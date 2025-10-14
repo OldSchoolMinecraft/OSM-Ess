@@ -22,7 +22,7 @@ public class CommandStaff implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
 
-                if (player.isOp() || player.hasPermission("stafftools.staff")) {
+                if (player.isOp() || player.hasPermission("osmess.staff")) {
                     if (args.length == 0) {
                         if (plugin.inventoryHandler.hasSavedInventory(player)) {
                             plugin.inventoryHandler.loadSavedInventory(player);
@@ -43,7 +43,7 @@ public class CommandStaff implements CommandExecutor {
 
                     if (args.length == 1) {
                         if (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("reloadcfg")) {
-                            if (player.isOp() || player.hasPermission("stafftools.reload")) {
+                            if (player.isOp() || player.hasPermission("osmess.staff.reload")) {
                                 plugin.staffToolsCFG.reload();
                                 player.sendMessage("§aReloaded stafftools.yml file!");
                                 return true;
@@ -88,3 +88,4 @@ public class CommandStaff implements CommandExecutor {
         return true;
     }
 }
+
