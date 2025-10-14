@@ -1,0 +1,22 @@
+name: OSM-Ess
+main: com.oldschoolminecraft.OSMEss.OSMEss
+version: 1.0
+depend:
+  - Essentials
+softdepend:
+  - Invisiman
+  - PermissionsEx
+
+commands:
+  baltop:
+    aliases: [balancetop]
+    description: Shows a list of the top 10 players' balance.
+  list:
+    aliases: [online]
+    description: Shows a list of online players.
+  ptt:
+    description: Shows a list of the top 10 longest played players.
+  seen:
+    description: Shows info on a player's playtime, first join date, and more.
+  staff:
+    description: Gives you staff tools.
