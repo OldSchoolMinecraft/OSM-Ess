@@ -45,7 +45,7 @@ public class CommandSeen implements CommandExecutor {
                     if (other == null) {
                         OfflinePlayer offline = Bukkit.getOfflinePlayer(args[0]);
 
-                        if (plugin.essentials.getOfflineUser(offline.getName()).getLastLogin() == 0) {
+                        if (!plugin.playerDataHandler.hasData(offline)) {
                             player.sendMessage("§cPlayer has never logged in before!");
                             return true;
                         }
@@ -60,11 +60,6 @@ public class CommandSeen implements CommandExecutor {
                         player.sendMessage("§8Last seen: §7" + plugin.essentials.getOfflineUser(offline.getName()).getLastLogout());
                         player.sendMessage("§8Play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
                         player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(offline));
-                        return true;
-                    }
-
-                    if (plugin.essentials.getOfflineUser(other.getName()).getLastLogin() == 0) {
-                        player.sendMessage("§cPlayer has never logged in before!");
                         return true;
                     }
 
