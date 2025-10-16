@@ -83,7 +83,7 @@ public class PlaytimeHandler {
             long firstJoinMillis = data.firstJoin;
             ZoneId zone = ZoneOffset.UTC;
             LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(firstJoinMillis), zone);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' HH:mm z").withZone(zone);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' h:mm a").withZone(zone);
             return dateTime.atZone(zone).format(formatter);
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
