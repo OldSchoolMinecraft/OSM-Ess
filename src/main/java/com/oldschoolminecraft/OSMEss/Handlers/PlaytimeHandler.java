@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -32,7 +33,7 @@ public class PlaytimeHandler {
 
     }
 
-    public String getTotalPlaytime(Player player) {
+    public String getTotalPlaytime(OfflinePlayer player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName() + ".json"))) {
             OSMPLUserData data = gson.fromJson(reader, OSMPLUserData.class);
             long millis = data.playTime;
@@ -75,19 +76,19 @@ public class PlaytimeHandler {
         }
     }
 
-    public Calendar getTotalPlaytime(OfflinePlayer player) {
-        return null;
-    }
-
-    public Calendar getFirstJoinDate(Player player) {
-        Date date = new Date();
-
-
-        return null;
-    }
-
-    public Calendar getFirstJoinDate(OfflinePlayer player) {
-        return null;
+    public String getFirstJoinDate(OfflinePlayer player) {
+        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName() + ".json")))
+        {
+            OSMPLUserData data = gson.fromJson(reader, OSMPLUserData.class);
+            long firstJoinMillis = data.firstJoin;
+            ZoneId zone = ZoneOffset.UTC;
+            LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(firstJoinMillis), zone);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' HH:mm z").withZone(zone);
+            return dateTime.atZone(zone).format(formatter);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            return "N/A";
+        }
     }
 
     public java.util.List<java.util.Map.Entry<String, Integer>> getTopLongestPlayTime(int limit) { // Ripped from LoginStreaks.
