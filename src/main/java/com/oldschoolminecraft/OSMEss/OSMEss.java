@@ -3,6 +3,7 @@ package com.oldschoolminecraft.OSMEss;
 import com.earth2me.essentials.Essentials;
 import com.oldschoolminecraft.OSMEss.Commands.*;
 import com.oldschoolminecraft.OSMEss.Handlers.InventoryHandler;
+import com.oldschoolminecraft.OSMEss.Handlers.PlayerDataHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.PlaytimeHandler;
 import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
 import com.oldschoolminecraft.vanish.Invisiman;
@@ -22,6 +23,7 @@ public class OSMEss extends JavaPlugin {
 
     public InventoryHandler inventoryHandler;
     public PlaytimeHandler playtimeHandler;
+    public PlayerDataHandler playerDataHandler;
 
     @Override
     public void onEnable() {
@@ -54,6 +56,7 @@ public class OSMEss extends JavaPlugin {
         playtimeHandler = new PlaytimeHandler(this);
         inventoryHandler = new InventoryHandler(this);
         staffToolsCFG = new StaffToolsCFG(new File(this.getDataFolder().getAbsolutePath(), "staff-tools.yml"));
+        playerDataHandler = new PlayerDataHandler(this);
 
         new CommandBaltop(this);
         new CommandList(this);
