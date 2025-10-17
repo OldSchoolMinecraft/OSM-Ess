@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class OSMPLUserData
 {
+    public static final Gson gson = new Gson();
     public String name;
     public String ip;
     public long lastLogIn; // all timestamps are epoch millis
