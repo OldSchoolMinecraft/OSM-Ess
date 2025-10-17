@@ -6,6 +6,7 @@ depend:
   - Essentials
 softdepend:
   - Invisiman
+  - Landmarks
   - PermissionsEx
 
 commands:
@@ -21,3 +22,4 @@ commands:
     description: Shows info on a player's playtime, first join date, and more.
   staff:
     description: Toggles staff mode.
+
