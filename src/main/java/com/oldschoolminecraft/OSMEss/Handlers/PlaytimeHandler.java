@@ -159,6 +159,29 @@ public class PlaytimeHandler {
         return 0;
     }
 
+    public long getTotalPlayTimeInMillis(OfflinePlayer player) {
+        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
+            OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
+            return data.totalPlaytime;
+
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+
+        return 0;
+    }
+
+    public long getFirstJoinInMillis(OfflinePlayer player) {
+        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
+            OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
+            return data.firstJoin;
+
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+
+        return 0;
+    }
 
 //  Get Methods (Regular Time Format)
     public String getPlayTimeInSession(Player player) { //Partially Passed. Unknown result passed 1 hour.
@@ -195,7 +218,7 @@ public class PlaytimeHandler {
             long millis = data.totalPlaytime;
             long firstJoinMillis = data.firstJoin;
 
-            if (millis <= 0) return "0 minutes";
+            if (millis < 60000) return "0 minutes"; //Less than 1 minute
 
             Instant startInstant = Instant.ofEpochMilli(firstJoinMillis);
             Instant endInstant = startInstant.plusMillis(millis);
@@ -231,5 +254,4 @@ public class PlaytimeHandler {
             return "N/A";
         }
     }
-
 }
