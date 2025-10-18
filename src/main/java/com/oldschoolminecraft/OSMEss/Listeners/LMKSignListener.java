@@ -24,34 +24,36 @@ public class LMKSignListener implements Listener {
     public void onSignChange(SignChangeEvent event) {
         Player player = event.getPlayer();
 
-        if (event.getLine(0).equals("[Landmark]")) {
-            if (plugin.isLandmarksEnabled()) {
-                if (!event.getLine(1).isEmpty()) {
-                    if (!event.getLine(2).isEmpty() || !event.getLine(3).isEmpty()) {
-                        event.setLine(0, "§4[Landmark]");
-                        event.setLine(1, "§c???");
-                        event.setLine(2, "§c???");
-                        event.setLine(3, "§c???");
-                        player.sendMessage("§cPlease only fill line 1 with a valid landmark name!");
-                        return;
-                    }
+        if (player.isOp()) {
+            if (event.getLine(0).equals("[Landmark]")) {
+                if (plugin.isLandmarksEnabled()) {
+                    if (!event.getLine(1).isEmpty()) {
+                        if (!event.getLine(2).isEmpty() || !event.getLine(3).isEmpty()) {
+                            event.setLine(0, "§4[Landmark]");
+                            event.setLine(1, "§c???");
+                            event.setLine(2, "§c???");
+                            event.setLine(3, "§c???");
+                            player.sendMessage("§cPlease only fill line 1 with a valid landmark name!");
+                            return;
+                        }
 
-                    String lmkNameInputed = event.getLine(1);
+                        String lmkNameInputed = event.getLine(1);
 
-                    if (plugin.landmarks.getLmkManager().findLandmark(event.getLine(1)) != null) {
-                        event.setLine(0, "§1[Landmark]");
-                        event.setLine(1, lmkNameInputed);
-                        player.sendMessage("§aLandmark sign created for " + lmkNameInputed + "!");
-                    }
-                    else {
-                        event.setLine(0, "§4[Landmark]");
-                        event.setLine(1, "§c???");
-                        player.sendMessage("§cLandmark " + event.getLine(1) + " does not exist!");
+                        if (plugin.landmarks.getLmkManager().findLandmark(event.getLine(1)) != null) {
+                            event.setLine(0, "§1[Landmark]");
+                            event.setLine(1, lmkNameInputed);
+                            player.sendMessage("§aLandmark sign created for " + lmkNameInputed + "!");
+                        }
+                        else {
+                            event.setLine(0, "§4[Landmark]");
+                            event.setLine(1, "§c???");
+                            player.sendMessage("§cLandmark " + event.getLine(1) + " does not exist!");
+                        }
                     }
                 }
-            }
-            else {
-                player.sendMessage("§cPlugin 'Landmarks' is missing to create a landmark sign!");
+                else {
+                    player.sendMessage("§cPlugin 'Landmarks' is missing to create a landmark sign!");
+                }
             }
         }
 
