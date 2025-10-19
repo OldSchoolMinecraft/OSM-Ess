@@ -113,14 +113,21 @@ public class CommandPTT implements CommandExecutor {
         long days = dateDiff.getDays();
         long hoursPart = timeDiff.toHours();
         long minutesPart = timeDiff.toMinutes();
-
-        // readable string
+        
         StringBuilder sb = new StringBuilder();
-        if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
-        if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
-        if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
-        if (hoursPart > 0) sb.append(hoursPart).append(" hour").append(hoursPart > 1 ? "s " : " ");
-        if (minutesPart > 0) sb.append(minutesPart).append(" minute").append(minutesPart > 1 ? "s " : " ");
+
+        if (millis >= 86400000) { // 1 Day
+            if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
+            if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
+            if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
+        }
+        else {
+            if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
+            if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
+            if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
+            if (hoursPart > 0) sb.append(hoursPart).append(" hour").append(hoursPart > 1 ? "s " : " ");
+            if (minutesPart > 0) sb.append(minutesPart).append(" minute").append(minutesPart > 1 ? "s " : " ");
+        }
 
         return sb.toString().trim();
     }
