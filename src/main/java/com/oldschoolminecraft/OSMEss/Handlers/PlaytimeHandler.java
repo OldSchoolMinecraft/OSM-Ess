@@ -32,28 +32,28 @@ public class PlaytimeHandler {
             JSONObject jsonObject = new JSONObject();
 
             //Retain
-            long lastLogoutRETAIN = data.lastLogout;
-            long totalPlayTimeRETAIN = data.totalPlaytime;
+            long lastLogoutRETAIN = data.lastLogOut;
+            long totalPlayTimeRETAIN = data.playTime;
             long firstJoinRETAIN = data.firstJoin;
 
             //Values to calculate updates
-            data.lastLogin = System.currentTimeMillis();
+            data.lastLogIn = System.currentTimeMillis();
 
             //Update
             jsonObject.put("name", player.getName());
-            jsonObject.put("lastLogin", data.lastLogin);
-            jsonObject.put("lastLogout", lastLogoutRETAIN);
-            jsonObject.put("totalPlaytime", totalPlayTimeRETAIN);
+            jsonObject.put("lastLogIn", data.lastLogIn);
+            jsonObject.put("lastLogOut", lastLogoutRETAIN);
+            jsonObject.put("playTime", totalPlayTimeRETAIN);
             jsonObject.put("firstJoin", firstJoinRETAIN);
 
             //Write/Close
             FileWriter writer = new FileWriter(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"));
             writer.write(jsonObject.toJSONString());
             writer.close();
-            Bukkit.getServer().getLogger().info("[OSM-Ess] Saved lastLogin data for " + player.getName() + "! (Filename: " + player.getName().toLowerCase() + ".yml)");
+//            Bukkit.getServer().getLogger().info("[OSM-Ess] Saved lastLogIn data for " + player.getName() + "! (Filename: " + player.getName().toLowerCase() + ".yml)");
 
         } catch (IOException ex) {
-            Bukkit.getServer().getLogger().info("[OSM-Ess] Error saving lastLogin data for " + player.getName() + ": " + ex.getMessage());
+            Bukkit.getServer().getLogger().info("[OSM-Ess] Error saving lastLogIn data for " + player.getName() + ": " + ex.getMessage());
             ex.printStackTrace(System.err);
         }
     }
@@ -64,30 +64,30 @@ public class PlaytimeHandler {
             JSONObject jsonObject = new JSONObject();
 
             //Retain
-            long lastLoginRETAIN = data.lastLogin;
+            long lastLogInRETAIN = data.lastLogIn;
             long firstJoinRETAIN = data.firstJoin;
-            long totalOldPlaytime = data.totalPlaytime;
+            long playTimeOLD = data.playTime;
 
             //Values to calculate updates
-            data.lastLogout = System.currentTimeMillis();
-            long diff = data.lastLogout - lastLoginRETAIN;
-            long totalNewPlaytime = totalOldPlaytime + diff;
+            data.lastLogOut = System.currentTimeMillis();
+            long diff = data.lastLogOut - lastLogInRETAIN;
+            long playTimeNEW = playTimeOLD + diff;
 
             //Update
             jsonObject.put("name", player.getName());
-            jsonObject.put("lastLogin", lastLoginRETAIN);
-            jsonObject.put("lastLogout", data.lastLogout);
-            jsonObject.put("totalPlaytime", totalNewPlaytime);
+            jsonObject.put("lastLogIn", lastLogInRETAIN);
+            jsonObject.put("lastLogOut", data.lastLogOut);
+            jsonObject.put("playTime", playTimeNEW);
             jsonObject.put("firstJoin", firstJoinRETAIN);
 
             //Write/Close
             FileWriter writer = new FileWriter(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"));
             writer.write(jsonObject.toJSONString());
             writer.close();
-            Bukkit.getServer().getLogger().info("[OSM-Ess] Saved totalPlayTime data for " + player.getName() + "! (Filename: " + player.getName().toLowerCase() + ".yml)");
+//            Bukkit.getServer().getLogger().info("[OSM-Ess] Saved playTime data for " + player.getName() + "! (Filename: " + player.getName().toLowerCase() + ".yml)");
 
         } catch (IOException ex) {
-            Bukkit.getServer().getLogger().info("[OSM-Ess] Error saving totalPlayTime data for " + player.getName() + ": " + ex.getMessage());
+            Bukkit.getServer().getLogger().info("[OSM-Ess] Error saving playTime data for " + player.getName() + ": " + ex.getMessage());
             ex.printStackTrace(System.err);
         }
     }
@@ -97,7 +97,7 @@ public class PlaytimeHandler {
     public String getLastLogin(Player player) { //Passed.
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            long firstJoinMillis = data.lastLogin;
+            long firstJoinMillis = data.lastLogIn;
             ZoneId zone = ZoneOffset.UTC;
             LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(firstJoinMillis), zone);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' h:mm a").withZone(zone);
@@ -110,7 +110,7 @@ public class PlaytimeHandler {
     public String getLastLogout(OfflinePlayer player) { //Potentially Will Pass. (Repeat of getLastLogin)
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            long lastLogoutMillis = data.lastLogout;
+            long lastLogoutMillis = data.lastLogOut;
             ZoneId zone = ZoneOffset.UTC;
             LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastLogoutMillis), zone);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' h:mm a").withZone(zone);
@@ -139,7 +139,7 @@ public class PlaytimeHandler {
     public long getLastLoginInMillis(Player player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            return data.lastLogin;
+            return data.lastLogIn;
 
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -150,7 +150,7 @@ public class PlaytimeHandler {
     public long getLastLogoutInMillis(Player player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            return data.lastLogout;
+            return data.lastLogOut;
 
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -162,7 +162,7 @@ public class PlaytimeHandler {
     public long getTotalPlayTimeInMillis(OfflinePlayer player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            return data.totalPlaytime;
+            return data.playTime;
 
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -187,7 +187,7 @@ public class PlaytimeHandler {
     public String getPlayTimeInSession(Player player) { //Partially Passed. Unknown result passed 1 hour.
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            long lastLoginMillis = data.lastLogin;
+            long lastLoginMillis = data.lastLogIn;
             long liveMillis = System.currentTimeMillis();
             long ellapsedMillis = liveMillis - lastLoginMillis;
             if (ellapsedMillis <= 0) return "0 seconds";
@@ -215,7 +215,7 @@ public class PlaytimeHandler {
     public String getTotalPlaytime(OfflinePlayer player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            long millis = data.totalPlaytime;
+            long millis = data.playTime;
             long firstJoinMillis = data.firstJoin;
 
             if (millis < 60000) return "0 minutes"; //Less than 1 minute
@@ -240,13 +240,20 @@ public class PlaytimeHandler {
             long hoursPart = timeDiff.toHours();
             long minutesPart = timeDiff.toMinutes();
 
-            // readable string
             StringBuilder sb = new StringBuilder();
-            if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
-            if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
-            if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
-            if (hoursPart > 0) sb.append(hoursPart).append(" hour").append(hoursPart > 1 ? "s " : " ");
-            if (minutesPart > 0) sb.append(minutesPart).append(" minute").append(minutesPart > 1 ? "s " : " ");
+
+            if (millis >= 86400000) { // 1 Day
+                if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
+                if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
+                if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
+            }
+            else {
+                if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
+                if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
+                if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
+                if (hoursPart > 0) sb.append(hoursPart).append(" hour").append(hoursPart > 1 ? "s " : " ");
+                if (minutesPart > 0) sb.append(minutesPart).append(" minute").append(minutesPart > 1 ? "s " : " ");
+            }
 
             return sb.toString().trim();
         } catch (Exception ex) {
