@@ -6,12 +6,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 
 public class PlayerDataHandler {
 
     public OSMEss plugin;
-
 
     public PlayerDataHandler(OSMEss plugin) {
         this.plugin = plugin;
@@ -28,9 +30,10 @@ public class PlayerDataHandler {
             }
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name", player.getName());
-            jsonObject.put("lastLogin", System.currentTimeMillis());
-            jsonObject.put("lastLogout", 0);
-            jsonObject.put("totalPlaytime", System.currentTimeMillis());
+            jsonObject.put("lastLogIn", System.currentTimeMillis());
+            jsonObject.put("lastLogOut", 0);
+            jsonObject.put("playTime", 0);
+            jsonObject.put("firstJoin", System.currentTimeMillis());
 
             Writer writer = new FileWriter(file, false);
             writer.write(jsonObject.toString());
@@ -40,13 +43,11 @@ public class PlayerDataHandler {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Created & saved data for " + player.getName() + "! (Filename: " + file.getName() + ")");
         } catch (IOException ex) {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Error creating data for " + player.getName() + ": " + ex.getMessage());
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 
-
-
-    public boolean hasData(Player player) {
+    public boolean hasData(OfflinePlayer player) {
         File file = new File(plugin.getDataFolder().getAbsolutePath() + "/player-logs", player.getName().toLowerCase() + ".json");
 
         if (file.exists()) {
@@ -54,18 +55,5 @@ public class PlayerDataHandler {
         }
         else return false;
     }
-
-    public boolean hasData(OfflinePlayer offline) {
-        File file = new File(plugin.getDataFolder().getAbsolutePath() + "/player-logs", offline.getName().toLowerCase() + ".json");
-
-        if (file.exists()) {
-            return true;
-        }
-        else return false;
-    }
-
-    public void updateLastLogin(Player player){}
-    public void updateLastLogout(Player player){}
-    public void updateTotalPlayTime(Player player){}
 
 }
