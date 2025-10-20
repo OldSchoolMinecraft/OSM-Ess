@@ -31,6 +31,12 @@ public class OSMEss extends JavaPlugin {
     public PlaytimeHandler playtimeHandler;
     public PlayerDataHandler playerDataHandler;
 
+    public java.util.List<java.util.Map.Entry<String, Integer>> cachedTopBalances;
+    public java.util.List<java.util.Map.Entry<String, Integer>> cachedTopPlaytimes;
+
+    public int cacheTaskId = -1;
+    public long lastCacheRefreshTime = 0;
+
     @Override
     public void onEnable() {
         PluginManager pm = Bukkit.getPluginManager();
@@ -83,10 +89,15 @@ public class OSMEss extends JavaPlugin {
         new CommandPTT(this);
         new CommandSeen(this);
         new CommandStaff(this);
+
+//      Refresh Balance Top 10 & Playtime Top 10
+        updateTop10Lists();
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        cancelUpdateTop10Lists();
+    }
 
     public boolean isInvisimanEnabled() {
         if (Bukkit.getPluginManager().getPlugin("Invisiman") != null && Bukkit.getPluginManager().isPluginEnabled("Invisiman")) return true;
@@ -101,5 +112,116 @@ public class OSMEss extends JavaPlugin {
     public boolean isPermissionsExEnabled() {
         if (Bukkit.getPluginManager().getPlugin("PermissionsEx") != null && Bukkit.getPluginManager().isPluginEnabled("PermissionsEx")) return true;
         else return false;
+    }
+
+    public void updateTop10Lists() {
+        refreshBalanceTop();
+        refreshPlaytimeTop();
+
+        int refreshMinutes = 60; //1 hour
+        long refreshTicks = refreshMinutes * 60 * 20L; // Convert minutes to ticks (20 ticks = 1 second)
+
+        cacheTaskId = this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+            public void run() {
+                refreshBalanceTop();
+                refreshPlaytimeTop();
+            }
+        }, refreshTicks, refreshTicks);
+
+        Bukkit.getServer().getLogger().info("[OSM-Ess] Cache refresh task started (every " + refreshMinutes + " minutes)");
+    }
+
+    public void cancelUpdateTop10Lists() {
+        if (cacheTaskId != -1) {
+            this.getServer().getScheduler().cancelTask(cacheTaskId);
+            cacheTaskId = -1;
+            Bukkit.getServer().getLogger().info("[OSM-Ess] Cache refresh task canceled!");
+        }
+    }
+
+    public void refreshBalanceTop() {
+        java.util.List<java.util.Map.Entry<String, Integer>> topBalances = new java.util.ArrayList<java.util.Map.Entry<String, Integer>>();
+
+        // Get all player data files
+        java.io.File essentialsPlayerDataDir = new java.io.File(essentials.getDataFolder().getAbsolutePath(), "userdata");
+        if (!essentialsPlayerDataDir.exists()) {
+            cachedTopBalances = topBalances;
+            lastCacheRefreshTime = System.currentTimeMillis();
+            return;
+        }
+
+        java.io.File[] playerFiles = essentialsPlayerDataDir.listFiles();
+        if (playerFiles == null) {
+            cachedTopBalances = topBalances;
+            lastCacheRefreshTime = System.currentTimeMillis();
+            return;
+        }
+
+        // Read each player's longest streak
+        for (java.io.File playerFile : playerFiles) {
+            if (playerFile.getName().endsWith(".yml")) {
+                String playerName = playerFile.getName().substring(0, playerFile.getName().length() - 4);
+                int mostMoney = (int) essentials.getUser(playerName).getMoney();
+                if (mostMoney > 0) {
+                    topBalances.add(new java.util.AbstractMap.SimpleEntry<>(playerName, mostMoney));
+                }
+            }
+        }
+
+        // Sort by longest streak descending
+        java.util.Collections.sort(topBalances, new java.util.Comparator<java.util.Map.Entry<String, Integer>>() {
+            public int compare(java.util.Map.Entry<String, Integer> a, java.util.Map.Entry<String, Integer> b) {
+                return b.getValue().compareTo(a.getValue());
+            }
+        });
+
+        // Update cache
+        cachedTopBalances = topBalances;
+        lastCacheRefreshTime = System.currentTimeMillis();
+
+        Bukkit.getServer().getLogger().info("[OSM-Ess] Balance top cache updated ! (" + topBalances.size() + " players)");
+    }
+
+    public void refreshPlaytimeTop() {
+        java.util.List<java.util.Map.Entry<String, Integer>> topPlaytimes = new java.util.ArrayList<>();
+
+        // Get all player data files
+        java.io.File playerDataDir = new java.io.File(this.getDataFolder().getAbsolutePath(), "player-logs");
+        if (!playerDataDir.exists()) {
+            cachedTopPlaytimes = topPlaytimes;
+            lastCacheRefreshTime = System.currentTimeMillis();
+            return;
+        }
+
+        java.io.File[] playerFiles = playerDataDir.listFiles();
+        if (playerFiles == null) {
+            cachedTopPlaytimes = topPlaytimes;
+            lastCacheRefreshTime = System.currentTimeMillis();
+            return;
+        }
+
+        // Read each player's longest streak
+        for (java.io.File playerFile : playerFiles) {
+            if (playerFile.getName().endsWith(".json")) {
+                String playerName = playerFile.getName().substring(0, playerFile.getName().length() - 5);
+                int longestPlaytime = (int) playtimeHandler.getTotalPlayTimeInMillis(Bukkit.getOfflinePlayer(playerName));
+                if (longestPlaytime > 0) {
+                    topPlaytimes.add(new java.util.AbstractMap.SimpleEntry<>(playerName, longestPlaytime));
+                }
+            }
+        }
+
+        // Sort by longest streak descending
+        java.util.Collections.sort(topPlaytimes, new java.util.Comparator<java.util.Map.Entry<String, Integer>>() {
+            public int compare(java.util.Map.Entry<String, Integer> a, java.util.Map.Entry<String, Integer> b) {
+                return b.getValue().compareTo(a.getValue());
+            }
+        });
+
+        // Update cache
+        cachedTopPlaytimes = topPlaytimes;
+        lastCacheRefreshTime = System.currentTimeMillis();
+
+        Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
