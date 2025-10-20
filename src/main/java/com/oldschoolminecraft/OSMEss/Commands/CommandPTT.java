@@ -1,14 +1,10 @@
 package com.oldschoolminecraft.OSMEss.Commands;
 
 import com.oldschoolminecraft.OSMEss.OSMEss;
-import com.oldschoolminecraft.OSMEss.compat.OSMPLUserData;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 
 import java.time.*;
 
@@ -26,7 +22,7 @@ public class CommandPTT implements CommandExecutor {
 
         if (cmd.getName().equalsIgnoreCase("ptt")) {
             sender.sendMessage("§7Users with the top play time:");
-            java.util.List<java.util.Map.Entry<String, Integer>> topPlaytimes = getTopLongestPlayTime(10);
+            java.util.List<java.util.Map.Entry<String, Integer>> topPlaytimes = getTopPlaytimes(10);
 
             if (topPlaytimes.isEmpty()) {
                 sender.sendMessage("§cNo playtime data available yet.");
@@ -49,44 +45,14 @@ public class CommandPTT implements CommandExecutor {
         return true;
     }
 
-    public java.util.List<java.util.Map.Entry<String, Integer>> getTopLongestPlayTime(int limit) { // Ripped from LoginStreaks.
-        java.util.List<java.util.Map.Entry<String, Integer>> topPlaytimes = new java.util.ArrayList<>();
-
-        // Get all player data files
-        java.io.File playerDataDir = new java.io.File(plugin.getDataFolder().getAbsolutePath(), "player-logs");
-        if (!playerDataDir.exists()) {
-            return topPlaytimes;
+    public java.util.List<java.util.Map.Entry<String, Integer>> getTopPlaytimes(int limit) {
+        // Return from cache instead of reading files
+        if (plugin.cachedTopPlaytimes.size() > limit) {
+            return plugin.cachedTopPlaytimes.subList(0, limit);
         }
-
-        java.io.File[] playerFiles = playerDataDir.listFiles();
-        if (playerFiles == null) {
-            return topPlaytimes;
-        }
-
-        // Read each player's longest streak
-        for (java.io.File playerFile : playerFiles) {
-            if (playerFile.getName().endsWith(".json")) {
-                String playerName = playerFile.getName().substring(0, playerFile.getName().length() - 5);
-                int longestPlaytime = (int) plugin.playtimeHandler.getTotalPlayTimeInMillis(Bukkit.getOfflinePlayer(playerName)); //PLACE HOLDER TO STOP ERROR, REPLACE WHEN METHOD IS READY!
-                if (longestPlaytime > 0) {
-                    topPlaytimes.add(new java.util.AbstractMap.SimpleEntry<>(playerName, longestPlaytime));
-                }
-            }
-        }
-
-        // Sort by longest streak descending
-        java.util.Collections.sort(topPlaytimes, new java.util.Comparator<java.util.Map.Entry<String, Integer>>() {
-            public int compare(java.util.Map.Entry<String, Integer> a, java.util.Map.Entry<String, Integer> b) {
-                return b.getValue().compareTo(a.getValue());
-            }
-        });
-
-        // Return top N results
-        if (topPlaytimes.size() > limit) {
-            return topPlaytimes.subList(0, limit);
-        }
-        return topPlaytimes;
+        return plugin.cachedTopPlaytimes;
     }
+
 
     public String formatTime(String name, long timestamp) {
         long millis = plugin.playtimeHandler.getTotalPlayTimeInMillis(Bukkit.getOfflinePlayer(name));
