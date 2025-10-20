@@ -80,19 +80,27 @@ public class CommandList implements CommandExecutor {
                         if (!plugin.invisiman.isVanished(all)) {
                             stringBuilder.append("§7" + all.getName()).append("§8");
                         }
+
+                        sender.sendMessage("§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.");
+                        sender.sendMessage(stringBuilder.toString());
+                        return true;
                     }
                     else { // Invisiman is not installed, show the regular list regardless who's vanished.
                         stringBuilder.append("§7" + all.getName()).append("§8");
+
+                        sender.sendMessage("§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.");
+                        sender.sendMessage(stringBuilder.toString());
+                        return true;
                     }
                 }
-
-                sender.sendMessage("§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.");
-                sender.sendMessage(stringBuilder.toString());
-                return true;
             }
         }
         return true;
     }
+
+//    public Integer getOnlinePlayersVisible() { NOT READY FOR USE YET.
+//
+//    }
 
     public static String removePrefix(String str, String prefix) {
         if (str == null || prefix == null) return str;
@@ -117,4 +125,5 @@ public class CommandList implements CommandExecutor {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
+
 
