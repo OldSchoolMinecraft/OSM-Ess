@@ -77,10 +77,7 @@ public class CommandList implements CommandExecutor {
                     }
 
                     if (plugin.isInvisimanEnabled()) { // If Invisiman is installed, check to see who's invis and hide them from list.
-                        if (plugin.invisiman.isVanished(all)) {
-                            stringBuilder.append(false);
-                        }
-                        else {
+                        if (!plugin.invisiman.isVanished(all)) {
                             stringBuilder.append("§7" + all.getName()).append("§8");
                         }
                     }
@@ -120,3 +117,4 @@ public class CommandList implements CommandExecutor {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
+
