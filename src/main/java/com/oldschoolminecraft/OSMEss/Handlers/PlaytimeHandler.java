@@ -35,6 +35,7 @@ public class PlaytimeHandler {
             long lastLogoutRETAIN = data.lastLogOut;
             long totalPlayTimeRETAIN = data.playTime;
             long firstJoinRETAIN = data.firstJoin;
+            boolean ignoreBroadcastRETAIN = data.ignoreBroadcast;
 
             //Values to calculate updates
             data.lastLogIn = System.currentTimeMillis();
@@ -45,6 +46,7 @@ public class PlaytimeHandler {
             jsonObject.put("lastLogOut", lastLogoutRETAIN);
             jsonObject.put("playTime", totalPlayTimeRETAIN);
             jsonObject.put("firstJoin", firstJoinRETAIN);
+            jsonObject.put("ignoreBroadcast", ignoreBroadcastRETAIN);
 
             //Write/Close
             FileWriter writer = new FileWriter(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"));
@@ -66,6 +68,7 @@ public class PlaytimeHandler {
             //Retain
             long lastLogInRETAIN = data.lastLogIn;
             long firstJoinRETAIN = data.firstJoin;
+            boolean ignoreBroadcastRETAIN = data.ignoreBroadcast;
             long playTimeOLD = data.playTime;
 
             //Values to calculate updates
@@ -79,6 +82,7 @@ public class PlaytimeHandler {
             jsonObject.put("lastLogOut", data.lastLogOut);
             jsonObject.put("playTime", playTimeNEW);
             jsonObject.put("firstJoin", firstJoinRETAIN);
+            jsonObject.put("ignoreBroadcast", ignoreBroadcastRETAIN);
 
             //Write/Close
             FileWriter writer = new FileWriter(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"));
@@ -94,7 +98,7 @@ public class PlaytimeHandler {
 
 
 //  Get Methods (Date Format)
-    public String getLastLogin(Player player) { //Passed.
+    public String getLastLogin(Player player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
             long firstJoinMillis = data.lastLogIn;
@@ -107,7 +111,7 @@ public class PlaytimeHandler {
             return "N/A";
         }
     }
-    public String getLastLogout(OfflinePlayer player) { //Potentially Will Pass. (Repeat of getLastLogin)
+    public String getLastLogout(OfflinePlayer player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
             long lastLogoutMillis = data.lastLogOut;
@@ -120,7 +124,7 @@ public class PlaytimeHandler {
             return "N/A";
         }
     }
-    public String getFirstJoinDate(OfflinePlayer player) { //Passed.
+    public String getFirstJoinDate(OfflinePlayer player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
             long firstJoinMillis = data.firstJoin;
@@ -136,29 +140,6 @@ public class PlaytimeHandler {
 
 
 //  Get Methods (currentTimeMillis Format)
-    public long getLastLoginInMillis(Player player) {
-        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
-            OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            return data.lastLogIn;
-
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-
-        return 0;
-    }
-    public long getLastLogoutInMillis(Player player) {
-        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
-            OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            return data.lastLogOut;
-
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-
-        return 0;
-    }
-
     public long getTotalPlayTimeInMillis(OfflinePlayer player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
