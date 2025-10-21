@@ -13,6 +13,9 @@ commands:
   baltop:
     aliases: [balancetop]
     description: Shows a list of the top 10 players' balance.
+  ignorebroadcast:
+    aliases: [ignorebroadcasts]
+    description: Toggles visibility of the auto broadcast messages.
   list:
     aliases: [online]
     description: Shows a list of online players.
@@ -22,4 +25,5 @@ commands:
     description: Shows info on a player's playtime, first join date, and more.
   staff:
     description: Toggles staff mode.
+
 
