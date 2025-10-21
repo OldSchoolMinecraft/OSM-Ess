@@ -18,7 +18,7 @@ public class OSMPLUserData
     public Punishment currentMute;
     public int kills, deaths; // these integers will probably be imported and used by another plugin down the line
     public long lastWild; // we don't use this anymore either since the creation of OpenRTP
-    public boolean ignoreBroadcast; // this is used for ignoring auto broadcasts, but will be unused now that OSMPL is dead.
+    public boolean ignoreBroadcast;
 
     public class Punishment
     {
