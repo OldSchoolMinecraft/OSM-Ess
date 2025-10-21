@@ -12,11 +12,15 @@ import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
 import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
 import com.oldschoolminecraft.vanish.Invisiman;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OSMEss extends JavaPlugin {
 
@@ -36,6 +40,9 @@ public class OSMEss extends JavaPlugin {
 
     public int cacheTaskId = -1;
     public long lastCacheRefreshTime = 0;
+
+
+    private int index = 0; // For the auto broadcast sequence.
 
     @Override
     public void onEnable() {
@@ -85,6 +92,7 @@ public class OSMEss extends JavaPlugin {
         staffToolsCFG = new StaffToolsCFG(new File(this.getDataFolder().getAbsolutePath(), "staff-tools.yml"));
 
         new CommandBaltop(this);
+        new CommandIgnoreBC(this);
         new CommandList(this);
         new CommandPTT(this);
         new CommandSeen(this);
@@ -92,6 +100,8 @@ public class OSMEss extends JavaPlugin {
 
 //      Refresh Balance Top 10 & Playtime Top 10
         updateTop10Lists();
+
+        initAutoBC();
     }
 
     @Override
@@ -112,6 +122,37 @@ public class OSMEss extends JavaPlugin {
     public boolean isPermissionsExEnabled() {
         if (Bukkit.getPluginManager().getPlugin("PermissionsEx") != null && Bukkit.getPluginManager().isPluginEnabled("PermissionsEx")) return true;
         else return false;
+    }
+
+    public void initAutoBC() {
+
+        List<String> autoBCMessages = new ArrayList<>();
+
+        autoBCMessages.add("&f[&aOSM&f] &bWe have a ZERO tolerance griefing policy. If it isn't yours, don't touch it!");
+        autoBCMessages.add("&f[&aOSM&f] &bYou can do /landmarks to see all the landmarks on the server.");
+        autoBCMessages.add("&f[&aOSM&f] &bUsing /vote day is easier than using beds!");
+        autoBCMessages.add("&f[&aOSM&f] &bHave a question? Join our discord or do /warp info!");
+        autoBCMessages.add("&f[&aOSM&f] &bCreepers don’t do block damage!");
+        autoBCMessages.add("&f[&aOSM&f] &bIf you want to join our discord, do /discord!");
+        autoBCMessages.add("&f[&aOSM&f] &bDid you know you can also join with &aoldschoolminecraft.net&b!");
+
+        int perMinute = 5; //5 Minutes
+        long perMinTicks = perMinute * 60 * 20L; // Convert minutes to ticks (20 ticks = 1 second)
+
+        this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+            public void run() {
+                if (index >= autoBCMessages.size()) index = 0;
+
+                String autoBCMessage = autoBCMessages.get(index);
+
+                for (Player all : Bukkit.getOnlinePlayers()) {
+                    if (!playerDataHandler.hasIgnoreBroadcast(all)) {
+                        all.sendMessage(ChatColor.translateAlternateColorCodes('&', autoBCMessage));
+                    }
+                }
+                index++;
+            }
+        }, perMinute, perMinTicks);
     }
 
     public void updateTop10Lists() {
