@@ -2,6 +2,7 @@
 
 **Commands:**
 - /baltop - Reformatted look of the top 10 balances of players.
+- /ignorebroadcast - Toggle visibility of the auto broadcast messages.
 - /list - Reformatted look of online players.
 - /ptt - See the top 10 playtimes of players.
 - /seen - See player's playtime, first join date, & more.
