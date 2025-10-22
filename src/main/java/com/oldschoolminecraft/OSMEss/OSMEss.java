@@ -83,7 +83,6 @@ public class OSMEss extends JavaPlugin {
         }
 
         pm.registerEvents(new LMKSignListener(this), this);
-        pm.registerEvents(new PlayerBedListener(this), this);
         pm.registerEvents(new PlayerConnectionListener(this), this);
 
         playerDataHandler = new PlayerDataHandler(this);
@@ -266,3 +265,4 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
+
