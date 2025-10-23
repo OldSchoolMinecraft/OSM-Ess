@@ -11,6 +11,7 @@ import com.oldschoolminecraft.OSMEss.Listeners.PlayerBedListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
 import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
 import com.oldschoolminecraft.vanish.Invisiman;
+import net.oldschoolminecraft.sd.ScheduledDeath;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -28,6 +29,7 @@ public class OSMEss extends JavaPlugin {
     public Invisiman invisiman;
     public Landmarks landmarks;
     public PermissionsEx permissionsEx;
+    public ScheduledDeath scheduledDeath;
 
     public StaffToolsCFG staffToolsCFG;
 
@@ -82,6 +84,14 @@ public class OSMEss extends JavaPlugin {
             Bukkit.getServer().getLogger().severe("[OSM-Ess] PermissionsEx not found, thus its features are disabled!");
         }
 
+        if (pm.getPlugin("ScheduledDeath") != null && pm.isPluginEnabled("ScheduledDeath")) {
+            scheduledDeath = (ScheduledDeath) pm.getPlugin("ScheduledDeath");
+            Bukkit.getServer().getLogger().info("[OSM-Ess] ScheduledDeath v" + scheduledDeath.getDescription().getVersion() + " found!");
+        }
+        else {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] ScheduledDeath not found, thus its features are disabled!");
+        }
+
         pm.registerEvents(new LMKSignListener(this), this);
         pm.registerEvents(new PlayerConnectionListener(this), this);
 
@@ -123,12 +133,18 @@ public class OSMEss extends JavaPlugin {
         else return false;
     }
 
+    public boolean isScheduledDeathEnabled() {
+        if (Bukkit.getPluginManager().getPlugin("ScheduledDeath") != null && Bukkit.getPluginManager().isPluginEnabled("ScheduledDeath")) return true;
+        else return false;
+    }
+
     public void initAutoBC() {
 
         List<String> autoBCMessages = new ArrayList<>();
 
         autoBCMessages.add("&f[&aOSM&f] &bWe have a ZERO tolerance griefing policy. If it isn't yours, don't touch it!");
         autoBCMessages.add("&f[&aOSM&f] &bYou can do /landmarks to see all the landmarks on the server.");
+        autoBCMessages.add("&f[&aOSM&f] &bToggle seeing these messages with /ignorebroadcast!");
         autoBCMessages.add("&f[&aOSM&f] &bUsing /vote day is easier than using beds!");
         autoBCMessages.add("&f[&aOSM&f] &bHave a question? Join our discord or do /warp info!");
         autoBCMessages.add("&f[&aOSM&f] &bCreepers don’t do block damage!");
@@ -265,4 +281,3 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
-
