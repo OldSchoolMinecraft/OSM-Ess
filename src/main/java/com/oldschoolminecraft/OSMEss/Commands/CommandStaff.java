@@ -23,6 +23,13 @@ public class CommandStaff implements CommandExecutor {
                 Player player = (Player) sender;
 
                 if (player.isOp() || player.hasPermission("osmess.staff")) {
+                    if (plugin.isScheduledDeathEnabled()) {
+                        if (plugin.scheduledDeath.getTimeToLive() <= 30) {
+                            player.sendMessage("§cCommand is disabled as the server is about to restart!");
+                            return true;
+                        }
+                    }
+
                     if (args.length == 0) {
                         if (plugin.inventoryHandler.hasSavedInventory(player)) {
                             plugin.inventoryHandler.loadSavedInventory(player);
@@ -69,6 +76,13 @@ public class CommandStaff implements CommandExecutor {
                 }
             }
             else {
+                if (plugin.isScheduledDeathEnabled()) {
+                    if (plugin.scheduledDeath.getTimeToLive() <= 30) {
+                        sender.sendMessage("§cCommand is disabled as the server is about to restart!");
+                        return true;
+                    }
+                }
+
                 if (args.length != 1) {
                     sender.sendMessage("§cUsage: /staff reload");
                     return true;
@@ -88,4 +102,3 @@ public class CommandStaff implements CommandExecutor {
         return true;
     }
 }
-
