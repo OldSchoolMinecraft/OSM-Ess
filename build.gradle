@@ -11,5 +11,6 @@ dependencies {
     implementation(files("libs/EssentialsB1.7.3.jar"))
     implementation(files("libs/Landmarks.jar"))
     implementation(files("libs/PermissionsEx.jar"))
+    implementation(files("libs/ScheduledDeath.jar"))
     implementation(files("libs/project-poseidon-1.1.8.jar"))
 }
