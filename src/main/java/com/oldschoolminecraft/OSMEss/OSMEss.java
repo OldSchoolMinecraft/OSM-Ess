@@ -103,6 +103,7 @@ public class OSMEss extends JavaPlugin {
         new CommandBaltop(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
+        new CommandPing(this);
         new CommandPTT(this);
         new CommandSeen(this);
         new CommandStaff(this);
@@ -281,3 +282,4 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
+
