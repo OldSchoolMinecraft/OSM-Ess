@@ -1,6 +1,7 @@
 package com.oldschoolminecraft.OSMEss.Commands;
 
 import com.oldschoolminecraft.OSMEss.OSMEss;
+import com.oldschoolminecraft.vanish.Invisiman;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,15 +15,14 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-
+import java.util.stream.Collectors;
 
 public class CommandList implements CommandExecutor {
 
     private final OSMEss plugin;
     private final JSONObject data;
+    public static List<Player> vanished = new ArrayList<>(); // Used to get a count of vanished staff to minus from player count for getPlayerCountVisisble().
 
     public CommandList(OSMEss plugin) {
         this.plugin = plugin;
@@ -37,12 +37,12 @@ public class CommandList implements CommandExecutor {
 
             ConcurrentHashMap<PermissionGroup, ArrayList<PermissionUser>> groups = new ConcurrentHashMap<>();
 
-            if (plugin.isPermissionsExEnabled()) { //Use grouping ranks if PermissionsEx exists.
+            if (plugin.isPermissionsExEnabled()) { // Use grouping ranks if PermissionsEx exists.
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers())
                 {
                     PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(onlinePlayer);
                     PermissionGroup pexGroup = pexUser.getGroups()[0];
-
+                    
                     groups.get(pexGroup).add(pexUser);
                 }
 
@@ -69,38 +69,50 @@ public class CommandList implements CommandExecutor {
                 sendMultiline(sender, finalOut);
                 return true;
             }
-            else { //Regular list of players. Fallback option if PermissionsEx is not installed.
-                for (Player all : Bukkit.getServer().getOnlinePlayers()) {
-
-                    if (stringBuilder.length() > 0) {
-                        stringBuilder.append(", ");
-                    }
-
-                    if (plugin.isInvisimanEnabled()) { // If Invisiman is installed, check to see who's invis and hide them from list.
-                        if (!plugin.invisiman.isVanished(all)) {
-                            stringBuilder.append("§7" + all.getName()).append("§8");
+            else { // Regular list of players. Fallback option if PermissionsEx is not installed.
+                if (plugin.isInvisimanEnabled()) { // Invisiman is installed. Filter out vanished players.
+                    for (Player all : Arrays.stream(Bukkit.getOnlinePlayers()).filter(all -> !Invisiman.instance.isVanished(all)).collect(Collectors.toList())) {
+                        if (stringBuilder.length() > 0) {
+                            stringBuilder.append(", ");
                         }
 
-                        sender.sendMessage("§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.");
-                        sender.sendMessage(stringBuilder.toString());
-                        return true;
+                        stringBuilder.append("§8" + all.getName()).append("§7");
                     }
-                    else { // Invisiman is not installed, show the regular list regardless who's vanished.
-                        stringBuilder.append("§7" + all.getName()).append("§8");
 
-                        sender.sendMessage("§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.");
-                        sender.sendMessage(stringBuilder.toString());
-                        return true;
+                    sender.sendMessage("§7There are §8" + getOnlinePlayerCountVisible() + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.");
+                    sender.sendMessage(stringBuilder.toString());
+                    return true;
+                }
+                else { // Invisiman is not installed. No filtering out vanished players.
+                    for (Player all : Bukkit.getOnlinePlayers()) {
+                        if (stringBuilder.length() > 0) {
+                            stringBuilder.append(", ");
+                        }
+
+                        stringBuilder.append("§8" + all.getName()).append("§7");
                     }
+
+                    sender.sendMessage("§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.");
+                    sender.sendMessage(stringBuilder.toString());
+                    return true;
                 }
             }
         }
         return true;
     }
 
-//    public Integer getOnlinePlayersVisible() { NOT READY FOR USE YET.
-//
-//    }
+    public Integer getOnlinePlayerCountVisible() { // May need additional work!
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            if ((Invisiman.instance.isVanished(all))) {
+                if (!vanished.contains(all)) {
+                    vanished.add(all);
+                }
+                return Bukkit.getOnlinePlayers().length - vanished.size();
+            }
+
+        }
+        return Bukkit.getOnlinePlayers().length;
+    }
 
     public static String removePrefix(String str, String prefix) {
         if (str == null || prefix == null) return str;
@@ -125,5 +137,3 @@ public class CommandList implements CommandExecutor {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
-
-
