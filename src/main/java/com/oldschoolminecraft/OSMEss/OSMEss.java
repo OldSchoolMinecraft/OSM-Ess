@@ -6,8 +6,8 @@ import com.oldschoolminecraft.OSMEss.Commands.*;
 import com.oldschoolminecraft.OSMEss.Handlers.InventoryHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.PlayerDataHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.PlaytimeHandler;
+import com.oldschoolminecraft.OSMEss.Listeners.CommandPreProcessListener;
 import com.oldschoolminecraft.OSMEss.Listeners.LMKSignListener;
-import com.oldschoolminecraft.OSMEss.Listeners.PlayerBedListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
 import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
 import com.oldschoolminecraft.vanish.Invisiman;
@@ -92,6 +92,7 @@ public class OSMEss extends JavaPlugin {
             Bukkit.getServer().getLogger().severe("[OSM-Ess] ScheduledDeath not found, thus its features are disabled!");
         }
 
+        pm.registerEvents(new CommandPreProcessListener(this), this);
         pm.registerEvents(new LMKSignListener(this), this);
         pm.registerEvents(new PlayerConnectionListener(this), this);
 
@@ -282,4 +283,3 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
-
