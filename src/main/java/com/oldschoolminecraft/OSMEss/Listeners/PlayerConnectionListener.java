@@ -1,6 +1,8 @@
 package com.oldschoolminecraft.OSMEss.Listeners;
 
+import com.oldschoolminecraft.OSMEss.Commands.CommandList;
 import com.oldschoolminecraft.OSMEss.OSMEss;
+import com.oldschoolminecraft.vanish.Invisiman;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,5 +41,11 @@ public class PlayerConnectionListener extends PlayerListener {
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         plugin.playtimeHandler.updateTotalPlaytime(player);
+
+        if (Invisiman.instance.isVanished(player)) { //Remove them from arraylist if they quit while vanished.
+            if (CommandList.vanished.contains(player)) {
+                CommandList.vanished.remove(player);
+            }
+        }
     }
 }
