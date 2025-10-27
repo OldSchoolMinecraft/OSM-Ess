@@ -22,7 +22,7 @@ public class CommandList implements CommandExecutor {
 
     private final OSMEss plugin;
     private final JSONObject data;
-    public static List<Player> vanished = new ArrayList<>(); // Used to get a count of vanished staff to minus from player count for getPlayerCountVisisble().
+    public static List<Player> vanished = new ArrayList<>(); //Used to get the count of vanished ppl to minus from player count for getPlayerCountVisisble().
 
     public CommandList(OSMEss plugin) {
         this.plugin = plugin;
@@ -43,8 +43,9 @@ public class CommandList implements CommandExecutor {
                     PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(onlinePlayer);
                     PermissionGroup pexGroup = pexUser.getGroups()[0];
 
-                    if (groups.containsKey(pexGroup))
-                    {
+                    groups.getOrDefault(pexGroup, new ArrayList<>()).add(pexUser);
+
+                    if (groups.containsKey(pexGroup)) {
                         groups.get(pexGroup).add(pexUser);
                     } else {
                         ArrayList<PermissionUser> newGroupList = new ArrayList<>();
@@ -60,12 +61,23 @@ public class CommandList implements CommandExecutor {
                 {
                     stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
                     int userIndex = 0;
-                    for (PermissionUser user : group.getUsers())
-                    {
-                        userIndex++;
-                        stringBuilder.append("§8").append(user.getName());
-                        if (userIndex < group.getUsers().length)
+
+//                    for (PermissionUser user : group.getUsers()) {
+//                        userIndex++;
+//
+//                        stringBuilder.append("§8").append(user.getName());
+//                        if (userIndex < group.getUsers().length)
+//                            stringBuilder.append("§7, ");
+//                    }
+
+                    for (PermissionUser user : group.getUsers()) {
+                        for (Player onlinePlayer : Arrays.stream(Bukkit.getOnlinePlayers()).filter(onlinePlayer -> user.getName().equalsIgnoreCase(onlinePlayer.getName())).collect(Collectors.toList())) {
+                            userIndex++;
+
+                        stringBuilder.append("§8").append(onlinePlayer.getName());
+                        if (group.getUsers().length > userIndex)
                             stringBuilder.append("§7, ");
+                        }
                     }
                 }
 
