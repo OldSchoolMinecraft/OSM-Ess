@@ -43,7 +43,7 @@ public class CommandList implements CommandExecutor {
                     PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(onlinePlayer);
                     PermissionGroup pexGroup = pexUser.getGroups()[0];
                     
-                    groups.get(pexGroup).add(pexUser);
+                    groups.getOrDefault(pexGroup, new ArrayList<>()).add(pexUser);
                 }
 
                 String listHeader = "§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.";
