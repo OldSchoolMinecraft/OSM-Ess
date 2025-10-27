@@ -42,8 +42,15 @@ public class CommandList implements CommandExecutor {
                 {
                     PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(onlinePlayer);
                     PermissionGroup pexGroup = pexUser.getGroups()[0];
-                    
-                    groups.getOrDefault(pexGroup, new ArrayList<>()).add(pexUser);
+
+                    if (groups.containsKey(pexGroup))
+                    {
+                        groups.get(pexGroup).add(pexUser);
+                    } else {
+                        ArrayList<PermissionUser> newGroupList = new ArrayList<>();
+                        newGroupList.add(pexUser);
+                        groups.put(pexGroup, newGroupList);
+                    }
                 }
 
                 String listHeader = "§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.";
