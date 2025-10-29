@@ -1,6 +1,5 @@
 package com.oldschoolminecraft.OSMEss;
 
-import Landmarks.Landmarks;
 import com.earth2me.essentials.Essentials;
 import com.oldschoolminecraft.OSMEss.Commands.*;
 import com.oldschoolminecraft.OSMEss.Handlers.InventoryHandler;
@@ -11,6 +10,7 @@ import com.oldschoolminecraft.OSMEss.Listeners.LMKSignListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
 import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
 import com.oldschoolminecraft.vanish.Invisiman;
+import net.oldschoolminecraft.lmk.Landmarks;
 import net.oldschoolminecraft.sd.ScheduledDeath;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
