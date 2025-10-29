@@ -21,11 +21,11 @@ public class PlayerDataHandler {
     public void createData(Player player) {
 
         try {
-            File file = new File(plugin.getDataFolder().getAbsolutePath() + "/player-logs", player.getName().toLowerCase() + ".json");
+            File dir = new File(plugin.getDataFolder().getAbsolutePath() + "/player-logs");
+            File file = new File(dir, player.getName().toLowerCase() + ".json");
 
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+            if (!file.exists()) file.createNewFile();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("name", player.getName());
             jsonObject.put("lastLogIn", System.currentTimeMillis());

@@ -71,14 +71,15 @@ public class CommandList implements CommandExecutor {
 
                     for (PermissionGroup group : groups.keySet()) {
                         stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
-                        userIndexVisible = 0;
 
                         for (PermissionUser user : group.getUsers()) {
-                            for (Player all : Arrays.stream(Bukkit.getOnlinePlayers()).filter(all -> user.getName().equalsIgnoreCase(all.getName()) && !Invisiman.instance.isVanished(all)).collect(Collectors.toList())) {
-                                userIndexVisible++;
+                            List<Player> onlineVisiblePlayers = Arrays.stream(Bukkit.getOnlinePlayers()).filter(all -> user.getName().equalsIgnoreCase(all.getName()) && !Invisiman.instance.isVanished(all)).collect(Collectors.toList());
+                            for (int i = 0; i < onlineVisiblePlayers.size(); i++)
+                            {
+                                Player all = onlineVisiblePlayers.get(i);
                                 stringBuilder.append("§8").append(all.getName());
-                                if (group.getUsers().length > userIndexVisible)
-                                    stringBuilder.append(ChatColor.GRAY + ", ");
+                                if (i == onlineVisiblePlayers.size() - 1) break;
+                                stringBuilder.append(ChatColor.GRAY).append(", ");
                             }
                         }
 
