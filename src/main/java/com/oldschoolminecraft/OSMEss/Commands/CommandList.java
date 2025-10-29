@@ -3,6 +3,7 @@ package com.oldschoolminecraft.OSMEss.Commands;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import com.oldschoolminecraft.vanish.Invisiman;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -35,12 +36,15 @@ public class CommandList implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("list") || cmd.getName().equalsIgnoreCase("online")) {
             StringBuilder stringBuilder = new StringBuilder();
 
-            ConcurrentHashMap<PermissionGroup, ArrayList<PermissionUser>> groups = new ConcurrentHashMap<>();
 
             if (plugin.isPermissionsExEnabled()) { // Use grouping ranks if PermissionsEx exists.
-                for (Player onlinePlayer : Bukkit.getOnlinePlayers())
-                {
-                    PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(onlinePlayer);
+                String listHeader = "§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.";
+                stringBuilder.append(listHeader);
+
+                ConcurrentHashMap<PermissionGroup, ArrayList<PermissionUser>> groups = new ConcurrentHashMap<>();
+
+                for (Player all : Bukkit.getOnlinePlayers()) {
+                    PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(all);
                     PermissionGroup pexGroup = pexUser.getGroups()[0];
 
                     groups.getOrDefault(pexGroup, new ArrayList<>()).add(pexUser);
@@ -54,36 +58,31 @@ public class CommandList implements CommandExecutor {
                     }
                 }
 
-                String listHeader = "§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.";
-                stringBuilder.append(listHeader);
-
-                for (PermissionGroup group : groups.keySet())
-                {
+                for (PermissionGroup group : groups.keySet()) {
                     stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
                     int userIndex = 0;
-
-//                    for (PermissionUser user : group.getUsers()) {
+//                    for (PermissionUser user : group.getUsers()) { Old method.
 //                        userIndex++;
 //
 //                        stringBuilder.append("§8").append(user.getName());
 //                        if (userIndex < group.getUsers().length)
-//                            stringBuilder.append("§7, ");
+//                            stringBuilder.append(ChatColor.GRAY + ", ");
 //                    }
 
-                    for (PermissionUser user : group.getUsers()) {
-                        for (Player onlinePlayer : Arrays.stream(Bukkit.getOnlinePlayers()).filter(onlinePlayer -> user.getName().equalsIgnoreCase(onlinePlayer.getName())).collect(Collectors.toList())) {
+                    for (PermissionUser user : group.getUsers()) { //Replica of above method but filtering to look for only online players in their respective group.
+                        for (Player all : Arrays.stream(Bukkit.getOnlinePlayers()).filter(all -> user.getName().equalsIgnoreCase(all.getName())).collect(Collectors.toList())) {
                             userIndex++;
 
-                        stringBuilder.append("§8").append(onlinePlayer.getName());
-                        if (group.getUsers().length > userIndex)
-                            stringBuilder.append("§7, ");
+                            stringBuilder.append("§8").append(all.getName());
+                            if (group.getUsers().length > userIndex)
+                                stringBuilder.append(ChatColor.GRAY + ", ");
                         }
                     }
+
                 }
 
                 String finalOut = stringBuilder.toString();
-                finalOut = removePrefix(finalOut, "\n");
-                finalOut = removeSuffix(finalOut, "\n");
+                finalOut = removeSuffix(finalOut.trim(), ",");
 
                 sendMultiline(sender, finalOut);
                 return true;
