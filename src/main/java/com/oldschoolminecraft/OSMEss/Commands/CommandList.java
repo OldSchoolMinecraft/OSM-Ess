@@ -25,6 +25,9 @@ public class CommandList implements CommandExecutor {
     private final JSONObject data;
     public static List<Player> vanished = new ArrayList<>(); //Used to get the count of vanished ppl to minus from player count for getPlayerCountVisisble().
 
+    public static int userIndex = 0;
+    public static int userIndexVisible = userIndex - vanished.size();
+
     public CommandList(OSMEss plugin) {
         this.plugin = plugin;
         this.data = new JSONObject();
@@ -38,29 +41,79 @@ public class CommandList implements CommandExecutor {
 
 
             if (plugin.isPermissionsExEnabled()) { // Use grouping ranks if PermissionsEx exists.
-                String listHeader = "§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.";
-                stringBuilder.append(listHeader);
+                if (plugin.isInvisimanEnabled()) { //Inivisman Filter out players vanished from their respective group.
+                    String listHeader = "§7There are §8" + getOnlinePlayerCountVisible() + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.";
+                    stringBuilder.append(listHeader);
 
-                ConcurrentHashMap<PermissionGroup, ArrayList<PermissionUser>> groups = new ConcurrentHashMap<>();
+                    ConcurrentHashMap<PermissionGroup, ArrayList<PermissionUser>> groups = new ConcurrentHashMap<>();
 
-                for (Player all : Bukkit.getOnlinePlayers()) {
-                    PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(all);
-                    PermissionGroup pexGroup = pexUser.getGroups()[0];
+                    for (Player all : Bukkit.getOnlinePlayers()) {
+                        PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(all);
+                        PermissionGroup pexGroup = pexUser.getGroups()[0];
 
-                    groups.getOrDefault(pexGroup, new ArrayList<>()).add(pexUser);
+                        groups.getOrDefault(pexGroup, new ArrayList<>()).add(pexUser);
 
-                    if (groups.containsKey(pexGroup)) {
-                        groups.get(pexGroup).add(pexUser);
-                    } else {
-                        ArrayList<PermissionUser> newGroupList = new ArrayList<>();
-                        newGroupList.add(pexUser);
-                        groups.put(pexGroup, newGroupList);
+                        if (groups.containsKey(pexGroup)) {
+                            if (!Invisiman.instance.isVanished(all)) {
+                                groups.get(pexGroup).add(pexUser);
+                            }
+                            else {
+                                groups.get(pexGroup).remove(pexUser);
+                            }
+                        } else {
+                            ArrayList<PermissionUser> newGroupList = new ArrayList<>();
+                            if (!Invisiman.instance.isVanished(all)) {
+                                newGroupList.add(pexUser);
+                                groups.put(pexGroup, newGroupList);
+                            }
+                        }
                     }
-                }
 
-                for (PermissionGroup group : groups.keySet()) {
-                    stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
-                    int userIndex = 0;
+                    for (PermissionGroup group : groups.keySet()) {
+                        stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
+                        userIndexVisible = 0;
+
+                        for (PermissionUser user : group.getUsers()) {
+                            for (Player all : Arrays.stream(Bukkit.getOnlinePlayers()).filter(all -> user.getName().equalsIgnoreCase(all.getName()) && !Invisiman.instance.isVanished(all)).collect(Collectors.toList())) {
+                                userIndexVisible++;
+                                stringBuilder.append("§8").append(all.getName());
+                                if (group.getUsers().length > userIndexVisible)
+                                    stringBuilder.append(ChatColor.GRAY + ", ");
+                            }
+                        }
+
+                    }
+
+                    String finalOut = stringBuilder.toString();
+                    finalOut = removeSuffix(finalOut.trim(), ",");
+
+                    sendMultiline(sender, finalOut);
+                    return true;
+                }
+                else { //Invisiman is not installed. Just group players with respective rank regardless of being vanished.
+                    String listHeader = "§7There are §8" + Bukkit.getServer().getOnlinePlayers().length + " §7out of a maximum §8" + Bukkit.getServer().getMaxPlayers() + " §7players online.";
+                    stringBuilder.append(listHeader);
+
+                    ConcurrentHashMap<PermissionGroup, ArrayList<PermissionUser>> groups = new ConcurrentHashMap<>();
+
+                    for (Player all : Bukkit.getOnlinePlayers()) {
+                        PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(all);
+                        PermissionGroup pexGroup = pexUser.getGroups()[0];
+
+                        groups.getOrDefault(pexGroup, new ArrayList<>()).add(pexUser);
+
+                        if (groups.containsKey(pexGroup)) {
+                            groups.get(pexGroup).add(pexUser);
+                        } else {
+                            ArrayList<PermissionUser> newGroupList = new ArrayList<>();
+                            newGroupList.add(pexUser);
+                            groups.put(pexGroup, newGroupList);
+                        }
+                    }
+
+                    for (PermissionGroup group : groups.keySet()) {
+                        stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
+                        userIndex = 0;
 //                    for (PermissionUser user : group.getUsers()) { Old method.
 //                        userIndex++;
 //
@@ -69,23 +122,24 @@ public class CommandList implements CommandExecutor {
 //                            stringBuilder.append(ChatColor.GRAY + ", ");
 //                    }
 
-                    for (PermissionUser user : group.getUsers()) { //Replica of above method but filtering to look for only online players in their respective group.
-                        for (Player all : Arrays.stream(Bukkit.getOnlinePlayers()).filter(all -> user.getName().equalsIgnoreCase(all.getName())).collect(Collectors.toList())) {
-                            userIndex++;
+                        for (PermissionUser user : group.getUsers()) { //Replica of above method but filtering to look for only online players in their respective group.
+                            for (Player all : Arrays.stream(Bukkit.getOnlinePlayers()).filter(all -> user.getName().equalsIgnoreCase(all.getName())).collect(Collectors.toList())) {
+                                userIndex++;
 
-                            stringBuilder.append("§8").append(all.getName());
-                            if (group.getUsers().length > userIndex)
-                                stringBuilder.append(ChatColor.GRAY + ", ");
+                                stringBuilder.append("§8").append(all.getName());
+                                if (group.getUsers().length > userIndex)
+                                    stringBuilder.append(ChatColor.GRAY + ", ");
+                            }
                         }
+
                     }
 
+                    String finalOut = stringBuilder.toString();
+                    finalOut = removeSuffix(finalOut.trim(), ",");
+
+                    sendMultiline(sender, finalOut);
+                    return true;
                 }
-
-                String finalOut = stringBuilder.toString();
-                finalOut = removeSuffix(finalOut.trim(), ",");
-
-                sendMultiline(sender, finalOut);
-                return true;
             }
             else { // Regular list of players. Fallback option if PermissionsEx is not installed.
                 if (plugin.isInvisimanEnabled()) { // Invisiman is installed. Filter out vanished players.
