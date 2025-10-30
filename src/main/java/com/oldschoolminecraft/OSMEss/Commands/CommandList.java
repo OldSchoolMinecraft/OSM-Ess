@@ -16,6 +16,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -72,17 +73,17 @@ public class CommandList implements CommandExecutor {
                     for (PermissionGroup group : groups.keySet()) {
                         stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
 
-                        for (PermissionUser user : group.getUsers()) {
-                            List<Player> onlineVisiblePlayers = Arrays.stream(Bukkit.getOnlinePlayers()).filter(all -> user.getName().equalsIgnoreCase(all.getName()) && !Invisiman.instance.isVanished(all)).collect(Collectors.toList());
-                            for (int i = 0; i < onlineVisiblePlayers.size(); i++)
-                            {
-                                Player all = onlineVisiblePlayers.get(i);
-                                stringBuilder.append("§8").append(all.getName());
-                                if (i == onlineVisiblePlayers.size() - 1) break;
-                                stringBuilder.append(ChatColor.GRAY).append(", ");
-                            }
-                        }
+                        List<String> visibleNames = Arrays.stream(group.getUsers())
+                                .map(PermissionUser::getName)
+                                .map(Bukkit::getPlayerExact)
+                                .filter(Objects::nonNull)
+                                .filter(p -> !Invisiman.instance.isVanished(p))
+                                .map(p -> "§8" + p.getName())
+                                .collect(Collectors.toList());
 
+                        if (!visibleNames.isEmpty()) {
+                            stringBuilder.append(String.join(ChatColor.GRAY + ", ", visibleNames));
+                        }
                     }
 
                     String finalOut = stringBuilder.toString();
