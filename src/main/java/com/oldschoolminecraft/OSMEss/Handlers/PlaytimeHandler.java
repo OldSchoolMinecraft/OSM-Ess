@@ -194,7 +194,7 @@ public class PlaytimeHandler {
     }
 
     public String getTotalPlaytime(OfflinePlayer player) {
-        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName() + ".json"))) {
+        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
             long millis = data.playTime;
             long firstJoinMillis = data.firstJoin;
@@ -243,3 +243,4 @@ public class PlaytimeHandler {
         }
     }
 }
+
