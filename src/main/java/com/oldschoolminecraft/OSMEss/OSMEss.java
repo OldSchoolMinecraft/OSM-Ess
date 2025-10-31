@@ -149,7 +149,7 @@ public class OSMEss extends JavaPlugin {
         autoBCMessages.add("&f[&aOSM&f] &bToggle seeing these messages with /ignorebroadcast!");
         autoBCMessages.add("&f[&aOSM&f] &bUsing /vote day is easier than using beds!");
         autoBCMessages.add("&f[&aOSM&f] &bHave a question? Join our discord or do /warp info!");
-        autoBCMessages.add("&f[&aOSM&f] &bCreepers don’t do block damage!");
+        autoBCMessages.add("&f[&aOSM&f] &bCreepers don't do block damage!");
         autoBCMessages.add("&f[&aOSM&f] &bIf you want to join our discord, do /discord!");
         autoBCMessages.add("&f[&aOSM&f] &bDid you know you can also join with &aoldschoolminecraft.net&b!");
 
@@ -283,3 +283,4 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
+
