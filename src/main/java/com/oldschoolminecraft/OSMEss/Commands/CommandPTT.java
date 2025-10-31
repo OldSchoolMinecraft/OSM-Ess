@@ -77,8 +77,8 @@ public class CommandPTT implements CommandExecutor {
         long years = dateDiff.getYears();
         long months = dateDiff.getMonths();
         long days = dateDiff.getDays();
-        long hoursPart = timeDiff.toHours();
-        long minutesPart = timeDiff.toMinutes();
+        long hoursPart = timeDiff.toHours() % 24;
+        long minutesPart = timeDiff.toMinutes() % 60;
         
         StringBuilder sb = new StringBuilder();
 
@@ -98,3 +98,4 @@ public class CommandPTT implements CommandExecutor {
         return sb.toString().trim();
     }
 }
+
