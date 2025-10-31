@@ -175,9 +175,9 @@ public class PlaytimeHandler {
 
             long totalSeconds = ellapsedMillis / 1000;
             long seconds = totalSeconds % 60;
-            long minutes = totalSeconds / 60; if (minutes <= 60) {minutes = minutes % 60;} // Passes 1 hour of in session playtime.
-            long secondsForHours = totalSeconds % 3600;
-            long hours = secondsForHours / 3600;
+            long minutes = (totalSeconds % 3600) / 60;
+            long hours = totalSeconds / 3600;
+
 
             // readable string
             StringBuilder sb = new StringBuilder();
@@ -243,6 +243,7 @@ public class PlaytimeHandler {
         }
     }
 }
+
 
 
 
