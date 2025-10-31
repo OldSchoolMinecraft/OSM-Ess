@@ -171,13 +171,13 @@ public class PlaytimeHandler {
             long lastLoginMillis = data.lastLogIn;
             long liveMillis = System.currentTimeMillis();
             long ellapsedMillis = liveMillis - lastLoginMillis;
-            if (ellapsedMillis <= 0) return "0 seconds";
+            if (ellapsedMillis < 1000) return "0 seconds";
 
             long totalSeconds = ellapsedMillis / 1000;
             long seconds = totalSeconds % 60;
             long minutes = totalSeconds / 60;
-            long hours = totalSeconds / 3600;
-            long days = hours / 24; //Unlikely if the server restarts every 12 hours.
+            long secondsForHours = totalSeconds % 3600;
+            long hours = secondsForHours / 3600;
 
             // readable string
             StringBuilder sb = new StringBuilder();
@@ -243,4 +243,5 @@ public class PlaytimeHandler {
         }
     }
 }
+
 
