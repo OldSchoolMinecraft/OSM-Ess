@@ -25,6 +25,13 @@ public class CommandSeen implements CommandExecutor {
 //              Player executes /seen
                 Player player = (Player) sender;
 
+//                if (plugin.isScheduledDeathEnabled()) {
+//                    if (plugin.scheduledDeath.getTimeToLive() <= 30) {
+//                        sender.sendMessage("§cCommand is disabled as the server is about to restart!");
+//                        return true;
+//                    }
+//                }
+
                 if (args.length == 0) {
                     if (plugin.essentials.getUser(player.getName()).getNickname() != null) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "§8Seen §7" + player.getName() + " §8(§7" + plugin.essentials.getUser(player.getName()).getNickname() + "§8)"));
@@ -59,7 +66,7 @@ public class CommandSeen implements CommandExecutor {
 
 //                      /seen <player> (who is offline)
                         player.sendMessage("§8Last seen: §7" + plugin.playtimeHandler.getLastLogout(offline)); //Potential to Pass.
-                        player.sendMessage("§8Play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
+                        player.sendMessage("§8Total Play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
                         player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(offline)); //Passed.
                         return true;
                     }
@@ -106,7 +113,7 @@ public class CommandSeen implements CommandExecutor {
 
 //                  /seen <player> (who is offline)
                     sender.sendMessage("§8Last seen: §7" + plugin.playtimeHandler.getLastLogout(offline)); //Potential to Pass.
-                    sender.sendMessage("§8Play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
+                    sender.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
                     sender.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(offline)); //Passed.
                     return true;
                 }
