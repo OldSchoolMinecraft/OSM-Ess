@@ -13,10 +13,7 @@ import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -70,14 +67,18 @@ public class CommandList implements CommandExecutor {
                         }
                     }
 
+                    Set<String> listedPlayers = new HashSet<>();
+
                     for (PermissionGroup group : groups.keySet()) {
                         stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
 
                         List<String> visibleNames = Arrays.stream(group.getUsers())
                                 .map(PermissionUser::getName)
+                                .filter(name -> !listedPlayers.contains(name)) // skip already-listed players
                                 .map(Bukkit::getPlayerExact)
                                 .filter(Objects::nonNull)
                                 .filter(p -> !Invisiman.instance.isVanished(p))
+                                .peek(p -> listedPlayers.add(p.getName())) // mark player as listed
                                 .map(p -> "§8" + p.getName())
                                 .collect(Collectors.toList());
 
