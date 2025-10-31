@@ -72,7 +72,7 @@ public class LMKSignListener implements Listener {
             Sign sign = (Sign) event.getClickedBlock().getState();
 
             if (plugin.isLandmarksEnabled()) {
-                if (sign.getLine(0).equals(ChatColor.DARK_BLUE + "[Landmark]") && !sign.getLine(1).isEmpty() && sign.getLine(2).isEmpty() && sign.getLine(3).isEmpty()) {
+                if (sign.getLine(0).equals(ChatColor.DARK_BLUE + "[Landmark]")) { // && !sign.getLine(1).isEmpty() && sign.getLine(2).isEmpty() && sign.getLine(3).isEmpty() | Removed to allow old created lmk signs with extra lines below to work.
                     try {
                         String name = sign.getLine(1);
                         LandmarkData landmark = plugin.landmarks.getLmkManager().findLandmark(name);
