@@ -58,6 +58,11 @@ public class CommandSeen implements CommandExecutor {
                             return true;
                         }
 
+                        if (plugin.essentials.getOfflineUser(offline.getName()) == null) {
+                            player.sendMessage("§cPlayer has never logged in before! (no Essentials data)");
+                            return true;
+                        }
+
                         if (plugin.essentials.getOfflineUser(offline.getName()).getNickname() != null) {
                             player.sendMessage(ChatColor.translateAlternateColorCodes('&', "§8Seen §7" + offline.getName() + " §8(§7" + plugin.essentials.getOfflineUser(offline.getName()).getNickname() + "§8)"));
                         } else {
@@ -102,6 +107,11 @@ public class CommandSeen implements CommandExecutor {
 
                     if (!plugin.playerDataHandler.hasData(offline)) {
                         sender.sendMessage("§cPlayer has never logged in before!");
+                        return true;
+                    }
+
+                    if (plugin.essentials.getOfflineUser(offline.getName()) == null) {
+                        sender.sendMessage("§cPlayer has never logged in before! (no Essentials data)");
                         return true;
                     }
 
