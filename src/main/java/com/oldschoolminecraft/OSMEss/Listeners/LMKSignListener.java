@@ -24,34 +24,32 @@ public class LMKSignListener implements Listener {
     public void onSignChange(SignChangeEvent event) {
         Player player = event.getPlayer();
 
-        if (player.isOp()) {
+        if (player.isOp() || player.hasPermission("osmess.landmarksigns.create")) {
             if (event.getLine(0).equals("[Landmark]")) {
                 if (plugin.isLandmarksEnabled()) {
                     if (event.getLine(1).isEmpty()) {
-                        event.setLine(0, "§4[Landmark]");
                         player.sendMessage("§cPlease fill line 1 with a valid landmark name!");
-                        return;
-                    }
-                    if (!event.getLine(2).isEmpty() || !event.getLine(3).isEmpty()) {
                         event.setLine(0, "§4[Landmark]");
                         event.setLine(1, "§c???");
-                        event.setLine(2, "§c???");
-                        event.setLine(3, "§c???");
-                        player.sendMessage("§cPlease only fill line 1 with a valid landmark name!");
+                        if (!event.getLine(2).isEmpty()) {event.setLine(2, " ");}
+                        if (!event.getLine(3).isEmpty()) {event.setLine(3, " ");}
                         return;
                     }
-
                     String lmkNameInputed = event.getLine(1);
 
                     if (plugin.landmarks.getLmkManager().findLandmark(event.getLine(1)) != null) {
+                        player.sendMessage("§aLandmark sign created for " + lmkNameInputed + "!");
                         event.setLine(0, "§1[Landmark]");
                         event.setLine(1, lmkNameInputed);
-                        player.sendMessage("§aLandmark sign created for " + lmkNameInputed + "!");
+                        if (!event.getLine(2).isEmpty()) {event.setLine(2, event.getLine(2));}
+                        if (!event.getLine(3).isEmpty()) {event.setLine(3, event.getLine(3));}
                     }
                     else {
+                        player.sendMessage("§cLandmark " + event.getLine(1) + " does not exist!");
                         event.setLine(0, "§4[Landmark]");
                         event.setLine(1, "§c???");
-                        player.sendMessage("§cLandmark " + event.getLine(1) + " does not exist!");
+                        if (!event.getLine(2).isEmpty()) {event.setLine(2, " ");}
+                        if (!event.getLine(3).isEmpty()) {event.setLine(3, " ");}
                     }
                 }
                 else {
@@ -80,7 +78,7 @@ public class LMKSignListener implements Listener {
                         if (landmark == null) player.sendMessage("§cLandmark " + name + " does not exist!");
                         else Bukkit.getServer().dispatchCommand(player, "lmk " + sign.getLine(1));
                     } catch (NullPointerException ex) {
-                        ex.getMessage();
+                        ex.printStackTrace(System.err);
                     }
                 }
             }
