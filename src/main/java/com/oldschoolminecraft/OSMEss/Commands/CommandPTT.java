@@ -21,8 +21,15 @@ public class CommandPTT implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
         if (cmd.getName().equalsIgnoreCase("ptt")) {
+            if (plugin.isScheduledDeathEnabled()) {
+                if (plugin.scheduledDeath.getTimeToLive() <= 30) {
+                    sender.sendMessage("§cCommand is disabled as the server is about to restart!");
+                    return true;
+                }
+            }
+
             sender.sendMessage("§7Users with the top play time:");
-            java.util.List<java.util.Map.Entry<String, Integer>> topPlaytimes = getTopPlaytimes(10);
+            java.util.List<java.util.Map.Entry<String, Long>> topPlaytimes = getTopPlaytimes(10);
 
             if (topPlaytimes.isEmpty()) {
                 sender.sendMessage("§cNo playtime data available yet.");
@@ -30,9 +37,9 @@ public class CommandPTT implements CommandExecutor {
             }
             else {
                 int rank = 1; //Ripped from LoginStreaks.
-                for (java.util.Map.Entry<String, Integer> entry : topPlaytimes) {
+                for (java.util.Map.Entry<String, Long> entry : topPlaytimes) {
                     String playerName = entry.getKey();
-                    int longestPlaytime = entry.getValue();
+                    long longestPlaytime = entry.getValue();
 
                     sender.sendMessage("§8" + rank + "§7. §7" + playerName + ": §8" + formatTime(playerName, longestPlaytime));
                     rank++;
@@ -45,7 +52,7 @@ public class CommandPTT implements CommandExecutor {
         return true;
     }
 
-    public java.util.List<java.util.Map.Entry<String, Integer>> getTopPlaytimes(int limit) {
+    public java.util.List<java.util.Map.Entry<String, Long>> getTopPlaytimes(int limit) {
         // Return from cache instead of reading files
         if (plugin.cachedTopPlaytimes.size() > limit) {
             return plugin.cachedTopPlaytimes.subList(0, limit);
@@ -98,4 +105,3 @@ public class CommandPTT implements CommandExecutor {
         return sb.toString().trim();
     }
 }
-
