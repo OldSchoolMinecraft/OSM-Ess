@@ -38,10 +38,11 @@ public class OSMEss extends JavaPlugin {
     public PlayerDataHandler playerDataHandler;
 
     public java.util.List<java.util.Map.Entry<String, Integer>> cachedTopBalances;
-    public java.util.List<java.util.Map.Entry<String, Integer>> cachedTopPlaytimes;
+    public java.util.List<java.util.Map.Entry<String, Long>> cachedTopPlaytimes;
 
     public int cacheTaskId = -1;
-    public long lastCacheRefreshTime = 0;
+    public long lastCacheRefreshBalTime = 0;
+    public long lastCacheRefreshPTTTime = 0;
 
 
     private int index = 0; // For the auto broadcast sequence.
@@ -102,6 +103,7 @@ public class OSMEss extends JavaPlugin {
         staffToolsCFG = new StaffToolsCFG(new File(this.getDataFolder().getAbsolutePath(), "staff-tools.yml"));
 
         new CommandBaltop(this);
+        new CommandDiscord(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
         new CommandPing(this);
@@ -148,10 +150,11 @@ public class OSMEss extends JavaPlugin {
         autoBCMessages.add("&f[&aOSM&f] &bYou can do /landmarks to see all the landmarks on the server.");
         autoBCMessages.add("&f[&aOSM&f] &bToggle seeing these messages with /ignorebroadcast!");
         autoBCMessages.add("&f[&aOSM&f] &bUsing /vote day is easier than using beds!");
-        autoBCMessages.add("&f[&aOSM&f] &bHave a question? Join our discord or do /warp info!");
+        autoBCMessages.add("&f[&aOSM&f] &bHave a question? Join our discord or ask a staff member!");
         autoBCMessages.add("&f[&aOSM&f] &bCreepers don't do block damage!");
         autoBCMessages.add("&f[&aOSM&f] &bIf you want to join our discord, do /discord!");
         autoBCMessages.add("&f[&aOSM&f] &bDid you know you can also join with &aoldschoolminecraft.net&b!");
+        autoBCMessages.add("&f[&aOSM&f] &bYou should join our subreddit r/OldSchoolMinecraft");
 
         int perMinute = 5; //5 Minutes
         long perMinTicks = perMinute * 60 * 20L; // Convert minutes to ticks (20 ticks = 1 second)
@@ -204,14 +207,14 @@ public class OSMEss extends JavaPlugin {
         java.io.File essentialsPlayerDataDir = new java.io.File(essentials.getDataFolder().getAbsolutePath(), "userdata");
         if (!essentialsPlayerDataDir.exists()) {
             cachedTopBalances = topBalances;
-            lastCacheRefreshTime = System.currentTimeMillis();
+            lastCacheRefreshBalTime = System.currentTimeMillis();
             return;
         }
 
         java.io.File[] playerFiles = essentialsPlayerDataDir.listFiles();
         if (playerFiles == null) {
             cachedTopBalances = topBalances;
-            lastCacheRefreshTime = System.currentTimeMillis();
+            lastCacheRefreshBalTime = System.currentTimeMillis();
             return;
         }
 
@@ -235,26 +238,26 @@ public class OSMEss extends JavaPlugin {
 
         // Update cache
         cachedTopBalances = topBalances;
-        lastCacheRefreshTime = System.currentTimeMillis();
+        lastCacheRefreshBalTime = System.currentTimeMillis();
 
         Bukkit.getServer().getLogger().info("[OSM-Ess] Balance top cache updated ! (" + topBalances.size() + " players)");
     }
 
     public void refreshPlaytimeTop() {
-        java.util.List<java.util.Map.Entry<String, Integer>> topPlaytimes = new java.util.ArrayList<>();
+        java.util.List<java.util.Map.Entry<String, Long>> topPlaytimes = new java.util.ArrayList<>();
 
         // Get all player data files
         java.io.File playerDataDir = new java.io.File(this.getDataFolder().getAbsolutePath(), "player-logs");
         if (!playerDataDir.exists()) {
             cachedTopPlaytimes = topPlaytimes;
-            lastCacheRefreshTime = System.currentTimeMillis();
+            lastCacheRefreshPTTTime = System.currentTimeMillis();
             return;
         }
 
         java.io.File[] playerFiles = playerDataDir.listFiles();
         if (playerFiles == null) {
             cachedTopPlaytimes = topPlaytimes;
-            lastCacheRefreshTime = System.currentTimeMillis();
+            lastCacheRefreshPTTTime = System.currentTimeMillis();
             return;
         }
 
@@ -262,7 +265,7 @@ public class OSMEss extends JavaPlugin {
         for (java.io.File playerFile : playerFiles) {
             if (playerFile.getName().endsWith(".json")) {
                 String playerName = playerFile.getName().substring(0, playerFile.getName().length() - 5);
-                int longestPlaytime = (int) playtimeHandler.getTotalPlayTimeInMillis(Bukkit.getOfflinePlayer(playerName));
+                long longestPlaytime = playtimeHandler.getTotalPlayTimeInMillis(Bukkit.getOfflinePlayer(playerName));
                 if (longestPlaytime > 0) {
                     topPlaytimes.add(new java.util.AbstractMap.SimpleEntry<>(playerName, longestPlaytime));
                 }
@@ -270,17 +273,16 @@ public class OSMEss extends JavaPlugin {
         }
 
         // Sort by longest streak descending
-        java.util.Collections.sort(topPlaytimes, new java.util.Comparator<java.util.Map.Entry<String, Integer>>() {
-            public int compare(java.util.Map.Entry<String, Integer> a, java.util.Map.Entry<String, Integer> b) {
+        java.util.Collections.sort(topPlaytimes, new java.util.Comparator<java.util.Map.Entry<String, Long>>() {
+            public int compare(java.util.Map.Entry<String, Long> a, java.util.Map.Entry<String, Long> b) {
                 return b.getValue().compareTo(a.getValue());
             }
         });
 
         // Update cache
         cachedTopPlaytimes = topPlaytimes;
-        lastCacheRefreshTime = System.currentTimeMillis();
+        lastCacheRefreshPTTTime = System.currentTimeMillis();
 
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
-
