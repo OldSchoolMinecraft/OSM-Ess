@@ -27,7 +27,11 @@ commands:
     description: Shows your ping/latency in milliseconds.
   ptt:
     description: Shows a list of the top 10 longest played players.
+  rainbow:
+    description: Gives you a rainbow name.
   seen:
     description: Shows info on a player's playtime, first join date, and more.
   staff:
     description: Toggles staff mode.
+
+
