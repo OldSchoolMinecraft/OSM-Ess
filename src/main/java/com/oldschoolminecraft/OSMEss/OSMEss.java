@@ -111,7 +111,6 @@ public class OSMEss extends JavaPlugin {
         new CommandRainbow(this);
         new CommandSeen(this);
         new CommandStaff(this);
-        new CommandWorkbench(this);
 
 //      Refresh Balance Top 10 & Playtime Top 10
         updateTop10Lists();
@@ -288,5 +287,6 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
+
 
 
