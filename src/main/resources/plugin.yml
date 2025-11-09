@@ -33,8 +33,7 @@ commands:
     description: Shows info on a player's playtime, first join date, and more.
   staff:
     description: Toggles staff mode.
-  workbench:
-    description: Opens the crafting table menu.
+
 
 
 
