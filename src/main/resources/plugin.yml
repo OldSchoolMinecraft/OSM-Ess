@@ -33,6 +33,10 @@ commands:
     description: Shows info on a player's playtime, first join date, and more.
   staff:
     description: Toggles staff mode.
+  warn:
+    description: Warns a player.
+  warnings:
+    description: Shows a player's list of warnings, or choose to clear them.
 
 
 
