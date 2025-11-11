@@ -9,11 +9,13 @@ import com.oldschoolminecraft.OSMEss.Listeners.CommandPreProcessListener;
 import com.oldschoolminecraft.OSMEss.Listeners.LMKSignListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
 import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
+import com.oldschoolminecraft.OSMEss.Util.WarningsCFG;
 import com.oldschoolminecraft.vanish.Invisiman;
 import net.oldschoolminecraft.lmk.Landmarks;
 import net.oldschoolminecraft.sd.ScheduledDeath;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -95,8 +97,8 @@ public class OSMEss extends JavaPlugin {
         }
 
         pm.registerEvents(new CommandPreProcessListener(this), this);
-        pm.registerEvents(new LMKSignListener(this), this);
         pm.registerEvents(new PlayerConnectionListener(this), this);
+        pm.registerEvents(new LMKSignListener(this), this);
 
         playerDataHandler = new PlayerDataHandler(this);
         playtimeHandler = new PlaytimeHandler(this);
@@ -113,6 +115,8 @@ public class OSMEss extends JavaPlugin {
         new CommandRainbow(this);
         new CommandSeen(this);
         new CommandStaff(this);
+        new CommandWarn(this);
+        new CommandWarnings(this);
 
 //      Refresh Balance Top 10 & Playtime Top 10
         updateTop10Lists();
@@ -284,7 +288,7 @@ public class OSMEss extends JavaPlugin {
         java.util.List<java.util.Map.Entry<String, Long>> topPlaytimes = new java.util.ArrayList<>();
 
         // Get all player data files
-        java.io.File playerDataDir = new java.io.File(this.getDataFolder().getAbsolutePath(), "player-logs");
+        java.io.File playerDataDir = new java.io.File(getDataFolder().getAbsolutePath(), "player-logs");
         if (!playerDataDir.exists()) {
             cachedTopPlaytimes = topPlaytimes;
             lastCacheRefreshPTTTime = System.currentTimeMillis();
@@ -323,7 +327,3 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
-
-
-
-
