@@ -14,11 +14,11 @@
 - /warnings - Shows a player's list of warnings, or choose to clear them.
 
 **Permissions:**
-`osmess.rainbow` - Permission to use /rainbow.
-`osmess.staff` - Permission to use /staff.
-`osmess.staff.reload` - Permission to use /staff reload.
-`osmess.warn` - Permission to use /warn.
-`osmess.warnings` - Permission to use /warnings.
+- `osmess.rainbow` - Permission to use /rainbow.
+- `osmess.staff` - Permission to use /staff.
+- `osmess.staff.reload` - Permission to use /staff reload.
+- `osmess.warn` - Permission to use /warn.
+- `osmess.warnings` - Permission to use /warnings.
 
 **NOTE:**
 
