@@ -32,6 +32,7 @@ public class OSMEss extends JavaPlugin {
     public ScheduledDeath scheduledDeath;
 
     public StaffToolsCFG staffToolsCFG;
+    public WarningsCFG warningsCFG;
 
     public InventoryHandler inventoryHandler;
     public PlaytimeHandler playtimeHandler;
@@ -101,6 +102,7 @@ public class OSMEss extends JavaPlugin {
         playtimeHandler = new PlaytimeHandler(this);
         inventoryHandler = new InventoryHandler(this);
         staffToolsCFG = new StaffToolsCFG(new File(this.getDataFolder().getAbsolutePath(), "staff-tools.yml"));
+        warningsCFG = new WarningsCFG(new File(this.getDataFolder().getAbsolutePath(), "warning-logs.yml"));
 
         new CommandBaltop(this);
         new CommandDiscord(this);
@@ -141,6 +143,40 @@ public class OSMEss extends JavaPlugin {
     public boolean isScheduledDeathEnabled() {
         if (Bukkit.getPluginManager().getPlugin("ScheduledDeath") != null && Bukkit.getPluginManager().isPluginEnabled("ScheduledDeath")) return true;
         else return false;
+    }
+
+    public boolean isPlayerInWarningLogs(OfflinePlayer player) {
+        if (this.warningsCFG.getConfigOption("Players." + player.getName().toLowerCase()) != null) return true;
+        else return false;
+    }
+
+    public void addWarning(Player player, String message) {
+        try {
+            List<String> warnings = this.warningsCFG.getStringList("Players." + player.getName().toLowerCase() + ".Warnings", new ArrayList<>());
+
+            warnings.add(message);
+            this.warningsCFG.setProperty("Players." + player.getName().toLowerCase() + ".Warnings", warnings);
+            this.warningsCFG.save();
+            Bukkit.getServer().getLogger().info("[OSM-Ess] New warning added to " + player.getName() + "'s records!");
+        } catch (Exception ex) {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating warning-logs.yml!");
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    public void clearWarnings(OfflinePlayer player) {
+        if (isPlayerInWarningLogs(player)) {
+            try {
+                List<String> warnings = this.warningsCFG.getStringList("Players." + player.getName().toLowerCase() + ".Warnings", new ArrayList<>());
+                warnings.clear();
+                this.warningsCFG.removeProperty("Players." + player.getName().toLowerCase());
+                this.warningsCFG.save();
+                Bukkit.getServer().getLogger().info("[OSM-Ess] All warnings cleared from " + player.getName() + "'s records!");
+            } catch (Exception ex) {
+                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating warning-logs.yml!");
+                ex.printStackTrace(System.err);
+            }
+        }
     }
 
     public void initAutoBC() {
@@ -287,6 +323,7 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
+
 
 
 
