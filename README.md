@@ -10,13 +10,15 @@
 - /seen - See player's playtime, first join date, & more.
 - /staff - Toggles staff mode & saves regular inventory.
 - /staff reload - Reloads the staff-tools.yml for tools to give in staff mode.
-- /workbench - Opens the crafting table menu.
+- /warn - Warns a player with a reason.
+- /warnings - Shows a player's list of warnings, or choose to clear them.
 
 **Permissions:**
 `osmess.rainbow` - Permission to use /rainbow.
 `osmess.staff` - Permission to use /staff.
 `osmess.staff.reload` - Permission to use /staff reload.
-`osmess.workbench` - Permission to use /workbench.
+`osmess.warn` - Permission to use /warn.
+`osmess.warnings` - Permission to use /warnings.
 
 **NOTE:**
 
