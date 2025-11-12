@@ -4,19 +4,20 @@ import com.oldschoolminecraft.OSMEss.OSMEss;
 import net.oldschoolminecraft.lmk.LandmarkData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class LMKSignListener implements Listener {
-
+public class PlayerWorldListener implements Listener {
     public OSMEss plugin;
 
-    public LMKSignListener(OSMEss plugin) {
+    public PlayerWorldListener(OSMEss plugin) {
         this.plugin = plugin;
     }
 
@@ -60,25 +61,48 @@ public class LMKSignListener implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = Event.Priority.Highest)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        Action action = event.getAction();
+        Block block = event.getClickedBlock();
 
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (action == Action.RIGHT_CLICK_BLOCK) {
+            // Landmarks
+            if (block.getState() instanceof Sign) {
+                Sign sign = (Sign) block.getState();
 
-        if (event.getClickedBlock().getState() instanceof Sign) {
-            Sign sign = (Sign) event.getClickedBlock().getState();
+                if (plugin.isLandmarksEnabled()) {
+                    if (sign.getLine(0).equals(ChatColor.DARK_BLUE + "[Landmark]")) { // && !sign.getLine(1).isEmpty() && sign.getLine(2).isEmpty() && sign.getLine(3).isEmpty() | Removed to allow old created lmk signs with extra lines below to work.
+                        try {
+                            String name = sign.getLine(1);
+                            LandmarkData landmark = plugin.landmarks.getLmkManager().findLandmark(name);
 
-            if (plugin.isLandmarksEnabled()) {
-                if (sign.getLine(0).equals(ChatColor.DARK_BLUE + "[Landmark]")) { // && !sign.getLine(1).isEmpty() && sign.getLine(2).isEmpty() && sign.getLine(3).isEmpty() | Removed to allow old created lmk signs with extra lines below to work.
-                    try {
-                        String name = sign.getLine(1);
-                        LandmarkData landmark = plugin.landmarks.getLmkManager().findLandmark(name);
+                            if (landmark == null) player.sendMessage("§cLandmark " + name + " does not exist!");
+                            else Bukkit.getServer().dispatchCommand(player, "lmk " + sign.getLine(1));
+                        } catch (NullPointerException ex) {
+                            ex.printStackTrace(System.err);
+                        }
+                    }
+                }
+            }
 
-                        if (landmark == null) player.sendMessage("§cLandmark " + name + " does not exist!");
-                        else Bukkit.getServer().dispatchCommand(player, "lmk " + sign.getLine(1));
-                    } catch (NullPointerException ex) {
-                        ex.printStackTrace(System.err);
+            //Lockette
+            if (plugin.isLocketteEnabled()) {
+                if (plugin.lockette.isProtected(block) && !plugin.lockette.isOwner(block, player.getName())) {
+                    if (player.isOp() || player.hasPermission("osmess.lockettebypass")) {
+                        event.setCancelled(false);
+                    }
+                }
+            }
+        }
+
+        if (action == Action.LEFT_CLICK_BLOCK) {
+            //Lockette
+            if (plugin.isLocketteEnabled()) {
+                if (plugin.lockette.isProtected(block) && !plugin.lockette.isOwner(block, player.getName())) {
+                    if (player.isOp() || player.hasPermission("osmess.lockettebypass")) {
+                        event.setCancelled(false);
                     }
                 }
             }
