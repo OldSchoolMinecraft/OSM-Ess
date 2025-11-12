@@ -6,8 +6,8 @@ import com.oldschoolminecraft.OSMEss.Handlers.InventoryHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.PlayerDataHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.PlaytimeHandler;
 import com.oldschoolminecraft.OSMEss.Listeners.CommandPreProcessListener;
-import com.oldschoolminecraft.OSMEss.Listeners.LMKSignListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
+import com.oldschoolminecraft.OSMEss.Listeners.PlayerWorldListener;
 import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
 import com.oldschoolminecraft.OSMEss.Util.WarningsCFG;
 import com.oldschoolminecraft.vanish.Invisiman;
@@ -19,6 +19,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.yi.acru.bukkit.Lockette.Lockette;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.io.File;
@@ -30,6 +31,7 @@ public class OSMEss extends JavaPlugin {
     public Essentials essentials;
     public Invisiman invisiman;
     public Landmarks landmarks;
+    public Lockette lockette;
     public PermissionsEx permissionsEx;
     public ScheduledDeath scheduledDeath;
 
@@ -80,6 +82,14 @@ public class OSMEss extends JavaPlugin {
             Bukkit.getServer().getLogger().severe("[OSM-Ess] Landmarks not found, thus will not listen for landmark signs!");
         }
 
+        if (pm.getPlugin("Lockette") != null && pm.isPluginEnabled("Lockette")) {
+            lockette = (Lockette) pm.getPlugin("Lockette");
+            Bukkit.getServer().getLogger().info("[OSM-Ess] Lockette v" + lockette.getDescription().getVersion() + " found!");
+        }
+        else {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Lockette not found, thus will not listen for landmark signs!");
+        }
+
         if (pm.getPlugin("PermissionsEx") != null && pm.isPluginEnabled("PermissionsEx")) {
             permissionsEx = (PermissionsEx) pm.getPlugin("PermissionsEx");
             Bukkit.getServer().getLogger().info("[OSM-Ess] PermissionsEx v" + permissionsEx.getDescription().getVersion() + " found!");
@@ -98,7 +108,7 @@ public class OSMEss extends JavaPlugin {
 
         pm.registerEvents(new CommandPreProcessListener(this), this);
         pm.registerEvents(new PlayerConnectionListener(this), this);
-        pm.registerEvents(new LMKSignListener(this), this);
+        pm.registerEvents(new PlayerWorldListener(this), this);
 
         playerDataHandler = new PlayerDataHandler(this);
         playtimeHandler = new PlaytimeHandler(this);
@@ -136,6 +146,11 @@ public class OSMEss extends JavaPlugin {
 
     public boolean isLandmarksEnabled() {
         if (Bukkit.getPluginManager().getPlugin("Landmarks") != null && Bukkit.getPluginManager().isPluginEnabled("Landmarks")) return true;
+        else return false;
+    }
+
+    public boolean isLocketteEnabled() {
+        if (Bukkit.getPluginManager().getPlugin("Lockette") != null && Bukkit.getPluginManager().isPluginEnabled("Lockette")) return true;
         else return false;
     }
 
