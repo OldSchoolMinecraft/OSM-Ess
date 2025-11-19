@@ -35,15 +35,7 @@ public class PlayerConnectionListener extends PlayerListener {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Retrieved data for " + player.getName() + "! (Filename: " + player.getName().toLowerCase() + ".json)");
         }
 
-        if (plugin.auctionHandler.hasHostItemsToReturn(player)) {
-            plugin.auctionHandler.returnAuctionHostItems(player);
-            player.sendMessage("§9Items you put for auction have been §breturned§9!");
-        }
-
-        if (plugin.auctionHandler.hasAuctionWonItemsToGive(player)) {
-            plugin.auctionHandler.giveAuctionWonItems(player);
-            player.sendMessage("§9Items you won from an auction have been §bgiven§9!");
-        }
+        // Auction methods moved to OSASPoseidonListener class.
     }
 
     @EventHandler
