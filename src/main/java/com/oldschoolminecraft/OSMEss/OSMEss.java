@@ -2,6 +2,7 @@ package com.oldschoolminecraft.OSMEss;
 
 import com.earth2me.essentials.Essentials;
 import com.oldschoolminecraft.OSMEss.Commands.*;
+import com.oldschoolminecraft.OSMEss.Handlers.AuctionHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.InventoryHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.PlayerDataHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.PlaytimeHandler;
@@ -38,6 +39,7 @@ public class OSMEss extends JavaPlugin {
     public StaffToolsCFG staffToolsCFG;
     public WarningsCFG warningsCFG;
 
+    public AuctionHandler auctionHandler;
     public InventoryHandler inventoryHandler;
     public PlaytimeHandler playtimeHandler;
     public PlayerDataHandler playerDataHandler;
@@ -45,7 +47,10 @@ public class OSMEss extends JavaPlugin {
     public java.util.List<java.util.Map.Entry<String, Integer>> cachedTopBalances;
     public java.util.List<java.util.Map.Entry<String, Long>> cachedTopPlaytimes;
 
+    public AuctionStatus auctionStatus;
+
     public int cacheTaskId = -1;
+    public int auctionTaskId = -1;
     public long lastCacheRefreshBalTime = 0;
     public long lastCacheRefreshPTTTime = 0;
 
@@ -110,13 +115,16 @@ public class OSMEss extends JavaPlugin {
         pm.registerEvents(new PlayerConnectionListener(this), this);
         pm.registerEvents(new PlayerWorldListener(this), this);
 
+        auctionHandler = new AuctionHandler(this);
         playerDataHandler = new PlayerDataHandler(this);
         playtimeHandler = new PlaytimeHandler(this);
         inventoryHandler = new InventoryHandler(this);
         staffToolsCFG = new StaffToolsCFG(new File(this.getDataFolder().getAbsolutePath(), "staff-tools.yml"));
         warningsCFG = new WarningsCFG(new File(this.getDataFolder().getAbsolutePath(), "warning-logs.yml"));
 
+        new CommandAuction(this);
         new CommandBaltop(this);
+        new CommandBid(this);
         new CommandDiscord(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
@@ -128,6 +136,8 @@ public class OSMEss extends JavaPlugin {
         new CommandWarn(this);
         new CommandWarnings(this);
 
+        auctionStatus = AuctionStatus.INACTIVE;
+
 //      Refresh Balance Top 10 & Playtime Top 10
         updateTop10Lists();
 
@@ -136,7 +146,9 @@ public class OSMEss extends JavaPlugin {
 
     @Override
     public void onDisable() {
+
         cancelUpdateTop10Lists();
+        auctionHandler.endVote();
     }
 
     public boolean isInvisimanEnabled() {
