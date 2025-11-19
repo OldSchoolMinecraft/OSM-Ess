@@ -7,10 +7,12 @@ import com.oldschoolminecraft.OSMEss.Handlers.InventoryHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.PlayerDataHandler;
 import com.oldschoolminecraft.OSMEss.Handlers.PlaytimeHandler;
 import com.oldschoolminecraft.OSMEss.Listeners.CommandPreProcessListener;
+import com.oldschoolminecraft.OSMEss.Listeners.OSASPoseidonListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerWorldListener;
 import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
 import com.oldschoolminecraft.OSMEss.Util.WarningsCFG;
+import com.oldschoolminecraft.osas.OSAS;
 import com.oldschoolminecraft.vanish.Invisiman;
 import net.oldschoolminecraft.lmk.Landmarks;
 import net.oldschoolminecraft.sd.ScheduledDeath;
@@ -18,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yi.acru.bukkit.Lockette.Lockette;
@@ -33,6 +36,7 @@ public class OSMEss extends JavaPlugin {
     public Invisiman invisiman;
     public Landmarks landmarks;
     public Lockette lockette;
+    public OSAS osas;
     public PermissionsEx permissionsEx;
     public ScheduledDeath scheduledDeath;
 
@@ -95,6 +99,14 @@ public class OSMEss extends JavaPlugin {
             Bukkit.getServer().getLogger().severe("[OSM-Ess] Lockette not found, thus will not listen for landmark signs!");
         }
 
+        if (pm.getPlugin("OSAS") != null && pm.isPluginEnabled("OSAS")) {
+            osas = (OSAS) pm.getPlugin("OSAS");
+            Bukkit.getServer().getLogger().info("[OSM-Ess] OSAS v" + osas.getDescription().getVersion() + " found!");
+        }
+        else {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] OSAS not found, thus its features are disabled!");
+        }
+
         if (pm.getPlugin("PermissionsEx") != null && pm.isPluginEnabled("PermissionsEx")) {
             permissionsEx = (PermissionsEx) pm.getPlugin("PermissionsEx");
             Bukkit.getServer().getLogger().info("[OSM-Ess] PermissionsEx v" + permissionsEx.getDescription().getVersion() + " found!");
@@ -114,6 +126,7 @@ public class OSMEss extends JavaPlugin {
         pm.registerEvents(new CommandPreProcessListener(this), this);
         pm.registerEvents(new PlayerConnectionListener(this), this);
         pm.registerEvents(new PlayerWorldListener(this), this);
+        pm.registerEvent(Event.Type.CUSTOM_EVENT, new OSASPoseidonListener(this), Event.Priority.Normal, this);
 
         auctionHandler = new AuctionHandler(this);
         playerDataHandler = new PlayerDataHandler(this);
@@ -166,6 +179,11 @@ public class OSMEss extends JavaPlugin {
         else return false;
     }
 
+    public boolean isOSASEnabled() {
+        if (Bukkit.getPluginManager().getPlugin("OSAS") != null && Bukkit.getPluginManager().isPluginEnabled("OSAS")) return true;
+        else return false;
+    }
+
     public boolean isPermissionsExEnabled() {
         if (Bukkit.getPluginManager().getPlugin("PermissionsEx") != null && Bukkit.getPluginManager().isPluginEnabled("PermissionsEx")) return true;
         else return false;
@@ -175,7 +193,6 @@ public class OSMEss extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("ScheduledDeath") != null && Bukkit.getPluginManager().isPluginEnabled("ScheduledDeath")) return true;
         else return false;
     }
-
     public boolean isPlayerInWarningLogs(OfflinePlayer player) {
         if (this.warningsCFG.getConfigOption("Players." + player.getName().toLowerCase()) != null) return true;
         else return false;
@@ -354,3 +371,4 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
+
