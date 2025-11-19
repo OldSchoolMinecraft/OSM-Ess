@@ -25,4 +25,4 @@
 **NOTE:**
 
 Requires **Essentials** to work.
-**Invisiman**, **Landmarks**, **PermissionsEx** & **ScheduledDeath** are optional but reccommended for other features to work.
+**Invisiman**, **Landmarks**, **OSAS**, **PermissionsEx** & **ScheduledDeath** are optional but reccommended for other features to work.
