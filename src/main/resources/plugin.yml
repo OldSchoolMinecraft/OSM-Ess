@@ -8,6 +8,7 @@ softdepend:
   - Invisiman
   - Landmarks
   - Lockette
+  - OSAS
   - PermissionsEx
   - ScheduledDeath
 
@@ -42,6 +43,7 @@ commands:
     description: Warns a player.
   warnings:
     description: Shows a player's list of warnings, or choose to clear them.
+
 
 
 
