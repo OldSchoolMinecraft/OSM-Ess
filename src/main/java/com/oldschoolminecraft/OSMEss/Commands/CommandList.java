@@ -70,7 +70,7 @@ public class CommandList implements CommandExecutor {
                     Set<String> listedPlayers = new HashSet<>();
 
                     for (PermissionGroup group : groups.keySet()) {
-                        stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
+                        stringBuilder.append("\n§7").append(capitalize(group.getName())).append("§7: ");
 
                         List<String> visibleNames = Arrays.stream(group.getUsers())
                                 .map(PermissionUser::getName)
@@ -115,7 +115,7 @@ public class CommandList implements CommandExecutor {
                     }
 
                     for (PermissionGroup group : groups.keySet()) {
-                        stringBuilder.append("\n§7").append(group.getName()).append("§7: ");
+                        stringBuilder.append("\n§7").append(capitalize(group.getName())).append("§7: ");
                         userIndex = 0;
 //                    for (PermissionUser user : group.getUsers()) { Old method.
 //                        userIndex++;
@@ -212,3 +212,4 @@ public class CommandList implements CommandExecutor {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
+
