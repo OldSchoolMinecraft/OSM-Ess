@@ -45,36 +45,54 @@ public class CommandAuction implements CommandExecutor {
                 }
 
                 if (args.length != 1) {
-                    player.sendMessage("§cUsage: /auction <price>");
-                    return true;
+                    if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < 43200000) {// 12 hours. Prevent new players from auctioning stolen items.
+                        player.sendMessage("§cYou need a minimum 12 hours of playtime to auction items!");
+                        return true;
+                    }
+                    else {
+                        if (plugin.isScheduledDeathEnabled()) {
+                            if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
+                                sender.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                return true;
+                            }
+                        }
+
+                        player.sendMessage("§cUsage: /auction <price>");
+                        return true;
+                    }
                 }
 
-                //Todo: Check if auction is running before starting a new one.
-                if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
-                    player.sendMessage("§cThere is currently an active auction!");
+                if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < 43200000) {// 12 hours. Prevent new players from auctioning stolen items.
+                    player.sendMessage("§cYou need a minimum 12 hours of playtime to auction items!");
                     return true;
                 }
                 else {
-                    if (plugin.isScheduledDeathEnabled()) {
-                        if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
-                            sender.sendMessage("§cCommand is disabled as the server is about to restart!");
-                        }
+                    if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
+                        player.sendMessage("§cThere is currently an active auction!");
+                        return true;
                     }
-
-                    try {
-                        int price = Integer.parseInt(args[0]);
-
-                        if (price == 0) {
-                            player.sendMessage("§cYou may not start an auction at $0!");
-                            return true;
+                    else {
+                        if (plugin.isScheduledDeathEnabled()) {
+                            if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
+                                sender.sendMessage("§cCommand is disabled as the server is about to restart!");
+                            }
                         }
 
-                        plugin.auctionHandler.startAuction(player, price);
-                    } catch (NumberFormatException ex) {
-                        player.sendMessage("§cInvalid integer provided!");
-                    }
+                        try {
+                            int price = Integer.parseInt(args[0]);
 
-                    return true;
+                            if (price == 0) {
+                                player.sendMessage("§cYou may not start an auction at $0!");
+                                return true;
+                            }
+
+                            plugin.auctionHandler.startAuction(player, price);
+                        } catch (NumberFormatException ex) {
+                            player.sendMessage("§cInvalid integer provided!");
+                        }
+
+                        return true;
+                    }
                 }
             }
             else {
