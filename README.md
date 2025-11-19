@@ -1,7 +1,9 @@
 # OSM-Ess
 
 **Commands:**
+- /auction - Starts an action with the item you're holding.
 - /baltop - Reformatted look of the top 10 balances of players.
+- /bid - Places a bid on an active auction.
 - /discord - Gives you the link to the discord server.
 - /ignorebroadcast - Toggle visibility of the auto broadcast messages.
 - /list - Reformatted look of online players.
