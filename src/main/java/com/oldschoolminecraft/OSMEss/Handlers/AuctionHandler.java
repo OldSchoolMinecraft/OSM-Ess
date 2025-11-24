@@ -105,16 +105,20 @@ public class AuctionHandler {
                 plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
             }
 
-            if (getTopBidder() == null) Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
-            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
+            if (getTopBidder() == null) {
+				Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
+			}
+			else {
+				 Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
+			}
 
 //            if (getTopBidder() == null) Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
 //            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
 
+            wipeAuctionFile();
             auctionHoster.clear();
             bidders.clear();
             totalBidders = 0;
-            wipeAuctionFile();
 
         }
 
