@@ -188,8 +188,6 @@ public class AuctionHandler {
                 else {
                     inventory.addItem(item); // Add the item to the player's inventory if it isn't full.
                 }
-
-                wipeAuctionFile();
             }
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
@@ -432,3 +430,4 @@ public class AuctionHandler {
     }
 //  Time Util
 }
+
