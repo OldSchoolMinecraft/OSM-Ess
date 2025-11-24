@@ -1,7 +1,6 @@
 package com.oldschoolminecraft.OSMEss.Handlers;
 
 import com.earth2me.essentials.User;
-import com.earth2me.essentials.UserMap;
 import com.google.gson.Gson;
 import com.oldschoolminecraft.OSMEss.AuctionStatus;
 import com.oldschoolminecraft.OSMEss.OSMEss;
@@ -14,7 +13,10 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class AuctionHandler {
@@ -103,12 +105,17 @@ public class AuctionHandler {
                 plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
             }
 
-            if (getTopBidder() == null) Bukkit.broadcastMessage("§9Player §b" + getOfflineTopBidder().getName() + " §awon §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
-            else Bukkit.broadcastMessage("§9Player §b" + getTopBidder().getName() + " §awon §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
+            if (getTopBidder() == null) Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
+            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
+
+//            if (getTopBidder() == null) Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
+//            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
+
             auctionHoster.clear();
             bidders.clear();
             totalBidders = 0;
             wipeAuctionFile();
+
         }
 
         setAuctionStatus(AuctionStatus.INACTIVE);
@@ -137,16 +144,16 @@ public class AuctionHandler {
         }
     }
 
-    public void removeFromAuction(Player player) { // Called if they leave the game with a bid placed on an active auction.
+    public void removeFromAuction(Player player) { // No longer used as we can track offline auctioneers.
         synchronized (bidders) {
             if (bidders.containsKey(player.getName())) {
                 bidders.remove(player.getName());
                 totalBidders--;
-//                Bukkit.broadcastMessage("§b" + player.getName() + " §9left during an active auction!"); // Debug.
             }
         }
     }
 //  Add/Remove Players from the Auction
+
 
 
 //  Store/Retrieve Auctioned Items
@@ -381,11 +388,17 @@ public class AuctionHandler {
 
         return maxValue;
     }
+
     public Player getTopBidder() {
         if (bidders.isEmpty()) {return null;}
 
-        return Bukkit.getPlayer(getKeyWithHighestValue(bidders));
+        if (Bukkit.getPlayer(getKeyWithHighestValue(bidders)) != null && Bukkit.getPlayer(getKeyWithHighestValue(bidders)).isOnline()) {
+            return Bukkit.getPlayer(getKeyWithHighestValue(bidders));
+        }
+
+        return null;
     }
+
     public OfflinePlayer getOfflineTopBidder() {
         if (bidders.isEmpty()) {return null;}
 
@@ -430,4 +443,3 @@ public class AuctionHandler {
     }
 //  Time Util
 }
-
