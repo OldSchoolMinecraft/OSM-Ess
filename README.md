@@ -5,6 +5,7 @@
 - /baltop - Reformatted look of the top 10 balances of players.
 - /bid - Places a bid on an active auction.
 - /discord - Gives you the link to the discord server.
+- /endauction - Forcefully ends an auction.
 - /ignorebroadcast - Toggle visibility of the auto broadcast messages.
 - /list - Reformatted look of online players.
 - /ptt - See the top 10 playtimes of players.
@@ -16,6 +17,7 @@
 - /warnings - Shows a player's list of warnings, or choose to clear them.
 
 **Permissions:**
+- `osmess.endauction` - Permission to use /endauction.
 - `osmess.rainbow` - Permission to use /rainbow.
 - `osmess.staff` - Permission to use /staff.
 - `osmess.staff.reload` - Permission to use /staff reload.
