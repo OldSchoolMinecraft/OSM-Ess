@@ -81,6 +81,11 @@ public class CommandAuction implements CommandExecutor {
                         try {
                             int price = Integer.parseInt(args[0]);
 
+                            if (args[0].contains("-") || args[0].contains("+") || args[0].contains("*") || args[0].contains("/")) {
+                                player.sendMessage("§cYou may not use special characters!");
+                                return true;
+                            }
+                            
                             if (price == 0) {
                                 player.sendMessage("§cYou may not start an auction at $0!");
                                 return true;
@@ -104,3 +109,4 @@ public class CommandAuction implements CommandExecutor {
         return true;
     }
 }
+
