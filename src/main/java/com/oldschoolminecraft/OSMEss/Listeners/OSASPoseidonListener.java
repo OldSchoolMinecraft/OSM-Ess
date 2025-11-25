@@ -18,30 +18,30 @@ public class OSASPoseidonListener extends CustomEventListener {
     }
 
     public void onCustomEvent(Event event) {
+        if (!plugin.isOSASEnabled()) return;
+
         if (!(event instanceof PlayerAuthenticationEvent)) return;
 
-        if (plugin.isOSASEnabled()) {
-            PlayerAuthenticationEvent authEvent = (PlayerAuthenticationEvent) event;
-            UUID playerUUID = authEvent.getPlayer();
+        PlayerAuthenticationEvent authEvent = (PlayerAuthenticationEvent) event;
+        UUID playerUUID = authEvent.getPlayer();
 
-            for (Player all : Bukkit.getOnlinePlayers()) {
-                if (all.getUniqueId().equals(playerUUID)) {
-                    Bukkit.getServer().getLogger().info("[OSM-Ess] Successful login for player " + all.getName() + "!");
-                    if (plugin.auctionHandler.hasHostItemsToReturn(all)) {
-                        plugin.auctionHandler.returnAuctionHostItems(all);
-                        all.sendMessage("§9Items you put for auction have been §breturned§9!");
-                    }
-
-                    if (plugin.auctionHandler.hasAuctionWonItemsToGive(all)) {
-                        plugin.auctionHandler.giveAuctionWonItems(all);
-                        all.sendMessage("§9Items you won from an auction have been §bgiven§9!");
-                    }
-
-                    return;
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            if (all.getUniqueId().equals(playerUUID)) {
+                Bukkit.getServer().getLogger().info("[OSM-Ess] Successful login for player " + all.getName() + "!");
+                if (plugin.auctionHandler.hasHostItemsToReturn(all)) {
+                    plugin.auctionHandler.returnAuctionHostItems(all);
+                    all.sendMessage("§9Items you put for auction have been §breturned§9!");
                 }
-            }
 
-            Bukkit.getServer().getLogger().info("[OSM-Ess] Records not found for UUID: " + playerUUID);
+                if (plugin.auctionHandler.hasAuctionWonItemsToGive(all)) {
+                    plugin.auctionHandler.giveAuctionWonItems(all);
+                    all.sendMessage("§9Items you won from an auction have been §bgiven§9!");
+                }
+
+                return;
+            }
         }
+
+        Bukkit.getServer().getLogger().info("[OSM-Ess] Records not found for UUID: " + playerUUID);
     }
 }
