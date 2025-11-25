@@ -41,6 +41,11 @@ public class CommandBid implements CommandExecutor {
                         try {
                             int amount = Integer.parseInt(args[0]);
 
+                            if (args[0].contains("-") || args[0].contains("+") || args[0].contains("*") || args[0].contains("/")) {
+                                player.sendMessage("§cYou may not use special characters!");
+                                return true;
+                            }
+
                             if (amount < plugin.auctionHandler.getStartingBid()) {
                                 player.sendMessage("§cYour bid amount is lower than the starting bid!");
                                 return true;
@@ -75,3 +80,4 @@ public class CommandBid implements CommandExecutor {
         return true;
     }
 }
+
