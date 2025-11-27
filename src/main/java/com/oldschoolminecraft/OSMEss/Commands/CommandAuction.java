@@ -2,6 +2,7 @@ package com.oldschoolminecraft.OSMEss.Commands;
 
 import com.oldschoolminecraft.OSMEss.AuctionStatus;
 import com.oldschoolminecraft.OSMEss.OSMEss;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,7 +29,7 @@ public class CommandAuction implements CommandExecutor {
                         player.sendMessage("§6Time Left: §e" + plugin.auctionHandler.formatTime(plugin.auctionHandler.getAuctionTimeLeft()));
                         player.sendMessage("§6Total Bidders: §e" + plugin.auctionHandler.totalBidders);
                         player.sendMessage("§6Current Bid: §a$" + plugin.auctionHandler.getTopBidAmount());
-                        player.sendMessage("§6Prize: §b" + plugin.auctionHandler.getAuctionItem().getAmount() + "x " +  plugin.auctionHandler.getAuctionItem().getType().name());
+                        player.sendMessage("§6Prize: §b" + plugin.auctionHandler.getAuctionItem().getAmount() + "x " +  plugin.auctionHandler.getAuctionItemName());
                         return true;
                     }
                     else {
@@ -67,6 +68,7 @@ public class CommandAuction implements CommandExecutor {
                     return true;
                 }
                 else {
+                    //Todo: Check if auction is running before starting a new one.
                     if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
                         player.sendMessage("§cThere is currently an active auction!");
                         return true;
@@ -78,6 +80,20 @@ public class CommandAuction implements CommandExecutor {
                             }
                         }
 
+                        long now = System.currentTimeMillis();
+                        if (now - plugin.auctionHandler.lastAuctionEndTime < plugin.auctionHandler.AUCTION_COOLDOWN_MS) {
+                            long remaining = (plugin.auctionHandler.AUCTION_COOLDOWN_MS - (now - plugin.auctionHandler.lastAuctionEndTime)) / 1000;
+
+                            if (remaining == 1) {
+                                player.sendMessage("§cYou must wait §e" + remaining + " §csecond before starting a new auction!");
+                                return true;
+                            }
+                            else {
+                                player.sendMessage("§cYou must wait §e" + remaining + " §cseconds before starting a new auction!");
+                                return true;
+                            }
+                        }
+
                         try {
                             int price = Integer.parseInt(args[0]);
 
@@ -85,7 +101,7 @@ public class CommandAuction implements CommandExecutor {
                                 player.sendMessage("§cYou may not use special characters!");
                                 return true;
                             }
-                            
+
                             if (price == 0) {
                                 player.sendMessage("§cYou may not start an auction at $0!");
                                 return true;
@@ -109,4 +125,3 @@ public class CommandAuction implements CommandExecutor {
         return true;
     }
 }
-
