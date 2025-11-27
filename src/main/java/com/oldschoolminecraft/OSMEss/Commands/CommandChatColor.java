@@ -117,6 +117,10 @@ public class CommandChatColor implements CommandExecutor {
                         player.sendMessage("§cUse /colors to see available color codes!");
                     }
                 }
+                else {
+                    player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                    return true;
+                }
             }
         }
 
