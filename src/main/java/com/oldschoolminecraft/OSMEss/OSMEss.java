@@ -10,6 +10,7 @@ import com.oldschoolminecraft.OSMEss.Listeners.CommandPreProcessListener;
 import com.oldschoolminecraft.OSMEss.Listeners.OSASPoseidonListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerWorldListener;
+import com.oldschoolminecraft.OSMEss.Util.ColorMessageCFG;
 import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
 import com.oldschoolminecraft.OSMEss.Util.WarningsCFG;
 import com.oldschoolminecraft.osas.OSAS;
@@ -40,6 +41,7 @@ public class OSMEss extends JavaPlugin {
     public PermissionsEx permissionsEx;
     public ScheduledDeath scheduledDeath;
 
+    public ColorMessageCFG colorMessageCFG;
     public StaffToolsCFG staffToolsCFG;
     public WarningsCFG warningsCFG;
 
@@ -132,12 +134,14 @@ public class OSMEss extends JavaPlugin {
         playerDataHandler = new PlayerDataHandler(this);
         playtimeHandler = new PlaytimeHandler(this);
         inventoryHandler = new InventoryHandler(this);
+        colorMessageCFG = new ColorMessageCFG(new File(this.getDataFolder().getAbsolutePath(), "color-message-settings.yml"));
         staffToolsCFG = new StaffToolsCFG(new File(this.getDataFolder().getAbsolutePath(), "staff-tools.yml"));
         warningsCFG = new WarningsCFG(new File(this.getDataFolder().getAbsolutePath(), "warning-logs.yml"));
 
         new CommandAuction(this);
         new CommandBaltop(this);
         new CommandBid(this);
+        new CommandChatColor(this);
         new CommandDiscord(this);
         new CommandEndAuction(this);
         new CommandIgnoreBC(this);
@@ -194,6 +198,7 @@ public class OSMEss extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("ScheduledDeath") != null && Bukkit.getPluginManager().isPluginEnabled("ScheduledDeath")) return true;
         else return false;
     }
+
     public boolean isPlayerInWarningLogs(OfflinePlayer player) {
         if (this.warningsCFG.getConfigOption("Players." + player.getName().toLowerCase()) != null) return true;
         else return false;
@@ -228,6 +233,35 @@ public class OSMEss extends JavaPlugin {
         }
     }
 
+    public void updateChatColorMessage(Player player, String chatColorCode) {
+        try {
+            this.colorMessageCFG.setProperty("Players." + player.getName().toLowerCase() + ".Color", chatColorCode);
+            this.colorMessageCFG.save();
+        } catch (Exception ex) {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating color-message-settings.yml!");
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    public void removeChatColorSetting(Player player) {
+        try {
+            this.colorMessageCFG.removeProperty("Players." + player.getName().toLowerCase());
+            this.colorMessageCFG.save();
+        } catch (Exception ex) {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating color-message-settings.yml!");
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    public boolean hasChatColorMessageSet(Player player) {
+        if (this.colorMessageCFG.getConfigOption("Players." + player.getName().toLowerCase() + ".Color") != null) return true;
+        else return false;
+    }
+
+    public String getChatColorMessageSetting(Player player) {
+        return this.colorMessageCFG.getString("Players." + player.getName().toLowerCase() + ".Color");
+    }
+
     public void initAutoBC() {
 
         List<String> autoBCMessages = new ArrayList<>();
@@ -242,7 +276,7 @@ public class OSMEss extends JavaPlugin {
         autoBCMessages.add("&f[&aOSM&f] &bDid you know you can also join with &aoldschoolminecraft.net&b!");
         autoBCMessages.add("&f[&aOSM&f] &bYou should join our subreddit r/OldSchoolMinecraft");
 
-        int perMinute = 5; //5 Minutes
+        int perMinute = 5; // 5 Minutes
         long perMinTicks = perMinute * 60 * 20L; // Convert minutes to ticks (20 ticks = 1 second)
 
         this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
@@ -372,5 +406,3 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
-
-
