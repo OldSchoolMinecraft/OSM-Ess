@@ -7,9 +7,13 @@ import com.oldschoolminecraft.OSMEss.OSMEss;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Wool;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -27,6 +31,9 @@ public class AuctionHandler {
     private final ArrayList<String> auctionHoster = new ArrayList<>();
 
     private long lastStartAuctionVote;
+
+    public long lastAuctionEndTime = 0L;
+    public long AUCTION_COOLDOWN_MS = 60 * 1000; // 1 minute
 
     public int AUCTION_DURATION_TICKS = 20 * 60;
     public int totalBidders = 0;
@@ -51,22 +58,38 @@ public class AuctionHandler {
             return;
         }
 
-        String name = item.getType().name();
+//        String name = item.getType().name();
         startBid = startingBid;
         int amount = item.getAmount();
 
-        storeAuctionItem(player);
-        player.setItemInHand(null);
+        MaterialData materialData = item.getData();
 
-        auctionHoster.add(player.getName());
+        //Blacklist
+        if (item.getType() == Material.BEDROCK) {
+            player.sendMessage("§cThis item is blacklisted from being auctioned!");
+            Bukkit.getServer().getLogger().warning("[OSM-Ess] " + player.getName() + " tried to auction " + amount + "x BEDROCK which is blacklisted!");
+        }
+        else if (item.getType() == Material.STEP && materialData.getData() == 4) { // Crash Slab
+            player.sendMessage("§cThis item is blacklisted from being auctioned!");
+            Bukkit.getServer().getLogger().warning("[OSM-Ess] " + player.getName() + " tried to auction " + amount + "x CRASH SLAB which is blacklisted!");
+        }
 
-        lastStartAuctionVote = System.currentTimeMillis();
-        setAuctionStatus(AuctionStatus.ACTIVE);
-        plugin.auctionTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::endVote, AUCTION_DURATION_TICKS);
+        else {
+            storeAuctionItem(player);
+            player.setItemInHand(null);
 
-        Bukkit.broadcastMessage("§9Auction started by §b" + player.getName() + "§9!");
-        Bukkit.broadcastMessage("§9Auction ends in §b1 minute§9!");
-        Bukkit.broadcastMessage("§9Prize: §b" + amount + "x " + name.toUpperCase() + "§9, Starting Bid: §b$" + startingBid);
+            auctionHoster.add(player.getName());
+
+            lastStartAuctionVote = System.currentTimeMillis();
+            setAuctionStatus(AuctionStatus.ACTIVE);
+            plugin.auctionTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::endVote, AUCTION_DURATION_TICKS);
+
+            Bukkit.broadcastMessage("§9Auction started by §b" + player.getName() + "§9!");
+            Bukkit.broadcastMessage("§9Auction ends in §b1 minute§9!");
+
+
+            Bukkit.broadcastMessage("§9Prize: §b" + amount + "x " + getAuctionItemName() + "§9, Starting Bid: §b$" + startingBid);
+        }
     }
 
     public void endVote() {
@@ -105,24 +128,21 @@ public class AuctionHandler {
                 plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
             }
 
-            if (getTopBidder() == null) {
-				Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
-			}
-			else {
-				 Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItem().getType().name() + "§9!");
-			}
+            if (getTopBidder() == null) Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItemName() + "§9!");
+            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItemName() + "§9!");
 
 //            if (getTopBidder() == null) Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
 //            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
 
-            wipeAuctionFile();
             auctionHoster.clear();
             bidders.clear();
             totalBidders = 0;
+            wipeAuctionFile();
 
         }
 
         setAuctionStatus(AuctionStatus.INACTIVE);
+        lastAuctionEndTime = System.currentTimeMillis();
         if (plugin.auctionTaskId != -1) {Bukkit.getScheduler().cancelTask(plugin.auctionTaskId); plugin.auctionTaskId = -1;}
     }
 //  Start/End Auction
@@ -232,6 +252,103 @@ public class AuctionHandler {
 
         return null;
     }
+
+    public String getAuctionItemName() {
+        try {
+            Gson gson = new Gson();
+            File file = new File(plugin.getDataFolder().getAbsolutePath() + "/auction-item.json");
+            if (file.exists()) { // Know if the file exits.
+                Reader reader = new FileReader(file);
+                ItemStack item = gson.fromJson(reader, ItemStack.class);
+
+                Material material = item.getType();
+
+                if (material == null) {return null;}
+
+                if (material.isBlock()) { // Wool, Logs, etc.
+                    if (material == Material.WOOL) {
+                        Wool wool = (Wool) item.getData();
+
+                        return wool.getColor().name() + " WOOL";
+                    }
+
+                    if (material == Material.LOG) {
+                        MaterialData materialData = item.getData();
+
+                        if (materialData.getData() == 0) {return "OAK LOG";}
+                        if (materialData.getData() == 1) {return "SPRUCE LOG";}
+                        if (materialData.getData() == 2) {return "BIRCH LOG";}
+                        else {return "OAK LOG";}
+                    }
+
+                    if (material == Material.LEAVES) {
+                        MaterialData materialData = item.getData();
+
+                        if (materialData.getData() == 0) {return "OAK LEAVES";}
+                        if (materialData.getData() == 1) {return "SPRUCE LEAVES";}
+                        if (materialData.getData() == 2) {return "BIRCH LEAVES";}
+                        else {return "OAK LEAVES";}
+                    }
+
+                    if (material == Material.STEP) {
+                        MaterialData materialData = item.getData();
+
+                        if (materialData.getData() == 0) {return "STONE SLAB";}
+                        if (materialData.getData() == 1) {return "SANDSTONE SLAB";}
+                        if (materialData.getData() == 2) {return "WOODEN SLAB";}
+                        if (materialData.getData() == 3) {return "COBBLESTONE SLAB";}
+                        if (materialData.getData() == 4) {return "CRASH SLAB";}
+                        else {return "STONE SLAB";}
+                    }
+
+                    if (material == Material.SAPLING) {
+                        MaterialData materialData = item.getData();
+
+                        if (materialData.getData() == 0) {return "OAK SAPLING";}
+                        if (materialData.getData() == 1) {return "SPRUCE SAPLING";}
+                        if (materialData.getData() == 2) {return "BIRCH SAPLING";}
+                        else {return "OAK SAPLING";}
+                    }
+
+                    if (material == Material.LONG_GRASS) {return "WEED";}
+
+                    else {
+                        return item.getType().name();
+                    }
+                }
+                else { // Not a block.
+                    if (material == Material.INK_SACK) {
+                        MaterialData materialData = item.getData();
+
+                        if (materialData.getData() == 0) {return "INK SAC";}
+                        if (materialData.getData() == 1) {return "ROSE RED";}
+                        if (materialData.getData() == 2) {return "CACTUS GREEN";}
+                        if (materialData.getData() == 3) {return "COCOA BEANS";}
+                        if (materialData.getData() == 4) {return "LAPIS LAZULI";}
+                        if (materialData.getData() == 5) {return "PURPLE DYE";}
+                        if (materialData.getData() == 6) {return "CYAN DYE";}
+                        if (materialData.getData() == 7) {return "LIGHT GRAY BEANS";}
+                        if (materialData.getData() == 8) {return "GRAY DYE";}
+                        if (materialData.getData() == 9) {return "PINK DYE";}
+                        if (materialData.getData() == 10) {return "LIME DYE";}
+                        if (materialData.getData() == 11) {return "DANDELION YELLOW";}
+                        if (materialData.getData() == 12) {return "LIGHT BLUE DYE";}
+                        if (materialData.getData() == 13) {return "MAGENTA DYE";}
+                        if (materialData.getData() == 14) {return "ORANGE DYE";}
+                        if (materialData.getData() == 15) {return "BONE MEAN";}
+                        else {return "INK SAC";}
+                    }
+
+                    return item.getType().name();
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace(System.err);
+        }
+
+        return null;
+    }
+
     public void backupAuctionHostItems(OfflinePlayer player) {
         try {
             Gson gson = new Gson();
@@ -429,14 +546,13 @@ public class AuctionHandler {
 
 //  Getters
 
-
-
 //  Time Util
     public int getAuctionTimeLeft() {
         long timeSinceLastAuctionStart = now() - this.lastStartAuctionVote / 1000;
         int voteDurationSeconds = 60;
         return (int)Math.max(0L, (long)voteDurationSeconds - timeSinceLastAuctionStart);
     }
+
     public static long now() {
         return System.currentTimeMillis() / 1000L;
     }
