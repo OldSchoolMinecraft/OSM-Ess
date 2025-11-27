@@ -4,6 +4,7 @@
 - /auction - Starts an action with the item you're holding.
 - /baltop - Reformatted look of the top 10 balances of players.
 - /bid - Places a bid on an active auction.
+- /chatcolor - Sets the color of the message typed in public chat.
 - /discord - Gives you the link to the discord server.
 - /endauction - Forcefully ends an auction.
 - /ignorebroadcast - Toggle visibility of the auto broadcast messages.
