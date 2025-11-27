@@ -312,6 +312,7 @@ public class AuctionHandler {
 
                     if (material == Material.LONG_GRASS) {return "WEED";}
 
+                    if (material == Material.GRASS) {return "GRASS BLOCK";}
                     else {
                         return item.getType().name();
                     }
@@ -563,3 +564,4 @@ public class AuctionHandler {
     }
 //  Time Util
 }
+
