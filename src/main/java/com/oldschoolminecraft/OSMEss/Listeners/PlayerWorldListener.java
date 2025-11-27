@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class PlayerWorldListener implements Listener {
@@ -19,6 +20,17 @@ public class PlayerWorldListener implements Listener {
 
     public PlayerWorldListener(OSMEss plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onChat(PlayerChatEvent event) {
+        Player player = event.getPlayer();
+
+        if (player.isOp() || player.hasPermission("osmess.chatcolor")) {
+            if (!plugin.hasChatColorMessageSet(player)) return;
+
+            event.setMessage(plugin.getChatColorMessageSetting(player) + event.getMessage());
+        }
     }
 
     @EventHandler
