@@ -20,6 +20,9 @@ commands:
     description: Shows a list of the top 10 players' balance.
   bid:
     description: Places a bid on an active auction.
+  chatcolor:
+    aliases: [cc]
+    description: Sets the color of the message typed in public chat.
   discord:
     description: Gives you the link to the discord server.
   endauction:
@@ -45,6 +48,7 @@ commands:
     description: Warns a player.
   warnings:
     description: Shows a player's list of warnings, or choose to clear them.
+
 
 
 
