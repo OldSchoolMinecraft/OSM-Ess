@@ -31,11 +31,6 @@ public class CommandPing implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
 
-                if (args.length != 0) {
-                    player.sendMessage("§cUsage: /ping");
-                    return true;
-                }
-
                 if (!pingCooldown.containsKey(player.getName()) || System.currentTimeMillis()/1000 - pingCooldown.get(player.getName())/1000 > 25) {
                     getPing(player);
                     pingCooldown.put(player.getName(), System.currentTimeMillis());
@@ -95,10 +90,11 @@ public class CommandPing implements CommandExecutor {
 //        String host = "pha.moe"; Test run with an overseas minecraft server.
         String host = "os-mc.net"; // Replace with target's host or IP
         int port = Bukkit.getPort(); // Replace with target's port
-        int timeoutMillis = 700; // Timeout in milliseconds
+        int timeoutMillis = 500; // Timeout in milliseconds
 
         try (Socket socket = new Socket()) {
-            SocketAddress socketAddress = new InetSocketAddress(host, port);
+//            SocketAddress socketAddress = new InetSocketAddress(host, port);
+            SocketAddress socketAddress = new InetSocketAddress(player.getAddress().getAddress().getHostAddress(), player.getServer().getPort());
             long startTime = System.currentTimeMillis();
             socket.connect(socketAddress, timeoutMillis);
             long endTime = System.currentTimeMillis();
