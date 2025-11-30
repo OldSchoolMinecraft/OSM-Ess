@@ -29,6 +29,7 @@ public class CommandAuction implements CommandExecutor {
                         player.sendMessage("§6Time Left: §e" + plugin.auctionHandler.formatTime(plugin.auctionHandler.getAuctionTimeLeft()));
                         player.sendMessage("§6Total Bidders: §e" + plugin.auctionHandler.totalBidders);
                         player.sendMessage("§6Current Bid: §a$" + plugin.auctionHandler.getTopBidAmount());
+                        player.sendMessage("§6Starting Bid: §a$" + plugin.auctionHandler.getStartingBid());
                         player.sendMessage("§6Prize: §b" + plugin.auctionHandler.getAuctionItem().getAmount() + "x " +  plugin.auctionHandler.getAuctionItemName());
                         return true;
                     }
@@ -117,8 +118,19 @@ public class CommandAuction implements CommandExecutor {
                 }
             }
             else {
-                sender.sendMessage("§cCommand can only be executed by a player!");
-                return true;
+                if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
+                    sender.sendMessage("-= AUCTION =-");
+                    sender.sendMessage("Time Left: " + plugin.auctionHandler.formatTime(plugin.auctionHandler.getAuctionTimeLeft()));
+                    sender.sendMessage("Total Bidders: " + plugin.auctionHandler.totalBidders);
+                    sender.sendMessage("Current Bid: $" + plugin.auctionHandler.getTopBidAmount());
+                    sender.sendMessage("Starting Bid: $" + plugin.auctionHandler.getStartingBid());
+                    sender.sendMessage("Prize: " + plugin.auctionHandler.getAuctionItem().getAmount() + "x " +  plugin.auctionHandler.getAuctionItemName());
+                    return true;
+                }
+                else {
+                    sender.sendMessage("§cThere is no auction to look at!");
+                    return true;
+                }
             }
         }
 
