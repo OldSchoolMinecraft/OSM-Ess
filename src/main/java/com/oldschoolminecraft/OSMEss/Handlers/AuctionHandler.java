@@ -530,7 +530,7 @@ public class AuctionHandler {
                         double total = material.getMaxDurability();
                         double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
                         String percent = String.format("%.2f%%", percentValue);
-                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD  SWORD"; }
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD SWORD"; }
                         else {return "GOLD SWORD";}
                     }
                     if (material == Material.STONE_SWORD) {
@@ -916,3 +916,4 @@ public class AuctionHandler {
     }
 //  Time Util
 }
+
