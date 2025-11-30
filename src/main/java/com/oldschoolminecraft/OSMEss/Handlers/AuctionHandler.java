@@ -88,7 +88,8 @@ public class AuctionHandler {
             Bukkit.broadcastMessage("§9Auction ends in §b1 minute§9!");
 
 
-            Bukkit.broadcastMessage("§9Prize: §b" + amount + "x " + getAuctionItemName() + "§9, Starting Bid: §b$" + startingBid);
+            Bukkit.broadcastMessage("§9Prize: §b" + amount + "x " + getAuctionItemName());
+            Bukkit.broadcastMessage("§9Starting Bid: §b$" + startingBid);
         }
     }
 
@@ -128,9 +129,12 @@ public class AuctionHandler {
                 plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
             }
 
-            if (getTopBidder() == null) Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItemName() + "§9!");
-            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for §b" + getAuctionItem().getAmount() + "x " + getAuctionItemName() + "§9!");
-
+            if (getTopBidder() == null) {
+                Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for:");
+                Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName() + "§9!");
+            }
+            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for:");
+            Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName() + "§9!");
 //            if (getTopBidder() == null) Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
 //            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
 
@@ -314,7 +318,7 @@ public class AuctionHandler {
 
                     if (material == Material.GRASS) {return "GRASS BLOCK";}
                     else {
-                        return item.getType().name();
+                        return item.getType().name().replaceAll("_", " ");
                     }
                 }
                 else { // Not a block.
@@ -340,7 +344,355 @@ public class AuctionHandler {
                         else {return "INK SAC";}
                     }
 
-                    return item.getType().name();
+                    if (material == Material.FLINT_AND_STEEL) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bFLINT & STEEL"; }
+                        else {return "FLINT & STEEL";}
+                    }
+
+                    if (material == Material.FISHING_ROD) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bFISHING ROD"; }
+                        else {return "FISHING ROD";}
+                    }
+
+                    if (material == Material.SHEARS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bSHEARS"; }
+                        else {return "SHEARS";}
+                    }
+
+                    if (material == Material.DIAMOND_HELMET) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bDIAMOND HELMET"; }
+                        else {return "DIAMOND HELMET";}
+                    }
+                    if (material == Material.IRON_HELMET) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bIRON HELMET"; }
+                        else {return "IRON HELMET";}
+                    }
+                    if (material == Material.CHAINMAIL_HELMET) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bCHAIN HELMET"; }
+                        else {return "CHAIN HELMET";}
+                    }
+                    if (material == Material.GOLD_HELMET) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD HELMET"; }
+                        else {return "GOLD HELMET";}
+                    }
+                    if (material == Material.LEATHER_HELMET) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bLEATHER HELMET"; }
+                        else {return "LEATHER HELMET";}
+                    }
+
+                    if (material == Material.DIAMOND_CHESTPLATE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bDIAMOND CHESTPLATE"; }
+                        else {return "DIAMOND CHESTPLATE";}
+                    }
+                    if (material == Material.IRON_CHESTPLATE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bIRON CHESTPLATE"; }
+                        else {return "IRON CHESTPLATE";}
+                    }
+                    if (material == Material.CHAINMAIL_CHESTPLATE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bCHAIN CHESTPLATE"; }
+                        else {return "CHAIN CHESTPLATE";}
+                    }
+                    if (material == Material.GOLD_CHESTPLATE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD CHESTPLATE"; }
+                        else {return "GOLD CHESTPLATE";}
+                    }
+                    if (material == Material.LEATHER_CHESTPLATE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bLEATHER CHESTPLATE"; }
+                        else {return "LEATHER CHESTPLATE";}
+                    }
+
+                    if (material == Material.DIAMOND_LEGGINGS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bDIAMOND LEGGINGS"; }
+                        else {return "DIAMOND LEGGINGS";}
+                    }
+                    if (material == Material.IRON_LEGGINGS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bIRON LEGGINGS"; }
+                        else {return "IRON LEGGINGS";}
+                    }
+                    if (material == Material.CHAINMAIL_LEGGINGS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bCHAIN LEGGINGS"; }
+                        else {return "CHAIN LEGGINGS";}
+                    }
+                    if (material == Material.GOLD_LEGGINGS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD LEGGINGS"; }
+                        else {return "GOLD LEGGINGS";}
+                    }
+                    if (material == Material.LEATHER_LEGGINGS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bLEATHER LEGGINGS"; }
+                        else {return "LEATHER LEGGINGS";}
+                    }
+
+                    if (material == Material.DIAMOND_BOOTS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bDIAMOND BOOTS"; }
+                        else {return "DIAMOND BOOTS";}
+                    }
+                    if (material == Material.IRON_BOOTS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bIRON BOOTS"; }
+                        else {return "IRON BOOTS";}
+                    }
+                    if (material == Material.CHAINMAIL_BOOTS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bCHAIN BOOTS"; }
+                        else {return "CHAIN BOOTS";}
+                    }
+                    if (material == Material.GOLD_BOOTS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD BOOTS"; }
+                        else {return "GOLD BOOTS";}
+                    }
+                    if (material == Material.LEATHER_BOOTS) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bLEATHER BOOTS"; }
+                        else {return "LEATHER BOOTS";}
+                    }
+
+                    if (material == Material.DIAMOND_SWORD) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bDIAMOND SWORD"; }
+                        else {return "DIAMOND SWORD";}
+                    }
+                    if (material == Material.IRON_SWORD) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bIRON SWORD"; }
+                        else {return "IRON SWORD";}
+                    }
+                    if (material == Material.GOLD_SWORD) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD  SWORD"; }
+                        else {return "GOLD SWORD";}
+                    }
+                    if (material == Material.STONE_SWORD) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bSTONE SWORD"; }
+                        else {return "STONE SWORD";}
+                    }
+                    if (material == Material.WOOD_SWORD) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bWOOD SWORD"; }
+                        else {return "WOOD SWORD";}
+                    }
+
+                    if (material == Material.DIAMOND_PICKAXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bDIAMOND PICKAXE"; }
+                        else {return "DIAMOND PICKAXE";}
+                    }
+                    if (material == Material.IRON_PICKAXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bIRON PICKAXE"; }
+                        else {return "IRON PICKAXE";}
+                    }
+                    if (material == Material.GOLD_PICKAXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD PICKAXE"; }
+                        else {return "GOLD PICKAXE";}
+                    }
+                    if (material == Material.STONE_PICKAXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bSTONE PICKAXE"; }
+                        else {return "STONE PICKAXE";}
+                    }
+                    if (material == Material.WOOD_PICKAXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bWOOD PICKAXE"; }
+                        else {return "WOOD PICKAXE";}
+                    }
+
+                    if (material == Material.DIAMOND_AXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bDIAMOND AXE"; }
+                        else {return "DIAMOND AXE";}
+                    }
+                    if (material == Material.IRON_AXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bIRON AXE"; }
+                        else {return "IRON AXE";}
+                    }
+                    if (material == Material.GOLD_AXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD AXE"; }
+                        else {return "GOLD AXE";}
+                    }
+                    if (material == Material.STONE_AXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bSTONE AXE"; }
+                        else {return "STONE AXE";}
+                    }
+                    if (material == Material.WOOD_AXE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bWOOD AXE"; }
+                        else {return "WOOD AXE";}
+                    }
+
+                    if (material == Material.DIAMOND_SPADE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bDIAMOND SHOVEL"; }
+                        else {return "DIAMOND SHOVEL";}
+                    }
+                    if (material == Material.IRON_SPADE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bIRON SHOVEL"; }
+                        else {return "IRON SHOVEL";}
+                    }
+                    if (material == Material.GOLD_SPADE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD SHOVEL"; }
+                        else {return "GOLD SHOVEL";}
+                    }
+                    if (material == Material.STONE_SPADE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bSTONE SHOVEL"; }
+                        else {return "STONE SHOVEL";}
+                    }
+                    if (material == Material.WOOD_SPADE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bWOOD SHOVEL"; }
+                        else {return "WOOD SHOVEL";}
+                    }
+
+                    if (material == Material.DIAMOND_HOE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bDIAMOND HOE"; }
+                        else {return "DIAMOND HOE";}
+                    }
+                    if (material == Material.IRON_HOE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bIRON HOE"; }
+                        else {return "IRON HOE";}
+                    }
+                    if (material == Material.GOLD_HOE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bGOLD HOE"; }
+                        else {return "GOLD HOE";}
+                    }
+                    if (material == Material.STONE_HOE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bSTONE HOE"; }
+                        else {return "STONE HOE";}
+                    }
+                    if (material == Material.WOOD_HOE) {
+                        double total = material.getMaxDurability();
+                        double percentValue = total == 0 ? 0 : (item.getDurability() * 100) / total;
+                        String percent = String.format("%.2f%%", percentValue);
+                        if (item.getDurability() != 0) { return "§4[§c" + percent + " §4USED]§bWOOD HOE"; }
+                        else {return "WOOD HOE";}
+                    }
+
+                    return item.getType().name().replaceAll("_", " ");
                 }
             }
         } catch (IOException ex) {
@@ -564,4 +916,3 @@ public class AuctionHandler {
     }
 //  Time Util
 }
-
