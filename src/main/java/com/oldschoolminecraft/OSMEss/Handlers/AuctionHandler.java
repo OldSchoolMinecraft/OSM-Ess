@@ -111,37 +111,88 @@ public class AuctionHandler {
             Bukkit.broadcastMessage("§9Auction ended with no bidders!");
         }
         else { // Auction ended with a bidder.
-            //Todo: Check who bid the most and award them the item.
+            if (getTopBidder() == null) { // Winner is offline.
+                if (!doesOfflineWinnerHaveTheMoney(getTopBidder())) { // Offline winner doesn't have the money.
+                    Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                    removeOfflinePlayerFromAuction(getTopBidder());
 
-            if (getTopBidder() == null) {
-                plugin.essentials.getOfflineUser(getOfflineTopBidder().getName()).takeMoney(getTopBidAmount());
-                backupAuctionWinnerItems(getOfflineTopBidder());
+                    if (totalBidders == 0) {
+                        if (getAuctionHost() == null) {
+                            backupAuctionHostItems(getOfflineAuctionHost());
+                        }
+                        else {
+                            awardAuctionItem(getAuctionHost());
+                        }
+
+                        auctionHoster.clear();
+                        wipeAuctionFile();
+
+                        Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+                    }
+                }
+                else { // They have the money.
+                    plugin.essentials.getOfflineUser(getOfflineTopBidder().getName()).takeMoney(getTopBidAmount());
+                    backupAuctionWinnerItems(getOfflineTopBidder());
+
+                    if (getAuctionHost() == null) {
+                        plugin.essentials.getOfflineUser(getOfflineAuctionHost().getName()).giveMoney(getTopBidAmount());
+                    }
+                    else {
+                        plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
+                    }
+
+                    Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for:");
+                    Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
+
+                    auctionHoster.clear();
+                    bidders.clear();
+                    totalBidders = 0;
+                    wipeAuctionFile();
+                }
             }
             else {
-                plugin.essentials.getUser(getTopBidder()).takeMoney(getTopBidAmount());
-                awardAuctionItem(getTopBidder());
-            }
+                if (!doesOnlineWinnerHaveTheMoney(getTopBidder())) { // Online winner doesn't have the money.
+                    Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                    removeOnlinePlayerFromAuction(getTopBidder());
 
-            if (getAuctionHost() == null) {
-                plugin.essentials.getOfflineUser(getOfflineAuctionHost().getName()).giveMoney(getTopBidAmount());
-            }
-            else {
-                plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
-            }
+                    if (totalBidders == 0) {
+                        if (getAuctionHost() == null) {
+                            backupAuctionHostItems(getOfflineAuctionHost());
+                        }
+                        else {
+                            awardAuctionItem(getAuctionHost());
+                        }
 
-            if (getTopBidder() == null) {
-                Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for:");
-                Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName() + "§9!");
-            }
-            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for:");
-            Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName() + "§9!");
-//            if (getTopBidder() == null) Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
-//            Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction with a final of §b$" + getTopBidAmount() + "§9!");
+                        auctionHoster.clear();
+                        wipeAuctionFile();
 
-            auctionHoster.clear();
-            bidders.clear();
-            totalBidders = 0;
-            wipeAuctionFile();
+                        Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+                    }
+                }
+                else { // They have the money.
+                    plugin.essentials.getUser(getTopBidder()).takeMoney(getTopBidAmount());
+                    awardAuctionItem(getTopBidder());
+
+                    if (getAuctionHost() == null) {
+                        plugin.essentials.getOfflineUser(getOfflineAuctionHost().getName()).giveMoney(getTopBidAmount());
+                    }
+                    else {
+                        plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
+                    }
+
+                    if (getTopBidder() == null) {
+                        Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for:");
+                        Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
+                    }
+                    Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for:");
+                    Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
+
+                    auctionHoster.clear();
+                    bidders.clear();
+                    totalBidders = 0;
+                    wipeAuctionFile();
+                }
+            }
 
         }
 
@@ -172,13 +223,38 @@ public class AuctionHandler {
         }
     }
 
-    public void removeFromAuction(Player player) { // No longer used as we can track offline auctioneers.
+    public void removeOnlinePlayerFromAuction(Player player) {
         synchronized (bidders) {
             if (bidders.containsKey(player.getName())) {
                 bidders.remove(player.getName());
                 totalBidders--;
             }
         }
+    }
+
+    public void removeOfflinePlayerFromAuction(OfflinePlayer player) {
+        synchronized (bidders) {
+            if (bidders.containsKey(player.getName())) {
+                bidders.remove(player.getName());
+                totalBidders--;
+            }
+        }
+    }
+
+    public boolean doesOnlineWinnerHaveTheMoney(Player player) {
+        if (bidders.containsKey(player.getName())) {
+            if (plugin.essentials.getUser(player).getMoney() >= getTopBidAmount()) { return true; }
+        }
+
+        return false;
+    }
+
+    public boolean doesOfflineWinnerHaveTheMoney(OfflinePlayer player) {
+        if (bidders.containsKey(player.getName())) {
+            if (plugin.essentials.getOfflineUser(player.getName()).getMoney() >= getTopBidAmount()) { return true; }
+        }
+
+        return false;
     }
 //  Add/Remove Players from the Auction
 
@@ -916,4 +992,3 @@ public class AuctionHandler {
     }
 //  Time Util
 }
-
