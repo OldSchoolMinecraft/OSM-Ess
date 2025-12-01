@@ -167,7 +167,7 @@ public class OSMEss extends JavaPlugin {
     public void onDisable() {
 
         cancelUpdateTop10Lists();
-        auctionHandler.endVote();
+        auctionHandler.endAuction();
     }
 
     public boolean isInvisimanEnabled() {
