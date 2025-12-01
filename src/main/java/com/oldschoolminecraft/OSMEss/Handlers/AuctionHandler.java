@@ -112,9 +112,9 @@ public class AuctionHandler {
         }
         else { // Auction ended with a bidder.
             if (getTopBidder() == null) { // Winner is offline.
-                if (!doesOfflineWinnerHaveTheMoney(getTopBidder())) { // Offline winner doesn't have the money.
-                    Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §9didn't have the money. Disqualified!");
-                    removeOfflinePlayerFromAuction(getTopBidder());
+                if (!doesOfflineWinnerHaveTheMoney(getOfflineTopBidder())) { // Offline winner doesn't have the money.
+                    Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                    removeOfflinePlayerFromAuction(getOfflineTopBidder());
 
                     if (totalBidders == 0) {
                         if (getAuctionHost() == null) {
@@ -251,7 +251,7 @@ public class AuctionHandler {
 
     public boolean doesOfflineWinnerHaveTheMoney(OfflinePlayer player) {
         if (bidders.containsKey(player.getName())) {
-            if (plugin.essentials.getOfflineUser(player.getName()).getMoney() >= getTopBidAmount()) { return true; }
+            if (plugin.essentials.getOfflineUser(player.getName().toLowerCase()).getMoney() >= getTopBidAmount()) { return true; }
         }
 
         return false;
