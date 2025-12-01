@@ -47,28 +47,6 @@ public class CommandStaff implements CommandExecutor {
                             return true;
                         }
                     }
-
-                    if (args.length == 1) {
-                        if (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("reloadcfg")) {
-                            if (player.isOp() || player.hasPermission("osmess.staff.reload")) {
-                                plugin.staffToolsCFG.reload();
-                                player.sendMessage("§aReloaded stafftools.yml file!");
-                                return true;
-                            }
-                            else {
-                                player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
-                                return true;
-                            }
-                        }
-                        else {
-                            player.sendMessage("§cUsage: /staff reload");
-                            return true;
-                        }
-                    }
-                    else {
-                        player.sendMessage("§cUsage: /staff or /staff reload");
-                        return true;
-                    }
                 }
                 else {
                     player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
@@ -76,27 +54,8 @@ public class CommandStaff implements CommandExecutor {
                 }
             }
             else {
-                if (plugin.isScheduledDeathEnabled()) {
-                    if (plugin.scheduledDeath.getTimeToLive() <= 30) {
-                        sender.sendMessage("§cCommand is disabled as the server is about to restart!");
-                        return true;
-                    }
-                }
-
-                if (args.length != 1) {
-                    sender.sendMessage("§cUsage: /staff reload");
-                    return true;
-                }
-
-                if (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("reloadcfg")) {
-                    plugin.staffToolsCFG.reload();
-                    sender.sendMessage("§aReloaded stafftools.yml file!");
-                    return true;
-                }
-                else {
-                    sender.sendMessage("§cUsage: /staff reload");
-                    return true;
-                }
+                sender.sendMessage("Command can only be executed by a player!");
+                return true;
             }
         }
         return true;
