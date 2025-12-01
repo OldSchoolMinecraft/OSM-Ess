@@ -2,6 +2,7 @@ package com.oldschoolminecraft.OSMEss.Handlers;
 
 import com.google.gson.Gson;
 import com.oldschoolminecraft.OSMEss.OSMEss;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,7 @@ public class InventoryHandler {
                 file.getParentFile().mkdir();
                 file.createNewFile();
             }
+
             Writer writer = new FileWriter(file, false);
             gson.toJson(items, writer); // Save player's inventory to the json file.
             writer.flush();
@@ -90,10 +92,10 @@ public class InventoryHandler {
         PlayerInventory inventory = player.getInventory();
 
 
-        Material materialSlot1 = Material.matchMaterial(plugin.staffToolsCFG.getString("Settings.staffTools.slot1"));
-        Material materialSlot2 = Material.matchMaterial(plugin.staffToolsCFG.getString("Settings.staffTools.slot2"));
-        Material materialSlot3 = Material.matchMaterial(plugin.staffToolsCFG.getString("Settings.staffTools.slot3"));
-        Material materialSlot4 = Material.matchMaterial(plugin.staffToolsCFG.getString("Settings.staffTools.slot4"));
+        Material materialSlot1 = Material.matchMaterial(plugin.configSettingCFG.getString("Settings.StaffTools.slot1"));
+        Material materialSlot2 = Material.matchMaterial(plugin.configSettingCFG.getString("Settings.StaffTools.slot2"));
+        Material materialSlot3 = Material.matchMaterial(plugin.configSettingCFG.getString("Settings.StaffTools.slot3"));
+        Material materialSlot4 = Material.matchMaterial(plugin.configSettingCFG.getString("Settings.StaffTools.slot4"));
 
         if (materialSlot1 == null || materialSlot1 == Material.AIR) return;
         else inventory.addItem(new ItemStack(materialSlot1, 1));
