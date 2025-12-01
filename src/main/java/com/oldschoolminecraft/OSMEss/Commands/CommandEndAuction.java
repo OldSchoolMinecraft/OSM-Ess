@@ -27,6 +27,7 @@ public class CommandEndAuction implements CommandExecutor {
 
                 plugin.auctionHandler.endVote();
                 Bukkit.broadcastMessage("§fAuction was forcefully ended!");
+                Bukkit.getServer().getLogger().info("Auction was forcefully ended!");
                 return true;
             }
             else {
