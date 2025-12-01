@@ -6,22 +6,26 @@
 - /bid - Places a bid on an active auction.
 - /chatcolor - Sets the color of the message typed in public chat.
 - /discord - Gives you the link to the discord server.
-- /endauction - Forcefully ends an auction.
 - /ignorebroadcast - Toggle visibility of the auto broadcast messages.
 - /list - Reformatted look of online players.
+- /osmess endauction - Forcefully ends an auction
+- /osmess reload - Reloads all yml files.
+- /osmess toggleauction - Enables/Disables the auction system.
 - /ptt - See the top 10 playtimes of players.
 - /rainbow - Gives you a rainbow name.
 - /seen - See player's playtime, first join date, & more.
 - /staff - Toggles staff mode & saves regular inventory.
-- /staff reload - Reloads the staff-tools.yml for tools to give in staff mode.
 - /warn - Warns a player with a reason.
 - /warnings - Shows a player's list of warnings, or choose to clear them.
 
 **Permissions:**
-- `osmess.endauction` - Permission to use /endauction.
+- `osmess.chatcolor` - Permission to use /chatcolor.
+- `osmess.command` - Permission to use /osmess.
+- `osmess.command.endauction` - Permission to use /osmess endauction.
+- `osmess.command.reload` - Permission to use /osmess reload.
+- `osmess.command.toggleauction` - Permission to use /osmess toggleauction.
 - `osmess.rainbow` - Permission to use /rainbow.
 - `osmess.staff` - Permission to use /staff.
-- `osmess.staff.reload` - Permission to use /staff reload.
 - `osmess.warn` - Permission to use /warn.
 - `osmess.warnings` - Permission to use /warnings.
 
