@@ -74,7 +74,7 @@ public class CommandRainbow implements CommandExecutor {
                }
            }
            else {
-               sender.sendMessage("§cCommand can only be executed by a player!");
+               sender.sendMessage("Command can only be executed by a player!");
                return true;
            }
         }
