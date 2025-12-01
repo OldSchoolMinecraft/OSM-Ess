@@ -21,9 +21,9 @@
 **Permissions:**
 - `osmess.chatcolor` - Permission to use /chatcolor.
 - `osmess.command` - Permission to use /osmess.
-- `osmess.command.endauction` - Permission to use /osmess endauction.
-- `osmess.command.reload` - Permission to use /osmess reload.
-- `osmess.command.toggleauction` - Permission to use /osmess toggleauction.
+- `osmess.command.endauction` - Permission to use /osmess endauction. [Requires `osmess.command`]
+- `osmess.command.reload` - Permission to use /osmess reload. [Requires `osmess.command`]
+- `osmess.command.toggleauction` - Permission to use /osmess toggleauction. [Requires `osmess.command`]
 - `osmess.rainbow` - Permission to use /rainbow.
 - `osmess.staff` - Permission to use /staff.
 - `osmess.warn` - Permission to use /warn.
