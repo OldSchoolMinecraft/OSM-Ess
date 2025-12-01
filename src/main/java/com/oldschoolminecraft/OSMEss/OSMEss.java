@@ -11,7 +11,7 @@ import com.oldschoolminecraft.OSMEss.Listeners.OSASPoseidonListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerWorldListener;
 import com.oldschoolminecraft.OSMEss.Util.ColorMessageCFG;
-import com.oldschoolminecraft.OSMEss.Util.StaffToolsCFG;
+import com.oldschoolminecraft.OSMEss.Util.ConfigSettingCFG;
 import com.oldschoolminecraft.OSMEss.Util.WarningsCFG;
 import com.oldschoolminecraft.osas.OSAS;
 import com.oldschoolminecraft.vanish.Invisiman;
@@ -42,7 +42,7 @@ public class OSMEss extends JavaPlugin {
     public ScheduledDeath scheduledDeath;
 
     public ColorMessageCFG colorMessageCFG;
-    public StaffToolsCFG staffToolsCFG;
+    public ConfigSettingCFG configSettingCFG;
     public WarningsCFG warningsCFG;
 
     public AuctionHandler auctionHandler;
@@ -135,7 +135,7 @@ public class OSMEss extends JavaPlugin {
         playtimeHandler = new PlaytimeHandler(this);
         inventoryHandler = new InventoryHandler(this);
         colorMessageCFG = new ColorMessageCFG(new File(this.getDataFolder().getAbsolutePath(), "color-message-settings.yml"));
-        staffToolsCFG = new StaffToolsCFG(new File(this.getDataFolder().getAbsolutePath(), "staff-tools.yml"));
+        configSettingCFG = new ConfigSettingCFG(new File(this.getDataFolder().getAbsolutePath(), "config.yml"));
         warningsCFG = new WarningsCFG(new File(this.getDataFolder().getAbsolutePath(), "warning-logs.yml"));
 
         new CommandAuction(this);
@@ -260,6 +260,14 @@ public class OSMEss extends JavaPlugin {
 
     public String getChatColorMessageSetting(Player player) {
         return this.colorMessageCFG.getString("Players." + player.getName().toLowerCase() + ".Color");
+    }
+
+    public Integer getMinimumRequiredPlaytimeToAuction() {
+        return (int) this.configSettingCFG.getConfigOption("Settings.Auction.minPlaytimeToAuction");
+    }
+
+    public Integer getMaxAllowedStartingBid() {
+        return (int) this.configSettingCFG.getConfigOption("Settings.Auction.maxStartingBid");
     }
 
     public void initAutoBC() {
