@@ -22,6 +22,11 @@ public class CommandBid implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
 
+                if (!plugin.isAuctionSystemEnabled()) {
+                    player.sendMessage("§cThe auction system is currently disabled!");
+                    return true;
+                }
+
                 if (args.length != 1) {
                     player.sendMessage("§cUsage: /bid <amount>");
                     return true;
@@ -72,7 +77,7 @@ public class CommandBid implements CommandExecutor {
                 }
             }
             else {
-                sender.sendMessage("§cCommand can only be executed by a player!");
+                sender.sendMessage("Command can only be executed by a player!");
                 return true;
             }
         }
@@ -80,4 +85,3 @@ public class CommandBid implements CommandExecutor {
         return true;
     }
 }
-
