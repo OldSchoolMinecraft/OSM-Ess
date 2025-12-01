@@ -40,8 +40,8 @@ public class CommandOSMEss implements CommandExecutor {
                                 return true;
                             }
 
-                            plugin.auctionHandler.endVote();
-                            Bukkit.broadcastMessage("§fAuction was forcefully ended!");
+                            plugin.auctionHandler.forceEndAuction();
+                            Bukkit.broadcastMessage("§9Auction was §cforcefully ended §9by §b" + player.getName() + "§9!");
                             Bukkit.getServer().getLogger().info("Auction was forcefully ended by " + player.getName() + "!");
                             return true;
                         }
@@ -124,8 +124,8 @@ public class CommandOSMEss implements CommandExecutor {
                         return true;
                     }
 
-                    plugin.auctionHandler.endVote();
-                    Bukkit.broadcastMessage("Auction was forcefully ended!");
+                    plugin.auctionHandler.forceEndAuction();
+                    Bukkit.broadcastMessage("§9Auction was §cforcefully ended §9by §bCONSOLE§9!");
                     Bukkit.getServer().getLogger().info("Auction was forcefully ended!");
                     return true;
                 }
