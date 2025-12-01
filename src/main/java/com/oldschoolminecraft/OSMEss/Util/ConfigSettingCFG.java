@@ -18,6 +18,7 @@ public class ConfigSettingCFG extends Configuration {
 
     public void write() {
         // Auction Settings
+        generateConfigOption("Settings.Auction.enabled", true);
         generateConfigOption("Settings.Auction.minPlaytimeToAuction", 43200000);
         generateConfigOption("Settings.Auction.maxStartingBid", 10000);
 
