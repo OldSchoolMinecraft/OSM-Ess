@@ -47,7 +47,7 @@ public class CommandAuction implements CommandExecutor {
                 }
 
                 if (args.length != 1) {
-                    if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < 43200000) {// 12 hours. Prevent new players from auctioning stolen items.
+                    if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < plugin.getMinimumRequiredPlaytimeToAuction()) {// 12 hours. Prevent new players from auctioning stolen items.
                         player.sendMessage("§cYou need a minimum 12 hours of playtime to auction items!");
                         return true;
                     }
@@ -64,7 +64,7 @@ public class CommandAuction implements CommandExecutor {
                     }
                 }
 
-                if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < 43200000) {// 12 hours. Prevent new players from auctioning stolen items.
+                if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < plugin.getMinimumRequiredPlaytimeToAuction()) {// 12 hours. Prevent new players from auctioning stolen items.
                     player.sendMessage("§cYou need a minimum 12 hours of playtime to auction items!");
                     return true;
                 }
@@ -105,6 +105,11 @@ public class CommandAuction implements CommandExecutor {
 
                             if (price == 0) {
                                 player.sendMessage("§cYou may not start an auction at $0!");
+                                return true;
+                            }
+
+                            if (price >= plugin.getMaxAllowedStartingBid()) {
+                                player.sendMessage("§cYou may not start an auction with a bid of $" + price + "!");
                                 return true;
                             }
 
