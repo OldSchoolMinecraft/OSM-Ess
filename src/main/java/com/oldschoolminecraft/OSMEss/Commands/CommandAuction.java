@@ -56,7 +56,7 @@ public class CommandAuction implements CommandExecutor {
                 if (args.length != 1) {
                     if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < plugin.getMinimumRequiredPlaytimeToAuction()) {// 12 hours. Prevent new players from auctioning stolen items.
 
-                        player.sendMessage("§cYou need a minimum " + formatTime(plugin.getMinimumRequiredPlaytimeToAuction()) + " of playtime to auction items!");
+                        player.sendMessage("§cYou need a minimum 12 hours of playtime to auction items!");
                         return true;
                     }
                     else {
@@ -151,7 +151,7 @@ public class CommandAuction implements CommandExecutor {
     }
 
     public String formatTime(long seconds) {
-        long hour = TimeUnit.SECONDS.toHours(seconds) % 24;
+        long hour = TimeUnit.SECONDS.toHours(seconds) * 24;
         long minute = TimeUnit.SECONDS.toMinutes(seconds);
         long second = TimeUnit.SECONDS.toSeconds(seconds) - TimeUnit.SECONDS.toMinutes(seconds) * 60L;
 
