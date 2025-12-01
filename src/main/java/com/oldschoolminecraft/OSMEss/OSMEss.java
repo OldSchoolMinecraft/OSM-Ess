@@ -143,10 +143,10 @@ public class OSMEss extends JavaPlugin {
         new CommandBid(this);
         new CommandChatColor(this);
         new CommandDiscord(this);
-        new CommandEndAuction(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
-        new CommandPing(this);
+        new CommandOSMEss(this);
+//        new CommandPing(this); Disabled until further notice.
         new CommandPTT(this);
         new CommandRainbow(this);
         new CommandSeen(this);
@@ -260,6 +260,21 @@ public class OSMEss extends JavaPlugin {
 
     public String getChatColorMessageSetting(Player player) {
         return this.colorMessageCFG.getString("Players." + player.getName().toLowerCase() + ".Color");
+    }
+
+    public boolean isAuctionSystemEnabled() {
+        if (this.configSettingCFG.getConfigOption("Settings.Auction.enabled").equals(true)) return true;
+        else return false;
+    }
+
+    public void setAllowAuctionSystem(boolean option) {
+        try {
+            this.configSettingCFG.setProperty("Settings.Auction.enabled", option);
+            configSettingCFG.save();
+        } catch (Exception ex) {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+            ex.printStackTrace(System.err);
+        }
     }
 
     public Integer getMinimumRequiredPlaytimeToAuction() {
