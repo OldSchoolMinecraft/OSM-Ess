@@ -122,6 +122,10 @@ public class CommandChatColor implements CommandExecutor {
                     return true;
                 }
             }
+            else {
+                sender.sendMessage("Command can only be executed by a player!");
+                return true;
+            }
         }
 
         return true;
