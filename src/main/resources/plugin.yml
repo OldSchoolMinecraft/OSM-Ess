@@ -34,7 +34,6 @@ commands:
     aliases: [online]
     description: Shows a list of online players.
   osmess:
-    aliases: [ms]
     description: OSM-Ess administration commands.
   ptt:
     description: Shows a list of the top 10 longest played players.
