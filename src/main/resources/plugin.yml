@@ -1,6 +1,6 @@
 name: OSM-Ess
 main: com.oldschoolminecraft.OSMEss.OSMEss
-version: 1.1
+version: 1.2
 authors: [SavageUser, moderator_man, ItsVollx]
 depend:
   - Essentials
@@ -25,17 +25,15 @@ commands:
     description: Sets the color of the message typed in public chat.
   discord:
     description: Gives you the link to the discord server.
-  endauction:
-    description: Forcefully ends an auction.
   ignorebroadcast:
     aliases: [ignorebroadcasts]
     description: Toggles visibility of the auto broadcast messages.
   list:
     aliases: [online]
     description: Shows a list of online players.
-  ping:
+  osmess:
     aliases: [ms]
-    description: Shows your ping/latency in milliseconds.
+    description: OSM-Ess administration commands.
   ptt:
     description: Shows a list of the top 10 longest played players.
   rainbow:
@@ -48,12 +46,3 @@ commands:
     description: Warns a player.
   warnings:
     description: Shows a player's list of warnings, or choose to clear them.
-
-
-
-
-
-
-
-
-
