@@ -82,7 +82,7 @@ public class AuctionHandler {
 
             lastStartAuctionVote = System.currentTimeMillis();
             setAuctionStatus(AuctionStatus.ACTIVE);
-            plugin.auctionTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::endVote, AUCTION_DURATION_TICKS);
+            plugin.auctionTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::endAuction, AUCTION_DURATION_TICKS);
 
             Bukkit.broadcastMessage("§9Auction started by §b" + player.getName() + "§9!");
             Bukkit.broadcastMessage("§9Auction ends in §b1 minute§9!");
@@ -93,8 +93,7 @@ public class AuctionHandler {
         }
     }
 
-    public void endVote() {
-
+    public void endAuction() {
         if (getAuctionStatus() == AuctionStatus.INACTIVE) return;
 
         if (totalBidders == 0) { // No one entered the auction, return the item.
@@ -195,6 +194,26 @@ public class AuctionHandler {
             }
 
         }
+
+        setAuctionStatus(AuctionStatus.INACTIVE);
+        lastAuctionEndTime = System.currentTimeMillis();
+        if (plugin.auctionTaskId != -1) {Bukkit.getScheduler().cancelTask(plugin.auctionTaskId); plugin.auctionTaskId = -1;}
+    }
+
+    public void forceEndAuction() {
+        if (getAuctionStatus() == AuctionStatus.INACTIVE) return;
+
+        if (getAuctionHost() == null) {
+            backupAuctionHostItems(getOfflineAuctionHost());
+        }
+        else {
+            awardAuctionItem(getAuctionHost());
+        }
+
+        auctionHoster.clear();
+        bidders.clear();
+        totalBidders = 0;
+        wipeAuctionFile();
 
         setAuctionStatus(AuctionStatus.INACTIVE);
         lastAuctionEndTime = System.currentTimeMillis();
