@@ -143,6 +143,7 @@ public class OSMEss extends JavaPlugin {
         new CommandBid(this);
         new CommandChatColor(this);
         new CommandDiscord(this);
+        new CommandForecast(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
         new CommandOSMEss(this);
