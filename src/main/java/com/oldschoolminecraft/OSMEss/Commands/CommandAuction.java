@@ -2,11 +2,12 @@ package com.oldschoolminecraft.OSMEss.Commands;
 
 import com.oldschoolminecraft.OSMEss.AuctionStatus;
 import com.oldschoolminecraft.OSMEss.OSMEss;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.concurrent.TimeUnit;
 
 public class CommandAuction implements CommandExecutor {
 
@@ -23,7 +24,13 @@ public class CommandAuction implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
 
+                if (!plugin.isAuctionSystemEnabled()) {
+                    player.sendMessage("§cThe auction system is currently disabled!");
+                    return true;
+                }
+
                 if (args.length == 0) {
+
                     if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
                         player.sendMessage("§5-= §dAUCTION §5=-");
                         player.sendMessage("§6Time Left: §e" + plugin.auctionHandler.formatTime(plugin.auctionHandler.getAuctionTimeLeft()));
@@ -48,7 +55,8 @@ public class CommandAuction implements CommandExecutor {
 
                 if (args.length != 1) {
                     if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < plugin.getMinimumRequiredPlaytimeToAuction()) {// 12 hours. Prevent new players from auctioning stolen items.
-                        player.sendMessage("§cYou need a minimum 12 hours of playtime to auction items!");
+
+                        player.sendMessage("§cYou need a minimum " + formatTime(plugin.getMinimumRequiredPlaytimeToAuction()) + " of playtime to auction items!");
                         return true;
                     }
                     else {
@@ -140,5 +148,19 @@ public class CommandAuction implements CommandExecutor {
         }
 
         return true;
+    }
+
+    public String formatTime(long seconds) {
+        long hour = TimeUnit.SECONDS.toHours(seconds) % 24;
+        long minute = TimeUnit.SECONDS.toMinutes(seconds);
+        long second = TimeUnit.SECONDS.toSeconds(seconds) - TimeUnit.SECONDS.toMinutes(seconds) * 60L;
+
+
+        if (plugin.getMinimumRequiredPlaytimeToAuction() >= 3600000) {
+            return hour + "h" + minute + "m" + second + "s";
+        }
+        else {
+            return minute + "m" + second + "s";
+        }
     }
 }
