@@ -10,9 +10,11 @@ import org.bukkit.entity.Player;
 public class CommandBid implements CommandExecutor {
 
     private final OSMEss plugin;
+    public final Object lock;
 
     public CommandBid(OSMEss plugin) {
         this.plugin = plugin;
+        lock = plugin.auctionHandler.lock;
         this.plugin.getCommand("bid").setExecutor(this);
     }
 
@@ -27,52 +29,54 @@ public class CommandBid implements CommandExecutor {
                     return true;
                 }
 
-                if (args.length != 1) {
-                    player.sendMessage("§cUsage: /bid <amount>");
-                    return true;
-                }
+                synchronized (lock) {
+                    if (args.length != 1) {
+                        player.sendMessage("§cUsage: /bid <amount>");
+                        return true;
+                    }
 
-                //Todo: Check if auction is running & if player has enough $ to enter the bid.
-                if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.INACTIVE) {
-                    player.sendMessage("§cThere is no active auction to bid on!");
-                    return true;
-                }
-                else {
-                    if (plugin.auctionHandler.getAuctionHost().getName().equalsIgnoreCase(player.getName())) {
-                        player.sendMessage("§cYou cannot bid on your own auction!");
+                    //Todo: Check if auction is running & if player has enough $ to enter the bid.
+                    if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.INACTIVE) {
+                        player.sendMessage("§cThere is no active auction to bid on!");
                         return true;
                     }
                     else {
-                        try {
-                            int amount = Integer.parseInt(args[0]);
-
-                            if (args[0].contains("-") || args[0].contains("+") || args[0].contains("*") || args[0].contains("/")) {
-                                player.sendMessage("§cYou may not use special characters!");
-                                return true;
-                            }
-
-                            if (amount < plugin.auctionHandler.getStartingBid()) {
-                                player.sendMessage("§cYour bid amount is lower than the starting bid!");
-                                return true;
-                            }
-
-                            if (plugin.auctionHandler.getTopBidAmount() >= amount) {
-                                player.sendMessage("§cYour bid amount must be higher than $" + plugin.auctionHandler.getTopBidAmount() + "!");
-                                return true;
-                            }
-                            if (amount >= plugin.essentials.getUser(player).getMoney()) {
-                                player.sendMessage("§cYou don't have enough money to bid this amount!");
-                                return true;
-                            }
-                            else {
-                                plugin.auctionHandler.addToAuction(player, amount);
-                            }
-
-                        } catch (NumberFormatException ex) {
-                            player.sendMessage("§cInvalid integer provided!");
+                        if (plugin.auctionHandler.getAuctionHost().getName().equalsIgnoreCase(player.getName())) {
+                            player.sendMessage("§cYou cannot bid on your own auction!");
+                            return true;
                         }
+                        else {
+                            try {
+                                int amount = Integer.parseInt(args[0]);
 
-                        return true;
+                                if (args[0].contains("-") || args[0].contains("+") || args[0].contains("*") || args[0].contains("/")) {
+                                    player.sendMessage("§cYou may not use special characters!");
+                                    return true;
+                                }
+
+                                if (amount < plugin.auctionHandler.getStartingBid()) {
+                                    player.sendMessage("§cYour bid amount is lower than the starting bid!");
+                                    return true;
+                                }
+
+                                if (plugin.auctionHandler.getTopBidAmount() >= amount) {
+                                    player.sendMessage("§cYour bid amount must be higher than $" + plugin.auctionHandler.getTopBidAmount() + "!");
+                                    return true;
+                                }
+                                if (amount >= plugin.essentials.getUser(player).getMoney()) {
+                                    player.sendMessage("§cYou don't have enough money to bid this amount!");
+                                    return true;
+                                }
+                                else {
+                                    plugin.auctionHandler.addToAuction(player, amount);
+                                }
+
+                            } catch (NumberFormatException ex) {
+                                player.sendMessage("§cInvalid integer provided!");
+                            }
+
+                            return true;
+                        }
                     }
                 }
             }
