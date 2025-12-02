@@ -29,6 +29,7 @@ public class AuctionHandler {
 
     private final Map<String, Integer> bidders = Collections.synchronizedMap(new HashMap<>());
     private final ArrayList<String> auctionHoster = new ArrayList<>();
+    public final Object lock = new Object();
 
     private long lastStartAuctionVote;
 
@@ -50,53 +51,164 @@ public class AuctionHandler {
 
 //  Start/End Auction
     public void startAuction(Player player, int startingBid) {
-        PlayerInventory inventory = player.getInventory();
-        ItemStack item = inventory.getItemInHand();
+        synchronized (lock) {
+            PlayerInventory inventory = player.getInventory();
+            ItemStack item = inventory.getItemInHand();
 
-        if (item == null || item.getType() == Material.AIR) {
-            player.sendMessage("§cYou're not holding anything to auction!");
-            return;
-        }
+            if (item == null || item.getType() == Material.AIR) {
+                player.sendMessage("§cYou're not holding anything to auction!");
+                return;
+            }
 
 //        String name = item.getType().name();
-        startBid = startingBid;
-        int amount = item.getAmount();
+            startBid = startingBid;
+            int amount = item.getAmount();
 
-        MaterialData materialData = item.getData();
+            MaterialData materialData = item.getData();
 
-        //Blacklist
-        if (item.getType() == Material.BEDROCK) {
-            player.sendMessage("§cThis item is blacklisted from being auctioned!");
-            Bukkit.getServer().getLogger().warning("[OSM-Ess] " + player.getName() + " tried to auction " + amount + "x BEDROCK which is blacklisted!");
-        }
-        else if (item.getType() == Material.STEP && materialData.getData() == 4) { // Crash Slab
-            player.sendMessage("§cThis item is blacklisted from being auctioned!");
-            Bukkit.getServer().getLogger().warning("[OSM-Ess] " + player.getName() + " tried to auction " + amount + "x CRASH SLAB which is blacklisted!");
-        }
+            //Blacklist
+            if (item.getType() == Material.BEDROCK) {
+                player.sendMessage("§cThis item is blacklisted from being auctioned!");
+                Bukkit.getServer().getLogger().warning("[OSM-Ess] " + player.getName() + " tried to auction " + amount + "x BEDROCK which is blacklisted!");
+            }
+            else if (item.getType() == Material.STEP && materialData.getData() == 4) { // Crash Slab
+                player.sendMessage("§cThis item is blacklisted from being auctioned!");
+                Bukkit.getServer().getLogger().warning("[OSM-Ess] " + player.getName() + " tried to auction " + amount + "x CRASH SLAB which is blacklisted!");
+            }
 
-        else {
-            storeAuctionItem(player);
-            player.setItemInHand(null);
+            else {
+                storeAuctionItem(player);
+                player.setItemInHand(null);
 
-            auctionHoster.add(player.getName());
+                auctionHoster.add(player.getName());
 
-            lastStartAuctionVote = System.currentTimeMillis();
-            setAuctionStatus(AuctionStatus.ACTIVE);
-            plugin.auctionTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::endAuction, AUCTION_DURATION_TICKS);
+                lastStartAuctionVote = System.currentTimeMillis();
+                setAuctionStatus(AuctionStatus.ACTIVE);
+                plugin.auctionTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::endAuction, AUCTION_DURATION_TICKS);
 
-            Bukkit.broadcastMessage("§9Auction started by §b" + player.getName() + "§9!");
-            Bukkit.broadcastMessage("§9Auction ends in §b1 minute§9!");
+                Bukkit.broadcastMessage("§9Auction started by §b" + player.getName() + "§9!");
+                Bukkit.broadcastMessage("§9Auction ends in §b1 minute§9!");
 
 
-            Bukkit.broadcastMessage("§9Prize: §b" + amount + "x " + getAuctionItemName());
-            Bukkit.broadcastMessage("§9Starting Bid: §b$" + startingBid);
+                Bukkit.broadcastMessage("§9Prize: §b" + amount + "x " + getAuctionItemName());
+                Bukkit.broadcastMessage("§9Starting Bid: §b$" + startingBid);
+            }
         }
     }
 
     public void endAuction() {
-        if (getAuctionStatus() == AuctionStatus.INACTIVE) return;
+        synchronized (lock) {
+            if (getAuctionStatus() == AuctionStatus.INACTIVE) return;
 
-        if (totalBidders == 0) { // No one entered the auction, return the item.
+            if (totalBidders == 0) { // No one entered the auction, return the item.
+                if (getAuctionHost() == null) {
+                    backupAuctionHostItems(getOfflineAuctionHost());
+                }
+                else {
+                    awardAuctionItem(getAuctionHost());
+                }
+
+                auctionHoster.clear();
+                wipeAuctionFile();
+
+                Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+            }
+            else { // Auction ended with a bidder.
+                if (getTopBidder() == null) { // Winner is offline.
+                    if (!doesOfflineWinnerHaveTheMoney(getOfflineTopBidder())) { // Offline winner doesn't have the money.
+                        Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                        removeOfflinePlayerFromAuction(getOfflineTopBidder());
+
+                        if (totalBidders == 0) {
+                            if (getAuctionHost() == null) {
+                                backupAuctionHostItems(getOfflineAuctionHost());
+                            }
+                            else {
+                                awardAuctionItem(getAuctionHost());
+                            }
+
+                            auctionHoster.clear();
+                            wipeAuctionFile();
+
+                            Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+                        }
+                    }
+                    else { // They have the money.
+                        plugin.essentials.getOfflineUser(getOfflineTopBidder().getName()).takeMoney(getTopBidAmount());
+                        backupAuctionWinnerItems(getOfflineTopBidder());
+
+                        if (getAuctionHost() == null) {
+                            plugin.essentials.getOfflineUser(getOfflineAuctionHost().getName()).giveMoney(getTopBidAmount());
+                        }
+                        else {
+                            plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
+                        }
+
+                        Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for:");
+                        Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
+
+                        auctionHoster.clear();
+                        bidders.clear();
+                        totalBidders = 0;
+                        wipeAuctionFile();
+                    }
+                }
+                else {
+                    if (!doesOnlineWinnerHaveTheMoney(getTopBidder())) { // Online winner doesn't have the money.
+                        Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                        removeOnlinePlayerFromAuction(getTopBidder());
+
+                        if (totalBidders == 0) {
+                            if (getAuctionHost() == null) {
+                                backupAuctionHostItems(getOfflineAuctionHost());
+                            }
+                            else {
+                                awardAuctionItem(getAuctionHost());
+                            }
+
+                            auctionHoster.clear();
+                            wipeAuctionFile();
+
+                            Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+                        }
+                    }
+                    else { // They have the money.
+                        plugin.essentials.getUser(getTopBidder()).takeMoney(getTopBidAmount());
+                        awardAuctionItem(getTopBidder());
+
+                        if (getAuctionHost() == null) {
+                            plugin.essentials.getOfflineUser(getOfflineAuctionHost().getName()).giveMoney(getTopBidAmount());
+                        }
+                        else {
+                            plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
+                        }
+
+                        if (getTopBidder() == null) {
+                            Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for:");
+                            Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
+                        }
+                        Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for:");
+                        Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
+
+                        auctionHoster.clear();
+                        bidders.clear();
+                        totalBidders = 0;
+                        wipeAuctionFile();
+                    }
+                }
+
+            }
+
+            setAuctionStatus(AuctionStatus.INACTIVE);
+            lastAuctionEndTime = System.currentTimeMillis();
+            if (plugin.auctionTaskId != -1) {Bukkit.getScheduler().cancelTask(plugin.auctionTaskId); plugin.auctionTaskId = -1;}
+        }
+    }
+
+    public void forceEndAuction() {
+        synchronized (lock) {
+            if (getAuctionStatus() == AuctionStatus.INACTIVE) return;
+
             if (getAuctionHost() == null) {
                 backupAuctionHostItems(getOfflineAuctionHost());
             }
@@ -105,119 +217,14 @@ public class AuctionHandler {
             }
 
             auctionHoster.clear();
+            bidders.clear();
+            totalBidders = 0;
             wipeAuctionFile();
 
-            Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+            setAuctionStatus(AuctionStatus.INACTIVE);
+            lastAuctionEndTime = System.currentTimeMillis();
+            if (plugin.auctionTaskId != -1) {Bukkit.getScheduler().cancelTask(plugin.auctionTaskId); plugin.auctionTaskId = -1;}
         }
-        else { // Auction ended with a bidder.
-            if (getTopBidder() == null) { // Winner is offline.
-                if (!doesOfflineWinnerHaveTheMoney(getOfflineTopBidder())) { // Offline winner doesn't have the money.
-                    Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §9didn't have the money. Disqualified!");
-                    removeOfflinePlayerFromAuction(getOfflineTopBidder());
-
-                    if (totalBidders == 0) {
-                        if (getAuctionHost() == null) {
-                            backupAuctionHostItems(getOfflineAuctionHost());
-                        }
-                        else {
-                            awardAuctionItem(getAuctionHost());
-                        }
-
-                        auctionHoster.clear();
-                        wipeAuctionFile();
-
-                        Bukkit.broadcastMessage("§9Auction ended with no bidders!");
-                    }
-                }
-                else { // They have the money.
-                    plugin.essentials.getOfflineUser(getOfflineTopBidder().getName()).takeMoney(getTopBidAmount());
-                    backupAuctionWinnerItems(getOfflineTopBidder());
-
-                    if (getAuctionHost() == null) {
-                        plugin.essentials.getOfflineUser(getOfflineAuctionHost().getName()).giveMoney(getTopBidAmount());
-                    }
-                    else {
-                        plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
-                    }
-
-                    Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for:");
-                    Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
-
-                    auctionHoster.clear();
-                    bidders.clear();
-                    totalBidders = 0;
-                    wipeAuctionFile();
-                }
-            }
-            else {
-                if (!doesOnlineWinnerHaveTheMoney(getTopBidder())) { // Online winner doesn't have the money.
-                    Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §9didn't have the money. Disqualified!");
-                    removeOnlinePlayerFromAuction(getTopBidder());
-
-                    if (totalBidders == 0) {
-                        if (getAuctionHost() == null) {
-                            backupAuctionHostItems(getOfflineAuctionHost());
-                        }
-                        else {
-                            awardAuctionItem(getAuctionHost());
-                        }
-
-                        auctionHoster.clear();
-                        wipeAuctionFile();
-
-                        Bukkit.broadcastMessage("§9Auction ended with no bidders!");
-                    }
-                }
-                else { // They have the money.
-                    plugin.essentials.getUser(getTopBidder()).takeMoney(getTopBidAmount());
-                    awardAuctionItem(getTopBidder());
-
-                    if (getAuctionHost() == null) {
-                        plugin.essentials.getOfflineUser(getOfflineAuctionHost().getName()).giveMoney(getTopBidAmount());
-                    }
-                    else {
-                        plugin.essentials.getUser(getAuctionHost()).giveMoney(getTopBidAmount());
-                    }
-
-                    if (getTopBidder() == null) {
-                        Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for:");
-                        Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
-                    }
-                    Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §2won §9the auction for:");
-                    Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
-
-                    auctionHoster.clear();
-                    bidders.clear();
-                    totalBidders = 0;
-                    wipeAuctionFile();
-                }
-            }
-
-        }
-
-        setAuctionStatus(AuctionStatus.INACTIVE);
-        lastAuctionEndTime = System.currentTimeMillis();
-        if (plugin.auctionTaskId != -1) {Bukkit.getScheduler().cancelTask(plugin.auctionTaskId); plugin.auctionTaskId = -1;}
-    }
-
-    public void forceEndAuction() {
-        if (getAuctionStatus() == AuctionStatus.INACTIVE) return;
-
-        if (getAuctionHost() == null) {
-            backupAuctionHostItems(getOfflineAuctionHost());
-        }
-        else {
-            awardAuctionItem(getAuctionHost());
-        }
-
-        auctionHoster.clear();
-        bidders.clear();
-        totalBidders = 0;
-        wipeAuctionFile();
-
-        setAuctionStatus(AuctionStatus.INACTIVE);
-        lastAuctionEndTime = System.currentTimeMillis();
-        if (plugin.auctionTaskId != -1) {Bukkit.getScheduler().cancelTask(plugin.auctionTaskId); plugin.auctionTaskId = -1;}
     }
 //  Start/End Auction
 
