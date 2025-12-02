@@ -60,7 +60,6 @@ public class OSMEss extends JavaPlugin {
     public long lastCacheRefreshBalTime = 0;
     public long lastCacheRefreshPTTTime = 0;
 
-
     private int index = 0; // For the auto broadcast sequence.
 
     @Override
@@ -154,6 +153,13 @@ public class OSMEss extends JavaPlugin {
         new CommandStaff(this);
         new CommandWarn(this);
         new CommandWarnings(this);
+
+        if (!isAuctionSystemEnabled()) {
+            Bukkit.getServer().getLogger().info("[OSM-Ess] Auction System: Disabled");
+        }
+        else {
+            Bukkit.getServer().getLogger().info("[OSM-Ess] Auction System: Enabled");
+        }
 
         auctionStatus = AuctionStatus.INACTIVE;
 
