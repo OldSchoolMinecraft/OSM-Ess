@@ -26,7 +26,7 @@ public class CommandForecast implements CommandExecutor {
                 if (player.isOp() || player.hasPermission("osmess.forecast")) {
                     if (Bukkit.getServer().getWorld("world").hasStorm()) {
                         if (Bukkit.getServer().getWorld("world").isThundering()) {
-                            player.sendMessage("§5-= &dWEATHER INFO &5=-");
+                            player.sendMessage("§5-= §dWEATHER INFO §5=-");
                             player.sendMessage("§6Current Weather: §eSTORM");
                             player.sendMessage("§6Weather Duration Left: §b" + Bukkit.getServer().getWorld("world").getWeatherDuration() + " §8(§d" + formatTimeFromTicks(Bukkit.getServer().getWorld("world").getWeatherDuration()) + "§8)");
                             player.sendMessage("§6Thundering: §aYES");
@@ -34,14 +34,14 @@ public class CommandForecast implements CommandExecutor {
                             return true;
                         }
 
-                        player.sendMessage("§5-= &dWEATHER INFO &5=-");
+                        player.sendMessage("§5-= §dWEATHER INFO §5=-");
                         player.sendMessage("§6Current Weather: §eRAIN");
                         player.sendMessage("§6Weather Duration Left: §b" + Bukkit.getServer().getWorld("world").getWeatherDuration() + " §8(§d" + formatTimeFromTicks(Bukkit.getServer().getWorld("world").getWeatherDuration()) + "§8)");
                         player.sendMessage("§6Thundering: §4NO");
                         return true;
                     }
 
-                    player.sendMessage("§5-= &dWEATHER INFO &5=-");
+                    player.sendMessage("§5-= §dWEATHER INFO §5=-");
                     player.sendMessage("§6Current Weather: §eSUN");
                     player.sendMessage("§6Weather Duration Left: §b" + Bukkit.getServer().getWorld("world").getWeatherDuration() + " §8(§d" + formatTimeFromTicks(Bukkit.getServer().getWorld("world").getWeatherDuration()) + "§8)");
                     player.sendMessage("§6Thundering: §4NO");
