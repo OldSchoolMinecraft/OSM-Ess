@@ -2,7 +2,6 @@ package com.oldschoolminecraft.OSMEss.Commands;
 
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -103,6 +102,12 @@ public class CommandChatColor implements CommandExecutor {
                         if (args[0].equalsIgnoreCase("&e") || args[0].equalsIgnoreCase("yellow")) {
                             plugin.updateChatColorMessage(player, "&e");
                             player.sendMessage("§aChat color message set to §eYELLOW§a!");
+                            return true;
+                        }
+                        if (args[0].equalsIgnoreCase("rainbow") || args[0].equalsIgnoreCase("rgb")) {
+                            plugin.updateChatColorMessage(player, "rainbow");
+                            player.sendMessage("§aChat color message set to §cR§6A§eI§aN§9B§1O§4W§a!");
+//                            player.sendMessage("§aChat color message set to §4R§cA§6I§eN§aB§2O§bW§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&f") || args[0].equalsIgnoreCase("white") || args[0].equalsIgnoreCase("reset") || args[0].equalsIgnoreCase("default")) {
@@ -285,6 +290,17 @@ public class CommandChatColor implements CommandExecutor {
                                 if (plugin.hasChatColorMessageSet(other)) {
                                     plugin.updateChatColorMessage(other, "&e");
                                     player.sendMessage("§aChat color message set to §eYELLOW §afor " + other.getName() + "!");
+                                    return true;
+                                }
+                                else {
+                                    player.sendMessage("§c" + other.getName() + " does not have a chat setting set!");
+                                    return true;
+                                }
+                            }
+                            if (args[0].equalsIgnoreCase("rainbow") || args[0].equalsIgnoreCase("rgb")) {
+                                if (plugin.hasChatColorMessageSet(other)) {
+                                    plugin.updateChatColorMessage(other, "rainbow");
+                                    player.sendMessage("§aChat color message set to §cR§6A§eI§aN§9B§1O§4W §afor " + other.getName() + "!");
                                     return true;
                                 }
                                 else {
@@ -490,6 +506,17 @@ public class CommandChatColor implements CommandExecutor {
                     if (plugin.hasChatColorMessageSet(other)) {
                         plugin.updateChatColorMessage(other, "&e");
                         sender.sendMessage("Chat color message set to YELLOW for " + other.getName() + "!");
+                        return true;
+                    }
+                    else {
+                        sender.sendMessage(other.getName() + " does not have a chat setting set!");
+                        return true;
+                    }
+                }
+                if (args[0].equalsIgnoreCase("rainbow") || args[0].equalsIgnoreCase("rgb")) {
+                    if (plugin.hasChatColorMessageSet(other)) {
+                        plugin.updateChatColorMessage(other, "rainbow");
+                        sender.sendMessage("Chat color message set to RAINBOW " + other.getName() + "!");
                         return true;
                     }
                     else {
