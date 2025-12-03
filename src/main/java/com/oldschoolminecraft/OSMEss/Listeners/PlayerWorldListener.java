@@ -15,11 +15,42 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PlayerWorldListener implements Listener {
     public OSMEss plugin;
 
     public PlayerWorldListener(OSMEss plugin) {
         this.plugin = plugin;
+    }
+
+    private static final List<ChatColor> colors = Arrays.asList(
+            ChatColor.RED,
+            ChatColor.GOLD,
+            ChatColor.YELLOW,
+            ChatColor.GREEN,
+            ChatColor.BLUE,
+            ChatColor.DARK_BLUE,
+            ChatColor.DARK_RED
+    );
+
+    public static String applyRainbow(String message) {
+        String name = ChatColor.stripColor(message);
+
+        int colorIndex = -1;
+        StringBuilder newName = new StringBuilder();
+
+        for (char c : name.toCharArray()) {
+            colorIndex++;
+
+            if (colorIndex >= colors.size())
+                colorIndex = 0;
+
+            newName.append(colors.get(colorIndex)).append(c);
+        }
+
+        return newName.toString();
     }
 
     @EventHandler
@@ -76,8 +107,8 @@ public class PlayerWorldListener implements Listener {
             if (plugin.getChatColorMessageSetting(player).equals("&e")) {
                 event.setMessage(ChatColor.YELLOW + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&f")) {
-                event.setMessage(ChatColor.WHITE + event.getMessage());
+            if (plugin.getChatColorMessageSetting(player).equals("rainbow")) {
+                event.setMessage(ChatColor.translateAlternateColorCodes('&', applyRainbow(event.getMessage())));
             }
             else {
                 event.setMessage(event.getMessage());
@@ -176,5 +207,4 @@ public class PlayerWorldListener implements Listener {
             }
         }
     }
-
 }
