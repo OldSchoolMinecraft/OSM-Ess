@@ -5,12 +5,14 @@ authors: [SavageUser, moderator_man, ItsVollx]
 depend:
   - Essentials
 softdepend:
+  - ChestShop
   - Invisiman
   - Landmarks
   - Lockette
   - OSAS
   - PermissionsEx
   - ScheduledDeath
+  - WorldGuard
 
 commands:
   auction:
@@ -25,6 +27,8 @@ commands:
     description: Sets the color of the message typed in public chat.
   discord:
     description: Gives you the link to the discord server.
+  editsign:
+    description: Edits an already written sign.
   forecast:
     description: Shows the weather forecast.
   ignorebroadcast:
