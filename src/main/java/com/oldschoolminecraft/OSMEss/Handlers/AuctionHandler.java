@@ -577,7 +577,7 @@ public class AuctionHandler {
                         if (materialData.getData() == 12) {return "LIGHT BLUE DYE";}
                         if (materialData.getData() == 13) {return "MAGENTA DYE";}
                         if (materialData.getData() == 14) {return "ORANGE DYE";}
-                        if (materialData.getData() == 15) {return "BONE MEAN";}
+                        if (materialData.getData() == 15) {return "BONE MEAL";}
                         else {return "INK SAC";}
                     }
 
@@ -1153,3 +1153,4 @@ public class AuctionHandler {
     }
 //  Time Util
 }
+
