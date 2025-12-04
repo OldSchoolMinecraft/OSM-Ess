@@ -47,7 +47,7 @@ public class CommandBid implements CommandExecutor {
                         }
                         else {
                             try {
-                                int amount = Integer.parseInt(args[0]);
+                                double amount = Math.round(Double.parseDouble(args[0]) * 100.0) / 100.0;
 
                                 if (args[0].contains("-") || args[0].contains("+") || args[0].contains("*") || args[0].contains("/")) {
                                     player.sendMessage("§cYou may not use special characters!");
