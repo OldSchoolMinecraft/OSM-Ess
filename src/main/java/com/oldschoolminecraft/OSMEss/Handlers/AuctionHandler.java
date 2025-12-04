@@ -25,7 +25,7 @@ public class AuctionHandler {
 
     public OSMEss plugin;
 
-    private final Map<String, Integer> bidders = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, Double> bidders = Collections.synchronizedMap(new HashMap<>());
     private final ArrayList<String> auctionHoster = new ArrayList<>();
     public final Object lock = new Object();
 
@@ -36,7 +36,7 @@ public class AuctionHandler {
 
     public int AUCTION_DURATION_TICKS = 20 * 60;
     public int totalBidders = 0;
-    public static int startBid;
+    public static double startBid;
 
     public AuctionHandler(OSMEss plugin) {
         this.plugin = plugin;
@@ -48,7 +48,7 @@ public class AuctionHandler {
     public AuctionStatus getAuctionStatus() {return plugin.auctionStatus;}
 
 //  Start/End Auction
-    public void startAuction(Player player, int startingBid) {
+    public void startAuction(Player player, double startingBid) {
         synchronized (lock) {
             PlayerInventory inventory = player.getInventory();
             ItemStack item = inventory.getItemInHand();
@@ -359,12 +359,11 @@ public class AuctionHandler {
 
 
 //  Add/Remove Players from the Auction
-    public void addToAuction(Player player, int bidAmount) {
+    public void addToAuction(Player player, double bidAmount) {
         if (auctionHoster.contains(player.getName())) { player.sendMessage("§cYou cannot bid on your own auction!"); return;}
 
         synchronized (bidders) {
             if (bidders.containsKey(player.getName())) { // Re-add them but with a higher bid amount.
-//                Integer currentAmount = bidders.get(player.getName());
                 bidders.put(player.getName(), bidAmount);
 
                 Bukkit.broadcastMessage("§b" + player.getName() + " §9increased their bid to §b$" + bidAmount + "§9!");
@@ -1071,7 +1070,7 @@ public class AuctionHandler {
 
 
 //  Getters
-    public Integer getStartingBid() {
+    public Double getStartingBid() {
         return startBid;
     }
 
@@ -1093,10 +1092,10 @@ public class AuctionHandler {
 
         return null;
     }
-    public Integer getTopBidAmount() {
-        if (bidders.isEmpty()) {return 0;}
+    public Double getTopBidAmount() {
+        if (bidders.isEmpty()) {return (double) 0;}
 
-        Integer maxValue = Collections.max(bidders.values());
+        Double maxValue = Collections.max(bidders.values());
 
         return maxValue;
     }
