@@ -107,7 +107,7 @@ public class CommandAuction implements CommandExecutor {
                             }
 
                             try {
-                                int price = Integer.parseInt(args[0]);
+                                double price = Math.round(Double.parseDouble(args[0]) * 100.0) / 100.0;
 
                                 if (args[0].contains("-") || args[0].contains("+") || args[0].contains("*") || args[0].contains("/")) {
                                     player.sendMessage("§cYou may not use special characters!");
@@ -120,7 +120,7 @@ public class CommandAuction implements CommandExecutor {
                                 }
 
                                 if (price >= plugin.getMaxAllowedStartingBid()) {
-                                    player.sendMessage("§cYou may not start an auction with a bid of $" + price + "!");
+                                    player.sendMessage("§cThe maximum allowed starting bid is $" + plugin.getMaxAllowedStartingBid() + "!");
                                     return true;
                                 }
 
