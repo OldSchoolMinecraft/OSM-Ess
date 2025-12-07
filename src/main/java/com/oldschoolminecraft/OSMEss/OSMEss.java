@@ -162,7 +162,7 @@ public class OSMEss extends JavaPlugin {
         new CommandBid(this);
         new CommandChatColor(this);
         new CommandDiscord(this);
-        new CommandEditSign(this);
+//        new CommandEditSign(this); Disabled until further notice.
         new CommandForecast(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
@@ -467,3 +467,4 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
+
