@@ -105,9 +105,8 @@ public class CommandChatColor implements CommandExecutor {
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("rainbow") || args[0].equalsIgnoreCase("rgb")) {
-                            plugin.updateChatColorMessage(player, "rainbow");
+                            plugin.updateChatColorMessage(player, "&rgb");
                             player.sendMessage("§aChat color message set to §cR§6A§eI§aN§9B§1O§4W§a!");
-//                            player.sendMessage("§aChat color message set to §4R§cA§6I§eN§aB§2O§bW§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&f") || args[0].equalsIgnoreCase("white") || args[0].equalsIgnoreCase("reset") || args[0].equalsIgnoreCase("default")) {
@@ -299,7 +298,7 @@ public class CommandChatColor implements CommandExecutor {
                             }
                             if (args[0].equalsIgnoreCase("rainbow") || args[0].equalsIgnoreCase("rgb")) {
                                 if (plugin.hasChatColorMessageSet(other)) {
-                                    plugin.updateChatColorMessage(other, "rainbow");
+                                    plugin.updateChatColorMessage(other, "&rgb");
                                     player.sendMessage("§aChat color message set to §cR§6A§eI§aN§9B§1O§4W §afor " + other.getName() + "!");
                                     return true;
                                 }
@@ -515,7 +514,7 @@ public class CommandChatColor implements CommandExecutor {
                 }
                 if (args[0].equalsIgnoreCase("rainbow") || args[0].equalsIgnoreCase("rgb")) {
                     if (plugin.hasChatColorMessageSet(other)) {
-                        plugin.updateChatColorMessage(other, "rainbow");
+                        plugin.updateChatColorMessage(other, "&rgb");
                         sender.sendMessage("Chat color message set to RAINBOW " + other.getName() + "!");
                         return true;
                     }
@@ -545,3 +544,4 @@ public class CommandChatColor implements CommandExecutor {
         return true;
     }
 }
+
