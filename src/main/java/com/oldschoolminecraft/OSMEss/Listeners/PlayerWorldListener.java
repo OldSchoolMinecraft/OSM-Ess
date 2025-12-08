@@ -53,7 +53,7 @@ public class PlayerWorldListener implements Listener {
         return newName.toString();
     }
 
-        @EventHandler
+    @EventHandler
     public void onChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
 
