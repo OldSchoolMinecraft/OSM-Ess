@@ -53,70 +53,66 @@ public class PlayerWorldListener implements Listener {
         return newName.toString();
     }
 
-    @EventHandler
+        @EventHandler
     public void onChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
 
         if (player.isOp() || player.hasPermission("osmess.chatcolor")) {
-            if (!plugin.hasChatColorMessageSet(player)) return;
+            if (!plugin.hasChatColorMessageSet(player)) {return;}
 
 //            event.setMessage(plugin.getChatColorMessageSetting(player) + event.getMessage());
 
             if (plugin.getChatColorMessageSetting(player).equals("&0")) {
                 event.setMessage(ChatColor.BLACK + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&1")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&1")) {
                 event.setMessage(ChatColor.DARK_BLUE + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&2")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&2")) {
                 event.setMessage(ChatColor.DARK_GREEN + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&3")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&3")) {
                 event.setMessage(ChatColor.DARK_AQUA + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&4")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&4")) {
                 event.setMessage(ChatColor.DARK_RED + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&5")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&5")) {
                 event.setMessage(ChatColor.DARK_PURPLE + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&6")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&6")) {
                 event.setMessage(ChatColor.GOLD + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&7")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&7")) {
                 event.setMessage(ChatColor.GRAY + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&8")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&8")) {
                 event.setMessage(ChatColor.DARK_GRAY + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&9")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&9")) {
                 event.setMessage(ChatColor.BLUE + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&a")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&a")) {
                 event.setMessage(ChatColor.GREEN + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&b")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&b")) {
                 event.setMessage(ChatColor.AQUA + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&c")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&c")) {
                 event.setMessage(ChatColor.RED + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&d")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&d")) {
                 event.setMessage(ChatColor.LIGHT_PURPLE + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("&e")) {
+            else if (plugin.getChatColorMessageSetting(player).equals("&e")) {
                 event.setMessage(ChatColor.YELLOW + event.getMessage());
             }
-            if (plugin.getChatColorMessageSetting(player).equals("rainbow")) {
-                event.setMessage(ChatColor.translateAlternateColorCodes('&', applyRainbow(event.getMessage())));
+            else if (plugin.getChatColorMessageSetting(player).equals("&rgb")) {
+                event.setMessage(applyRainbow(event.getMessage()));
             }
             else {
                 event.setMessage(event.getMessage());
-//                event.setMessage(ChatColor.WHITE + event.getMessage());
             }
-        }
-        else {
-            event.setMessage(event.getMessage());
         }
     }
 
