@@ -557,7 +557,9 @@ public class AuctionHandler {
                     }
                 }
                 else { // Not a block.
-                    if (material == material.CLAY_BALL) {return "CLAY";}
+                    if (material == Material.CLAY_BALL) {return "CLAY";}
+
+                    if (material == Material.SULPHUR) {return "GUNPOWDER";}
 
                     if (material == Material.INK_SACK) {
                         MaterialData materialData = item.getData();
@@ -1153,4 +1155,5 @@ public class AuctionHandler {
     }
 //  Time Util
 }
+
 
