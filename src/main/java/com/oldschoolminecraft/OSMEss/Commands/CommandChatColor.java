@@ -24,8 +24,14 @@ public class CommandChatColor implements CommandExecutor {
 
                 if (player.isOp() || player.hasPermission("osmess.chatcolor")) {
                     if (args.length == 0 || args.length > 2) {
-                        player.sendMessage("§cUsage: /chatcolor <color code> [player]");
-                        return true;
+                        if (player.isOp() || player.hasPermission("osmess.chatcolor.other")) {
+                            player.sendMessage("§cUsage: /chatcolor <color code> [player]");
+                            return true;
+                        }
+                        else {
+                            player.sendMessage("§cUsage: /chatcolor <color code>");
+                            return true;
+                        }
                     }
 
                     if (args.length == 1) {
@@ -544,4 +550,3 @@ public class CommandChatColor implements CommandExecutor {
         return true;
     }
 }
-
