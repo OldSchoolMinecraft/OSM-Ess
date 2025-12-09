@@ -1,6 +1,5 @@
 package com.oldschoolminecraft.OSMEss;
 
-import com.Acrobot.ChestShop.ChestShop;
 import com.earth2me.essentials.Essentials;
 import com.oldschoolminecraft.OSMEss.Commands.*;
 import com.oldschoolminecraft.OSMEss.Handlers.AuctionHandler;
@@ -16,7 +15,6 @@ import com.oldschoolminecraft.OSMEss.Util.ConfigSettingCFG;
 import com.oldschoolminecraft.OSMEss.Util.WarningsCFG;
 import com.oldschoolminecraft.osas.OSAS;
 import com.oldschoolminecraft.vanish.Invisiman;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import net.oldschoolminecraft.lmk.Landmarks;
 import net.oldschoolminecraft.sd.ScheduledDeath;
 import org.bukkit.Bukkit;
@@ -35,7 +33,6 @@ import java.util.List;
 
 public class OSMEss extends JavaPlugin {
 
-    public ChestShop chestShop;
     public Essentials essentials;
     public Invisiman invisiman;
     public Landmarks landmarks;
@@ -43,7 +40,6 @@ public class OSMEss extends JavaPlugin {
     public OSAS osas;
     public PermissionsEx permissionsEx;
     public ScheduledDeath scheduledDeath;
-    public WorldGuardPlugin worldGuard;
 
     public ColorMessageCFG colorMessageCFG;
     public ConfigSettingCFG configSettingCFG;
@@ -69,14 +65,6 @@ public class OSMEss extends JavaPlugin {
     @Override
     public void onEnable() {
         PluginManager pm = Bukkit.getPluginManager();
-
-        if (pm.getPlugin("ChestShop") != null && pm.isPluginEnabled("ChestShop")) {
-            chestShop = (ChestShop) pm.getPlugin("ChestShop");
-            Bukkit.getServer().getLogger().info("[OSM-Ess] ChestShop v" + chestShop.getDescription().getVersion() + " found!");
-        }
-        else {
-            Bukkit.getServer().getLogger().severe("[OSM-Ess] ChestShop not found, thus its features are disabled!");
-        }
 
         if (pm.getPlugin("Essentials") != null && pm.isPluginEnabled("Essentials")) {
             essentials = (Essentials) pm.getPlugin("Essentials");
@@ -136,14 +124,6 @@ public class OSMEss extends JavaPlugin {
             Bukkit.getServer().getLogger().severe("[OSM-Ess] ScheduledDeath not found, thus its features are disabled!");
         }
 
-        if (pm.getPlugin("WorldGuard") != null && pm.isPluginEnabled("WorldGuard")) {
-            worldGuard = (WorldGuardPlugin) pm.getPlugin("WorldGuard");
-            Bukkit.getServer().getLogger().info("[OSM-Ess] WorldGuard v" + worldGuard.getDescription().getVersion() + " found!");
-        }
-        else {
-            Bukkit.getServer().getLogger().severe("[OSM-Ess] WorldGuard not found, thus its features are disabled!");
-        }
-
         pm.registerEvents(new CommandPreProcessListener(this), this);
         pm.registerEvents(new PlayerConnectionListener(this), this);
         pm.registerEvents(new PlayerWorldListener(this), this);
@@ -162,7 +142,6 @@ public class OSMEss extends JavaPlugin {
         new CommandBid(this);
         new CommandChatColor(this);
         new CommandDiscord(this);
-//        new CommandEditSign(this); Disabled until further notice.
         new CommandForecast(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
@@ -197,11 +176,6 @@ public class OSMEss extends JavaPlugin {
         auctionHandler.endAuction();
     }
 
-    public boolean isChestShopEnabled() {
-        if (Bukkit.getPluginManager().getPlugin("ChestShop") != null && Bukkit.getPluginManager().isPluginEnabled("ChestShop")) return true;
-        else return false;
-    }
-
     public boolean isInvisimanEnabled() {
         if (Bukkit.getPluginManager().getPlugin("Invisiman") != null && Bukkit.getPluginManager().isPluginEnabled("Invisiman")) return true;
         else return false;
@@ -229,11 +203,6 @@ public class OSMEss extends JavaPlugin {
 
     public boolean isScheduledDeathEnabled() {
         if (Bukkit.getPluginManager().getPlugin("ScheduledDeath") != null && Bukkit.getPluginManager().isPluginEnabled("ScheduledDeath")) return true;
-        else return false;
-    }
-
-    public boolean isWorldGuardEnabled() {
-        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null && Bukkit.getPluginManager().isPluginEnabled("WorldGuard")) return true;
         else return false;
     }
 
@@ -467,4 +436,3 @@ public class OSMEss extends JavaPlugin {
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
 }
-
