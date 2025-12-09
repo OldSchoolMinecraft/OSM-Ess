@@ -5,14 +5,12 @@ authors: [SavageUser, moderator_man, ItsVollx]
 depend:
   - Essentials
 softdepend:
-  - ChestShop
   - Invisiman
   - Landmarks
   - Lockette
   - OSAS
   - PermissionsEx
   - ScheduledDeath
-  - WorldGuard
 
 commands:
   auction:
@@ -49,4 +47,5 @@ commands:
     description: Warns a player.
   warnings:
     description: Shows a player's list of warnings, or choose to clear them.
+
 
