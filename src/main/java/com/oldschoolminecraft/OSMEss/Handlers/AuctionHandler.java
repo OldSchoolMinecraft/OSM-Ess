@@ -3,6 +3,7 @@ package com.oldschoolminecraft.OSMEss.Handlers;
 import com.earth2me.essentials.User;
 import com.google.gson.Gson;
 import com.oldschoolminecraft.OSMEss.AuctionStatus;
+import com.oldschoolminecraft.OSMEss.AuctionThread;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -25,6 +26,7 @@ public class AuctionHandler {
 
     public OSMEss plugin;
 
+    public AuctionThread auctionThread;
     private final Map<String, Double> bidders = Collections.synchronizedMap(new HashMap<>());
     private final ArrayList<String> auctionHoster = new ArrayList<>();
     public final Object lock = new Object();
@@ -79,7 +81,8 @@ public class AuctionHandler {
 
                 lastStartAuctionVote = System.currentTimeMillis();
                 setAuctionStatus(AuctionStatus.ACTIVE);
-                plugin.auctionTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::endAuction, AUCTION_DURATION_TICKS);
+
+                auctionThread = new AuctionThread(60, this::endAuction);
 
                 Bukkit.broadcastMessage("§9Auction started by §b" + player.getName() + "§9!");
                 Bukkit.broadcastMessage("§9Auction ends in §b1 minute§9!");
@@ -329,7 +332,7 @@ public class AuctionHandler {
 
             setAuctionStatus(AuctionStatus.INACTIVE);
             lastAuctionEndTime = System.currentTimeMillis();
-            if (plugin.auctionTaskId != -1) {Bukkit.getScheduler().cancelTask(plugin.auctionTaskId); plugin.auctionTaskId = -1;}
+            if (auctionThread.isAlive()) {auctionThread.interrupt();}
         }
     }
 
@@ -351,7 +354,7 @@ public class AuctionHandler {
 
             setAuctionStatus(AuctionStatus.INACTIVE);
             lastAuctionEndTime = System.currentTimeMillis();
-            if (plugin.auctionTaskId != -1) {Bukkit.getScheduler().cancelTask(plugin.auctionTaskId); plugin.auctionTaskId = -1;}
+            if (auctionThread.isAlive()) {auctionThread.interrupt();}
         }
     }
 //  Start/End Auction
@@ -579,7 +582,7 @@ public class AuctionHandler {
                         if (materialData.getData() == 12) {return "LIGHT BLUE DYE";}
                         if (materialData.getData() == 13) {return "MAGENTA DYE";}
                         if (materialData.getData() == 14) {return "ORANGE DYE";}
-                        if (materialData.getData() == 15) {return "BONE MEAL";}
+                        if (materialData.getData() == 15) {return "BONE MEAN";}
                         else {return "INK SAC";}
                     }
 
@@ -1155,5 +1158,3 @@ public class AuctionHandler {
     }
 //  Time Util
 }
-
-
