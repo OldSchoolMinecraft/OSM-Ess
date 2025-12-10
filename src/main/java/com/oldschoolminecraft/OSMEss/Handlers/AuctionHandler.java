@@ -83,6 +83,7 @@ public class AuctionHandler {
                 setAuctionStatus(AuctionStatus.ACTIVE);
 
                 auctionThread = new AuctionThread(60, this::endAuction);
+                auctionThread.start();
 
                 Bukkit.broadcastMessage("§9Auction started by §b" + player.getName() + "§9!");
                 Bukkit.broadcastMessage("§9Auction ends in §b1 minute§9!");
