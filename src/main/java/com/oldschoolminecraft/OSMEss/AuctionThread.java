@@ -29,7 +29,6 @@ public class AuctionThread extends Thread {
             else if (secondsRemaining == 3) {Bukkit.broadcastMessage("§9Auction ends in §b3 seconds§9!");}
             else if (secondsRemaining == 15) {Bukkit.broadcastMessage("§9Auction ends in §b15 seconds§9!");}
             else if (secondsRemaining == 30) {Bukkit.broadcastMessage("§9Auction ends in §b30 seconds§9!");}
-            else if (secondsRemaining == 45) {Bukkit.broadcastMessage("§9Auction ends in §b45 seconds§9!");}
 
             secondsRemaining--;
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
