@@ -27,7 +27,7 @@ public class AuctionThread extends Thread {
             else if (secondsRemaining == 1) {Bukkit.broadcastMessage("§9Auction ends in §b1 second§9!");}
             else if (secondsRemaining == 2) {Bukkit.broadcastMessage("§9Auction ends in §b2 seconds§9!");}
             else if (secondsRemaining == 3) {Bukkit.broadcastMessage("§9Auction ends in §b3 seconds§9!");}
-            else if (secondsRemaining == 10) {Bukkit.broadcastMessage("§9Auction ends in §b10 seconds§9!");}
+            else if (secondsRemaining == 15) {Bukkit.broadcastMessage("§9Auction ends in §b15 seconds§9!");}
             else if (secondsRemaining == 30) {Bukkit.broadcastMessage("§9Auction ends in §b30 seconds§9!");}
             else if (secondsRemaining == 45) {Bukkit.broadcastMessage("§9Auction ends in §b45 seconds§9!");}
 
