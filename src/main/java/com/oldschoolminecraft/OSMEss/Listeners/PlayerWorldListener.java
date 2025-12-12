@@ -58,11 +58,70 @@ public class PlayerWorldListener implements Listener {
     public void onChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
 
+//        if (player.isOp() || player.hasPermission("osmess.chatcolor")) {
+//            if (!plugin.hasChatColorMessageSet(player)) {return;}
+//
+//            if (Objects.equals(plugin.getChatColorMessageSetting(player), "&rgb")) {event.setMessage(applyRainbow(event.getMessage()));}
+//            else {event.setMessage(plugin.getChatColorMessageSetting(player) + event.getMessage());}
+//        }
+
+
         if (player.isOp() || player.hasPermission("osmess.chatcolor")) {
             if (!plugin.hasChatColorMessageSet(player)) {return;}
 
-            if (Objects.equals(plugin.getChatColorMessageSetting(player), "&rgb")) {event.setMessage(applyRainbow(event.getMessage()));}
-            else {event.setMessage(plugin.getChatColorMessageSetting(player) + event.getMessage());}
+            switch (plugin.getChatColorMessageSetting(player)) {
+                case "&0":
+                    event.setMessage(ChatColor.BLACK + event.getMessage());
+                    break;
+                case "&1":
+                    event.setMessage(ChatColor.DARK_BLUE + event.getMessage());
+                    break;
+                case "&2":
+                    event.setMessage(ChatColor.DARK_GREEN + event.getMessage());
+                    break;
+                case "&3":
+                    event.setMessage(ChatColor.DARK_AQUA + event.getMessage());
+                    break;
+                case "&4":
+                    event.setMessage(ChatColor.DARK_RED + event.getMessage());
+                    break;
+                case "&5":
+                    event.setMessage(ChatColor.DARK_PURPLE + event.getMessage());
+                    break;
+                case "&6":
+                    event.setMessage(ChatColor.GOLD + event.getMessage());
+                    break;
+                case "&7":
+                    event.setMessage(ChatColor.GRAY + event.getMessage());
+                    break;
+                case "&8":
+                    event.setMessage(ChatColor.DARK_GRAY + event.getMessage());
+                    break;
+                case "&9":
+                    event.setMessage(ChatColor.BLUE + event.getMessage());
+                    break;
+                case "&a":
+                    event.setMessage(ChatColor.GREEN + event.getMessage());
+                    break;
+                case "&b":
+                    event.setMessage(ChatColor.AQUA + event.getMessage());
+                    break;
+                case "&c":
+                    event.setMessage(ChatColor.RED + event.getMessage());
+                    break;
+                case "&d":
+                    event.setMessage(ChatColor.LIGHT_PURPLE + event.getMessage());
+                    break;
+                case "&e":
+                    event.setMessage(ChatColor.YELLOW + event.getMessage());
+                    break;
+                case "&f":
+                    event.setMessage(ChatColor.WHITE + event.getMessage());
+                    break;
+                case "&rgb":
+                    event.setMessage(applyRainbow(event.getMessage()));
+                    break;
+            }
         }
     }
 
