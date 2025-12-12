@@ -33,7 +33,6 @@ public class CommandAuction implements CommandExecutor {
 
                 synchronized (lock) {
                     if (args.length == 0) {
-
                         if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
                             player.sendMessage("§5-= §dAUCTION §5=-");
                             player.sendMessage("§6Time Left: §e" + plugin.auctionHandler.formatTime(plugin.auctionHandler.getAuctionTimeLeft()));
@@ -46,7 +45,7 @@ public class CommandAuction implements CommandExecutor {
                         else {
                             if (plugin.isScheduledDeathEnabled()) {
                                 if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
-                                    sender.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                    player.sendMessage("§cCommand is disabled as the server is about to restart!");
                                     return true;
                                 }
                             }
@@ -57,22 +56,15 @@ public class CommandAuction implements CommandExecutor {
                     }
 
                     if (args.length != 1) {
-                        if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < plugin.getMinimumRequiredPlaytimeToAuction()) {// 12 hours. Prevent new players from auctioning stolen items.
-
-                            player.sendMessage("§cYou need a minimum 12 hours of playtime to auction items!");
-                            return true;
-                        }
-                        else {
-                            if (plugin.isScheduledDeathEnabled()) {
-                                if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
-                                    sender.sendMessage("§cCommand is disabled as the server is about to restart!");
-                                    return true;
-                                }
+                        if (plugin.isScheduledDeathEnabled()) {
+                            if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
+                                player.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                return true;
                             }
-
-                            player.sendMessage("§cUsage: /auction <price>");
-                            return true;
                         }
+
+                        player.sendMessage("§cUsage: /auction <price>");
+                        return true;
                     }
 
                     if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < plugin.getMinimumRequiredPlaytimeToAuction()) {// 12 hours. Prevent new players from auctioning stolen items.
@@ -80,7 +72,6 @@ public class CommandAuction implements CommandExecutor {
                         return true;
                     }
                     else {
-                        //Todo: Check if auction is running before starting a new one.
                         if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
                             player.sendMessage("§cThere is currently an active auction!");
                             return true;
@@ -88,7 +79,8 @@ public class CommandAuction implements CommandExecutor {
                         else {
                             if (plugin.isScheduledDeathEnabled()) {
                                 if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
-                                    sender.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                    player.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                    return true;
                                 }
                             }
 
