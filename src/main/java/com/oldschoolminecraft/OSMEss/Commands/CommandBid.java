@@ -31,11 +31,17 @@ public class CommandBid implements CommandExecutor {
 
                 synchronized (lock) {
                     if (args.length != 1) {
+                        if (plugin.isScheduledDeathEnabled()) {
+                            if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
+                                player.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                return true;
+                            }
+                        }
+
                         player.sendMessage("§cUsage: /bid <amount>");
                         return true;
                     }
 
-                    //Todo: Check if auction is running & if player has enough $ to enter the bid.
                     if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.INACTIVE) {
                         player.sendMessage("§cThere is no active auction to bid on!");
                         return true;
@@ -70,7 +76,6 @@ public class CommandBid implements CommandExecutor {
                                 else {
                                     plugin.auctionHandler.addToAuction(player, amount);
                                 }
-
                             } catch (NumberFormatException ex) {
                                 player.sendMessage("§cInvalid integer provided!");
                             }
