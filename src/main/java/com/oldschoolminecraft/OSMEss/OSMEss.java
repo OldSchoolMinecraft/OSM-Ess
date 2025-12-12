@@ -56,7 +56,6 @@ public class OSMEss extends JavaPlugin {
     public AuctionStatus auctionStatus;
 
     public int cacheTaskId = -1;
-    public int auctionTaskId = -1;
     public long lastCacheRefreshBalTime = 0;
     public long lastCacheRefreshPTTTime = 0;
 
