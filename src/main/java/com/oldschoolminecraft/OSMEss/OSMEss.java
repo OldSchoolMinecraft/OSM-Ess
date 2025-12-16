@@ -140,6 +140,8 @@ public class OSMEss extends JavaPlugin {
         new CommandBaltop(this);
         new CommandBid(this);
         new CommandChatColor(this);
+        new CommandConfirmBid(this);
+        new CommandDenyBid(this);
         new CommandDiscord(this);
         new CommandForecast(this);
         new CommandIgnoreBC(this);
@@ -289,6 +291,10 @@ public class OSMEss extends JavaPlugin {
 
     public Integer getMaxAllowedStartingBid() {
         return (int) this.configSettingCFG.getConfigOption("Settings.Auction.maxStartingBid");
+    }
+
+    public Integer getPercentageToRequireConfirmation() {
+        return (int) this.configSettingCFG.getConfigOption("Settings.Auction.percentageToRequireConfirmation");
     }
 
     public void initAutoBC() {
