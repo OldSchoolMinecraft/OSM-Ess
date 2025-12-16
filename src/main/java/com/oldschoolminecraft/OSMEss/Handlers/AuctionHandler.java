@@ -4,6 +4,7 @@ import com.earth2me.essentials.User;
 import com.google.gson.Gson;
 import com.oldschoolminecraft.OSMEss.AuctionStatus;
 import com.oldschoolminecraft.OSMEss.AuctionThread;
+import com.oldschoolminecraft.OSMEss.Commands.CommandBid;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -36,7 +37,6 @@ public class AuctionHandler {
     public long lastAuctionEndTime = 0L;
     public long AUCTION_COOLDOWN_MS = 60 * 1000; // 1 minute
 
-    public int AUCTION_DURATION_TICKS = 20 * 60;
     public int totalBidders = 0;
     public static double startBid;
 
@@ -111,6 +111,7 @@ public class AuctionHandler {
 
         auctionHoster.clear();
         bidders.clear();
+        CommandBid.confirmBidList.clear();
         totalBidders = 0;
         wipeAuctionFile();
     }
@@ -134,6 +135,7 @@ public class AuctionHandler {
 
         auctionHoster.clear();
         bidders.clear();
+        CommandBid.confirmBidList.clear();
         totalBidders = 0;
         wipeAuctionFile();
     }
@@ -159,6 +161,7 @@ public class AuctionHandler {
                     }
 
                     auctionHoster.clear();
+                    CommandBid.confirmBidList.clear();
                     wipeAuctionFile();
                     Bukkit.broadcastMessage("§9Auction ended with no bidders!");
                 }
@@ -189,6 +192,7 @@ public class AuctionHandler {
                     }
 
                     auctionHoster.clear();
+                    CommandBid.confirmBidList.clear();
                     wipeAuctionFile();
                     Bukkit.broadcastMessage("§9Auction ended with no bidders!");
                 }
@@ -217,6 +221,7 @@ public class AuctionHandler {
 
                 auctionHoster.clear();
                 bidders.clear();
+                CommandBid.confirmBidList.clear();
                 totalBidders = 0;
                 wipeAuctionFile();
 
@@ -244,6 +249,7 @@ public class AuctionHandler {
 
                 auctionHoster.clear();
                 bidders.clear();
+                CommandBid.confirmBidList.clear();
                 totalBidders = 0;
                 wipeAuctionFile();
 
@@ -270,6 +276,7 @@ public class AuctionHandler {
                 }
 
                 auctionHoster.clear();
+                CommandBid.confirmBidList.clear();
                 wipeAuctionFile();
 
                 Bukkit.broadcastMessage("§9Auction ended with no bidders!");
@@ -296,6 +303,7 @@ public class AuctionHandler {
                             }
 
                             auctionHoster.clear();
+                            CommandBid.confirmBidList.clear();
                             wipeAuctionFile();
                             Bukkit.broadcastMessage("§9Auction ended with no bidders!");
                         }
@@ -322,6 +330,7 @@ public class AuctionHandler {
                             }
 
                             auctionHoster.clear();
+                            CommandBid.confirmBidList.clear();
                             wipeAuctionFile();
                             Bukkit.broadcastMessage("§9Auction ended with no bidders!");
                         }
@@ -350,6 +359,7 @@ public class AuctionHandler {
 
             auctionHoster.clear();
             bidders.clear();
+            CommandBid.confirmBidList.clear();
             totalBidders = 0;
             wipeAuctionFile();
 
@@ -1159,4 +1169,3 @@ public class AuctionHandler {
     }
 //  Time Util
 }
-
