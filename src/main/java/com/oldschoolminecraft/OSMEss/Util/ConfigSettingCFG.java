@@ -21,7 +21,7 @@ public class ConfigSettingCFG extends Configuration {
         generateConfigOption("Settings.Auction.enabled", true);
         generateConfigOption("Settings.Auction.minPlaytimeToAuction", 43200000);
         generateConfigOption("Settings.Auction.maxStartingBid", 10000);
-        generateConfigOption("Settings.Auction.percentageToRequireConfirmation", 750); // 750%
+        generateConfigOption("Settings.Auction.percentageToRequireConfirmation", 100); // 100%
 
         // Staff Tool Settings
         generateConfigOption("Settings.StaffTools.slot1", 271);
