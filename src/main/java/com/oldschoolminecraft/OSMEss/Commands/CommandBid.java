@@ -88,7 +88,7 @@ public class CommandBid implements CommandExecutor {
                                 }
 
                                 if (plugin.auctionHandler.getTopBidAmount() != 0) {
-                                    double percentage = (amount / plugin.auctionHandler.getTopBidAmount()) * 100.0;
+                                    double percentage = (amount / plugin.auctionHandler.getTopBidAmount());
 
                                     if (percentage >= plugin.getPercentageToRequireConfirmation()) { // Default: 750%. Bidder has to /confirmbid to bid that amount.
                                         confirmBidList.put(player.getName(), amount);
@@ -127,3 +127,4 @@ public class CommandBid implements CommandExecutor {
         return true;
     }
 }
+
