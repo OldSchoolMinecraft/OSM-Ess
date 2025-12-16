@@ -23,6 +23,10 @@ commands:
   chatcolor:
     aliases: [cc]
     description: Sets the color of the message typed in public chat.
+  confirmbid:
+    description: Confirms a bid you have on hold.
+  denybid:
+    description: Denies a bid you have on hold.
   discord:
     description: Gives you the link to the discord server.
   forecast:
@@ -47,5 +51,6 @@ commands:
     description: Warns a player.
   warnings:
     description: Shows a player's list of warnings, or choose to clear them.
+
 
 
