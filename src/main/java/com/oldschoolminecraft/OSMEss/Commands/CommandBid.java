@@ -2,10 +2,14 @@ package com.oldschoolminecraft.OSMEss.Commands;
 
 import com.oldschoolminecraft.OSMEss.AuctionStatus;
 import com.oldschoolminecraft.OSMEss.OSMEss;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CommandBid implements CommandExecutor {
 
@@ -17,6 +21,8 @@ public class CommandBid implements CommandExecutor {
         lock = plugin.auctionHandler.lock;
         this.plugin.getCommand("bid").setExecutor(this);
     }
+
+    public static Map<String, Double> confirmBidList = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -51,6 +57,13 @@ public class CommandBid implements CommandExecutor {
                             player.sendMessage("§cYou cannot bid on your own auction!");
                             return true;
                         }
+
+                        if (confirmBidList.containsKey(player.getName())) { // Prevent them from bidding if they have a bid to confirm.
+                            player.sendMessage("§cYou have a bid on hold to confirm first!");
+                            player.sendMessage("§cPending Bid: §e$" + confirmBidList.get(player.getName()));
+                            player.sendMessage("§cConfirm it using §e/confirmbid §cor §e/denybid§c!");
+                            return true;
+                        }
                         else {
                             try {
                                 double amount = Math.round(Double.parseDouble(args[0]) * 100.0) / 100.0;
@@ -73,6 +86,26 @@ public class CommandBid implements CommandExecutor {
                                     player.sendMessage("§cYou don't have enough money to bid this amount!");
                                     return true;
                                 }
+
+                                if (plugin.auctionHandler.getTopBidAmount() != 0) {
+                                    double percentage = (amount / plugin.auctionHandler.getTopBidAmount()) * 100.0;
+
+                                    if (percentage >= plugin.getPercentageToRequireConfirmation()) { // Default: 750%. Bidder has to /confirmbid to bid that amount.
+                                        confirmBidList.put(player.getName(), amount);
+                                        player.sendMessage("§cBid amount seems irregular! §4(§e$" + amount + "§4)");
+                                        player.sendMessage("§cTo proceed, type §e/confirmbid §cbefore the auction ends.");
+                                        player.sendMessage("§cTo cancel it, type §e/denybid§c.");
+                                        player.sendMessage("§4WARNING: §cUpon confirmation & if deemed the winner, we are not responsible for refunding your bid money!");
+
+                                        Bukkit.getServer().getLogger().info("[OSM-Ess] " + player.getName() + "'s bid of $" + amount + " put on HOLD! (Irregular Amount)");
+                                        return true;
+                                    }
+                                    else {
+                                        plugin.auctionHandler.addToAuction(player, amount);
+                                        return true;
+                                    }
+                                }
+
                                 else {
                                     plugin.auctionHandler.addToAuction(player, amount);
                                 }
