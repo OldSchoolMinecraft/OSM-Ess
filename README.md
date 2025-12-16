@@ -5,6 +5,8 @@
 - /baltop - Reformatted look of the top 10 balances of players.
 - /bid - Places a bid on an active auction.
 - /chatcolor - Sets the color of the message typed in public chat.
+- /confirmbid - Confirms a bid you have on hold.
+- /denybid - Denies a bid you have on hold.
 - /discord - Gives you the link to the discord server.
 - /forecast - Shows the weather forecast.
 - /ignorebroadcast - Toggle visibility of the auto broadcast messages.
