@@ -90,7 +90,7 @@ public class CommandBid implements CommandExecutor {
                                 if (plugin.auctionHandler.getTopBidAmount() != 0) {
                                     double percentage = (amount / plugin.auctionHandler.getTopBidAmount());
 
-                                    if (percentage >= plugin.getPercentageToRequireConfirmation()) { // Default: 100%. Bidder has to /confirmbid to bid that amount.
+                                    if (percentage >= plugin.getPercentageToRequireConfirmation()) { // Default: 5%. Bidder has to /confirmbid to bid that amount.
                                         confirmBidList.put(player.getName(), amount);
                                         player.sendMessage("§cBid amount seems irregular! §4(§e$" + amount + "§4)");
                                         player.sendMessage("§cTo proceed, type §e/confirmbid §cbefore the auction ends.");
@@ -127,5 +127,6 @@ public class CommandBid implements CommandExecutor {
         return true;
     }
 }
+
 
 
