@@ -51,6 +51,7 @@ public class CommandAuction implements CommandExecutor {
                             }
 
                             player.sendMessage("§cUsage: /auction <price>");
+                            player.sendMessage("§4WARNING: §cTheres no confirmation when starting an auction, so make sure your price amount is correct!");
                             return true;
                         }
                     }
@@ -64,14 +65,11 @@ public class CommandAuction implements CommandExecutor {
                         }
 
                         player.sendMessage("§cUsage: /auction <price>");
+                        player.sendMessage("§4WARNING: §cTheres no confirmation when starting an auction, so make sure your price amount is correct!");
                         return true;
                     }
 
-                    if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) < plugin.getMinimumRequiredPlaytimeToAuction()) {// 12 hours. Prevent new players from auctioning stolen items.
-                        player.sendMessage("§cYou need a minimum 12 hours of playtime to auction items!");
-                        return true;
-                    }
-                    else {
+                    if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) >= plugin.getMinimumRequiredPlaytimeToAuction()) { // Player has minimum 12 hours of playtime or more.
                         if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
                             player.sendMessage("§cThere is currently an active auction!");
                             return true;
@@ -115,14 +113,22 @@ public class CommandAuction implements CommandExecutor {
                                     player.sendMessage("§cThe maximum allowed starting bid is $" + plugin.getMaxAllowedStartingBid() + "!");
                                     return true;
                                 }
+                                else {
+                                    plugin.auctionHandler.startAuction(player, price);
+                                    return true;
+                                }
 
-                                plugin.auctionHandler.startAuction(player, price);
                             } catch (NumberFormatException ex) {
                                 player.sendMessage("§cInvalid integer provided!");
                             }
 
                             return true;
                         }
+                    }
+                    else { // Player doesn't have minimum 12 hours of playtime.
+                        player.sendMessage("§cYou do not have enough playtime to use /auction!");
+                        player.sendMessage("§cMinimum Required Playtime: §e12h00m"); //Todo: Finish format method to match the millis value inputted in the config file.
+                        return true;
                     }
                 }
             }
@@ -153,7 +159,7 @@ public class CommandAuction implements CommandExecutor {
 
 
         if (plugin.getMinimumRequiredPlaytimeToAuction() >= 3600000) {
-            return hour + "h" + minute + "m" + second + "s";
+            return hour + "h" + minute + "m";
         }
         else {
             return minute + "m" + second + "s";
