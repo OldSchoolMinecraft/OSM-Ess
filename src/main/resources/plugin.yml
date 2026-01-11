@@ -1,6 +1,6 @@
 name: OSM-Ess
 main: com.oldschoolminecraft.OSMEss.OSMEss
-version: 1.2.0
+version: 1.3.0
 authors: [SavageUser, moderator_man, ItsVollx]
 depend:
   - Essentials
@@ -31,6 +31,12 @@ commands:
     description: Gives you the link to the discord server.
   forecast:
     description: Shows the weather forecast.
+  highlightwarp:
+    description: Highlights an existing warp to a specific color.
+  home:
+    description: Shows your homes in normal form.
+  homes:
+    description: Shows your homes in page form.
   ignorebroadcast:
     aliases: [ignorebroadcasts]
     description: Toggles visibility of the auto broadcast messages.
@@ -51,6 +57,7 @@ commands:
     description: Warns a player.
   warnings:
     description: Shows a player's list of warnings, or choose to clear them.
-
-
-
+  warp:
+    description: Shows a list of warps in normal form.
+  warps:
+    description: Shows a list of warps in page form.
