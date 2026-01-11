@@ -25,7 +25,7 @@ public class CommandDenyBid implements CommandExecutor {
                 Player player = (Player) sender;
 
                 if (!plugin.isAuctionSystemEnabled()) {
-                    player.sendMessage("§cThe auction system is currently disabled!");
+                    player.sendMessage(plugin.auctionNotEnabled);
                     return true;
                 }
 
@@ -53,7 +53,7 @@ public class CommandDenyBid implements CommandExecutor {
                 }
             }
             else {
-                sender.sendMessage("§cCommand can only be executed by a player!");
+                sender.sendMessage("Command can only be executed by a player!");
                 return true;
             }
         }
