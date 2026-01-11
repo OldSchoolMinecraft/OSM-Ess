@@ -25,13 +25,6 @@ public class CommandSeen implements CommandExecutor {
 //              Player executes /seen
                 Player player = (Player) sender;
 
-//                if (plugin.isScheduledDeathEnabled()) {
-//                    if (plugin.scheduledDeath.getTimeToLive() <= 30) {
-//                        sender.sendMessage("§cCommand is disabled as the server is about to restart!");
-//                        return true;
-//                    }
-//                }
-
                 if (args.length == 0) {
                     if (plugin.essentials.getUser(player.getName()).getNickname() != null) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', "§8Seen §7" + player.getName() + " §8(§7" + plugin.essentials.getUser(player.getName()).getNickname() + "§8)"));
@@ -40,10 +33,10 @@ public class CommandSeen implements CommandExecutor {
                     }
 
 //                  /seen (your own stats)
-                    player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(player)); //Passed.
-                    player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(player)); //Partially Passed. Unknown result passed 1 hour.
+                    player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(player));
+                    player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(player));
                     player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytime(player));
-                    player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(player)); //Passed.
+                    player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(player));
                     return true;
                 }
 
@@ -54,12 +47,12 @@ public class CommandSeen implements CommandExecutor {
                         OfflinePlayer offline = Bukkit.getOfflinePlayer(args[0]);
 
                         if (!plugin.playerDataHandler.hasData(offline)) {
-                            player.sendMessage("§cPlayer has never logged in before!");
+                            player.sendMessage(plugin.errorNeverJoinedNoData);
                             return true;
                         }
 
                         if (plugin.essentials.getOfflineUser(offline.getName()) == null) {
-                            player.sendMessage("§cPlayer has never logged in before! (no Essentials data)");
+                            player.sendMessage(plugin.errorNeverJoinedEss);
                             return true;
                         }
 
@@ -70,9 +63,9 @@ public class CommandSeen implements CommandExecutor {
                         }
 
 //                      /seen <player> (who is offline)
-                        player.sendMessage("§8Last seen: §7" + plugin.playtimeHandler.getLastLogout(offline)); //Potential to Pass.
+                        player.sendMessage("§8Last seen: §7" + plugin.playtimeHandler.getLastLogout(offline));
                         player.sendMessage("§8Total Play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
-                        player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(offline)); //Passed.
+                        player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(offline));
                         return true;
                     }
 
@@ -83,10 +76,10 @@ public class CommandSeen implements CommandExecutor {
                         player.sendMessage("§8Seen §7" + other.getName());
                     }
 
-                    player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(other)); //Passed.
-                    player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(other)); //Partially Passed. Unknown result passed 1 hour.
+                    player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(other));
+                    player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(other));
                     player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytime(other));
-                    player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(other)); //Passed.
+                    player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(other));
                     return true;
                 }
 
@@ -96,7 +89,7 @@ public class CommandSeen implements CommandExecutor {
 //              CONSOLE Executed /seen
 
                 if (args.length != 1) {
-                    sender.sendMessage("§cUsage: /seen <player>");
+                    sender.sendMessage("Usage: /seen <player>");
                     return true;
                 }
 
@@ -106,39 +99,39 @@ public class CommandSeen implements CommandExecutor {
                     OfflinePlayer offline = Bukkit.getOfflinePlayer(args[0]);
 
                     if (!plugin.playerDataHandler.hasData(offline)) {
-                        sender.sendMessage("§cPlayer has never logged in before!");
+                        sender.sendMessage("Error: Player never logged in before.");
                         return true;
                     }
 
                     if (plugin.essentials.getOfflineUser(offline.getName()) == null) {
-                        sender.sendMessage("§cPlayer has never logged in before! (no Essentials data)");
+                        sender.sendMessage("Error: Player never logged in before. (no Essentials data)");
                         return true;
                     }
 
                     if (plugin.essentials.getOfflineUser(offline.getName()).getNickname() != null) {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "§8Seen §7" + offline.getName() + " §8(§7" + plugin.essentials.getOfflineUser(offline.getName()).getNickname() + "§8)"));
+                        sender.sendMessage("Seen " + offline.getName() + " (" + plugin.essentials.getOfflineUser(offline.getName()).getNickname() + ")");
                     } else {
-                        sender.sendMessage("§8Seen §7" + offline.getName());
+                        sender.sendMessage("Seen " + offline.getName());
                     }
 
 //                  /seen <player> (who is offline)
-                    sender.sendMessage("§8Last seen: §7" + plugin.playtimeHandler.getLastLogout(offline)); //Potential to Pass.
-                    sender.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
-                    sender.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(offline)); //Passed.
+                    sender.sendMessage("Last seen: " + plugin.playtimeHandler.getLastLogout(offline));
+                    sender.sendMessage("Total play time: " + plugin.playtimeHandler.getTotalPlaytime(offline));
+                    sender.sendMessage("First join date: " + plugin.playtimeHandler.getFirstJoinDate(offline));
                     return true;
                 }
 
 //              /seen <player> who's online.
                 if (plugin.essentials.getUser(other.getName()).getNickname() != null) {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "§8Seen §7" + other.getName() + " §8(§7" + plugin.essentials.getUser(other.getName()).getNickname() + "§8)"));
+                    sender.sendMessage("Seen " + other.getName() + " (" + plugin.essentials.getOfflineUser(other.getName()).getNickname() + ")");
                 } else {
-                    sender.sendMessage("§8Seen §7" + other.getName());
+                    sender.sendMessage("Seen " + other.getName());
                 }
 
-                sender.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(other)); //Passed.
-                sender.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(other)); //Partially Passed. Unknown result passed 1 hour.
-                sender.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytime(other));
-                sender.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(other)); //Passed.
+                sender.sendMessage("Logged in at: " + plugin.playtimeHandler.getLastLogin(other));
+                sender.sendMessage("Play time in session: " + plugin.playtimeHandler.getPlayTimeInSession(other));
+                sender.sendMessage("Total play time: " + plugin.playtimeHandler.getTotalPlaytime(other));
+                sender.sendMessage("First join date: " + plugin.playtimeHandler.getFirstJoinDate(other));
                 return true;
             }
         }
