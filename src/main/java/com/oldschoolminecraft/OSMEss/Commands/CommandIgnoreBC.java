@@ -25,6 +25,13 @@ public class CommandIgnoreBC implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
 
+                if (plugin.isScheduledDeathEnabled()) {
+                    if (plugin.scheduledDeath.getTimeToLive() <= 30) {
+                        player.sendMessage(plugin.cmdDisabledRestart);
+                        return true;
+                    }
+                }
+
                 if (plugin.playerDataHandler.hasIgnoreBroadcast(player)) {
                     plugin.playerDataHandler.updateIgnoreBroadcast(player, false);
                     player.sendMessage("§f[§aOSM§f] §bYou will §anow §bsee auto broadcast messages!");
@@ -37,7 +44,7 @@ public class CommandIgnoreBC implements CommandExecutor {
                 }
             }
             else {
-                sender.sendMessage("§cCommand can only be executed by a player!");
+                sender.sendMessage("Command can only be executed by a player!");
                 return true;
             }
         }
