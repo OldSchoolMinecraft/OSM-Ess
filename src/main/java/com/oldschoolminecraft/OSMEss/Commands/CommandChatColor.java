@@ -42,27 +42,27 @@ public class CommandChatColor implements CommandExecutor {
                         }
                         if (args[0].equalsIgnoreCase("&1") || args[0].equalsIgnoreCase("darkblue")) {
                             plugin.updateChatColorMessage(player, "&1");
-                            player.sendMessage("§aChat color message set to §1DARK_BLUE§a!");
+                            player.sendMessage("§aChat color message set to §1DARK BLUE§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&2") || args[0].equalsIgnoreCase("darkgreen")) {
                             plugin.updateChatColorMessage(player, "&2");
-                            player.sendMessage("§aChat color message set to §2DARK_GREEN§a!");
+                            player.sendMessage("§aChat color message set to §2DARK GREEN§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&3") || args[0].equalsIgnoreCase("darkaqua")) {
                             plugin.updateChatColorMessage(player, "&3");
-                            player.sendMessage("§aChat color message set to §3DARK_AQUA§a!");
+                            player.sendMessage("§aChat color message set to §3DARK AQUA§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&4") || args[0].equalsIgnoreCase("darkred")) {
                             plugin.updateChatColorMessage(player, "&4");
-                            player.sendMessage("§aChat color message set to §4DARK_RED§a!");
+                            player.sendMessage("§aChat color message set to §4DARK RED§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&5") || args[0].equalsIgnoreCase("darkpurple")) {
                             plugin.updateChatColorMessage(player, "&5");
-                            player.sendMessage("§aChat color message set to §5DARK_PURPLE§a!");
+                            player.sendMessage("§aChat color message set to §5DARK PURPLE§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&6") || args[0].equalsIgnoreCase("gold")) {
@@ -77,7 +77,7 @@ public class CommandChatColor implements CommandExecutor {
                         }
                         if (args[0].equalsIgnoreCase("&8") || args[0].equalsIgnoreCase("darkgray")) {
                             plugin.updateChatColorMessage(player, "&8");
-                            player.sendMessage("§aChat color message set to §8DARK_GRAY§a!");
+                            player.sendMessage("§aChat color message set to §8DARK GRAY§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&9") || args[0].equalsIgnoreCase("blue")) {
@@ -102,7 +102,7 @@ public class CommandChatColor implements CommandExecutor {
                         }
                         if (args[0].equalsIgnoreCase("&d") || args[0].equalsIgnoreCase("lightpurple") || args[0].equalsIgnoreCase("pink")) {
                             plugin.updateChatColorMessage(player, "&d");
-                            player.sendMessage("§aChat color message set to §dLIGHT_PURPLE§a!");
+                            player.sendMessage("§aChat color message set to §dLIGHT PURPLE§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&e") || args[0].equalsIgnoreCase("yellow")) {
@@ -123,7 +123,7 @@ public class CommandChatColor implements CommandExecutor {
                             return true;
                         }
                         else {
-                            player.sendMessage("§cInvalid color code inputted!");
+                            player.sendMessage("§cInvalid color code provided!");
                             player.sendMessage("§cUse /colors to see available color codes!");
                         }
                     }
@@ -133,7 +133,7 @@ public class CommandChatColor implements CommandExecutor {
                             Player other = Bukkit.getPlayer(args[1]);
 
                             if (other == null) {
-                                player.sendMessage("§cPlayer is not online!");
+                                player.sendMessage(plugin.playerNotFound);
                                 return true;
                             }
 
@@ -151,7 +151,7 @@ public class CommandChatColor implements CommandExecutor {
                             if (args[0].equalsIgnoreCase("&1") || args[0].equalsIgnoreCase("darkblue")) {
                                 if (plugin.hasChatColorMessageSet(other)) {
                                     plugin.updateChatColorMessage(other, "&1");
-                                    player.sendMessage("§aChat color message set to §1DARK_BLUE §afor " + other.getName() + "!");
+                                    player.sendMessage("§aChat color message set to §1DARK BLUE §afor " + other.getName() + "!");
                                     return true;
                                 }
                                 else {
@@ -162,7 +162,7 @@ public class CommandChatColor implements CommandExecutor {
                             if (args[0].equalsIgnoreCase("&2") || args[0].equalsIgnoreCase("darkgreen")) {
                                 if (plugin.hasChatColorMessageSet(other)) {
                                     plugin.updateChatColorMessage(other, "&2");
-                                    player.sendMessage("§aChat color message set to §2DARK_GREEN §afor " + other.getName() + "!");
+                                    player.sendMessage("§aChat color message set to §2DARK GREEN §afor " + other.getName() + "!");
                                     return true;
                                 }
                                 else {
@@ -173,7 +173,7 @@ public class CommandChatColor implements CommandExecutor {
                             if (args[0].equalsIgnoreCase("&3") || args[0].equalsIgnoreCase("darkaqua")) {
                                 if (plugin.hasChatColorMessageSet(other)) {
                                     plugin.updateChatColorMessage(other, "&3");
-                                    player.sendMessage("§aChat color message set to §3DARK_AQUA §afor " + other.getName() + "!");
+                                    player.sendMessage("§aChat color message set to §3DARK AQUA §afor " + other.getName() + "!");
                                     return true;
                                 }
                                 else {
@@ -184,7 +184,7 @@ public class CommandChatColor implements CommandExecutor {
                             if (args[0].equalsIgnoreCase("&4") || args[0].equalsIgnoreCase("darkred")) {
                                 if (plugin.hasChatColorMessageSet(other)) {
                                     plugin.updateChatColorMessage(other, "&4");
-                                    player.sendMessage("§aChat color message set to §4DARK_RED §afor " + other.getName() + "!");
+                                    player.sendMessage("§aChat color message set to §4DARK RED §afor " + other.getName() + "!");
                                     return true;
                                 }
                                 else {
@@ -195,7 +195,7 @@ public class CommandChatColor implements CommandExecutor {
                             if (args[0].equalsIgnoreCase("&5") || args[0].equalsIgnoreCase("darkpurple")) {
                                 if (plugin.hasChatColorMessageSet(other)) {
                                     plugin.updateChatColorMessage(other, "&5");
-                                    player.sendMessage("§aChat color message set to §5DARK_PURPLE §afor " + other.getName() + "!");
+                                    player.sendMessage("§aChat color message set to §5DARK PURPLE §afor " + other.getName() + "!");
                                     return true;
                                 }
                                 else {
@@ -228,7 +228,7 @@ public class CommandChatColor implements CommandExecutor {
                             if (args[0].equalsIgnoreCase("&8") || args[0].equalsIgnoreCase("darkgray")) {
                                 if (plugin.hasChatColorMessageSet(other)) {
                                     plugin.updateChatColorMessage(other, "&8");
-                                    player.sendMessage("§aChat color message set to §8DARK_GRAY §afor " + other.getName() + "!");
+                                    player.sendMessage("§aChat color message set to §8DARK GRAY §afor " + other.getName() + "!");
                                     return true;
                                 }
                                 else {
@@ -283,7 +283,7 @@ public class CommandChatColor implements CommandExecutor {
                             if (args[0].equalsIgnoreCase("&d") || args[0].equalsIgnoreCase("lightpurple") || args[0].equalsIgnoreCase("pink")) {
                                 if (plugin.hasChatColorMessageSet(other)) {
                                     plugin.updateChatColorMessage(other, "&d");
-                                    player.sendMessage("§aChat color message set to §dLIGHT_PURPLE §afor " + other.getName() + "!");
+                                    player.sendMessage("§aChat color message set to §dLIGHT PURPLE §afor " + other.getName() + "!");
                                     return true;
                                 }
                                 else {
@@ -325,18 +325,18 @@ public class CommandChatColor implements CommandExecutor {
                                 }
                             }
                             else {
-                                player.sendMessage("§cInvalid color code inputted!");
+                                player.sendMessage("§cInvalid color code provided!");
                                 player.sendMessage("§cUse /colors to see available color codes!");
                             }
                         }
                         else {
-                            player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                            player.sendMessage(plugin.noPermission);
                             return true;
                         }
                     }
                 }
                 else {
-                    player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                    player.sendMessage(plugin.noPermission);
                     return true;
                 }
             }
@@ -349,7 +349,7 @@ public class CommandChatColor implements CommandExecutor {
                 Player other = Bukkit.getPlayer(args[1]);
 
                 if (other == null) {
-                    sender.sendMessage("Player is not online!");
+                    sender.sendMessage("Error: Player not found.");
                     return true;
                 }
 
@@ -367,7 +367,7 @@ public class CommandChatColor implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("&1") || args[0].equalsIgnoreCase("darkblue")) {
                     if (plugin.hasChatColorMessageSet(other)) {
                         plugin.updateChatColorMessage(other, "&1");
-                        sender.sendMessage("Chat color message set to DARK_BLUE for " + other.getName() + "!");
+                        sender.sendMessage("Chat color message set to DARK BLUE for " + other.getName() + "!");
                         return true;
                     }
                     else {
@@ -378,7 +378,7 @@ public class CommandChatColor implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("&2") || args[0].equalsIgnoreCase("darkgreen")) {
                     if (plugin.hasChatColorMessageSet(other)) {
                         plugin.updateChatColorMessage(other, "&2");
-                        sender.sendMessage("Chat color message set to DARK_GREEN for " + other.getName() + "!");
+                        sender.sendMessage("Chat color message set to DARK GREEN for " + other.getName() + "!");
                         return true;
                     }
                     else {
@@ -389,7 +389,7 @@ public class CommandChatColor implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("&3") || args[0].equalsIgnoreCase("darkaqua")) {
                     if (plugin.hasChatColorMessageSet(other)) {
                         plugin.updateChatColorMessage(other, "&3");
-                        sender.sendMessage("Chat color message set to DARK_AQUA for " + other.getName() + "!");
+                        sender.sendMessage("Chat color message set to DARK AQUA for " + other.getName() + "!");
                         return true;
                     }
                     else {
@@ -400,7 +400,7 @@ public class CommandChatColor implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("&4") || args[0].equalsIgnoreCase("darkred")) {
                     if (plugin.hasChatColorMessageSet(other)) {
                         plugin.updateChatColorMessage(other, "&4");
-                        sender.sendMessage("Chat color message set to DARK_RED for " + other.getName() + "!");
+                        sender.sendMessage("Chat color message set to DARK RED for " + other.getName() + "!");
                         return true;
                     }
                     else {
@@ -411,7 +411,7 @@ public class CommandChatColor implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("&5") || args[0].equalsIgnoreCase("darkpurple")) {
                     if (plugin.hasChatColorMessageSet(other)) {
                         plugin.updateChatColorMessage(other, "&5");
-                        sender.sendMessage("Chat color message set to DARK_PURPLE for " + other.getName() + "!");
+                        sender.sendMessage("Chat color message set to DARK PURPLE for " + other.getName() + "!");
                         return true;
                     }
                     else {
@@ -444,7 +444,7 @@ public class CommandChatColor implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("&8") || args[0].equalsIgnoreCase("darkgray")) {
                     if (plugin.hasChatColorMessageSet(other)) {
                         plugin.updateChatColorMessage(other, "&8");
-                        sender.sendMessage("Chat color message set to DARK_GRAY for " + other.getName() + "!");
+                        sender.sendMessage("Chat color message set to DARK GRAY for " + other.getName() + "!");
                         return true;
                     }
                     else {
@@ -499,7 +499,7 @@ public class CommandChatColor implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("&d") || args[0].equalsIgnoreCase("lightpurple") || args[0].equalsIgnoreCase("pink")) {
                     if (plugin.hasChatColorMessageSet(other)) {
                         plugin.updateChatColorMessage(other, "&d");
-                        sender.sendMessage("Chat color message set to LIGHT_PURPLE for " + other.getName() + "!");
+                        sender.sendMessage("Chat color message set to LIGHT PURPLE for " + other.getName() + "!");
                         return true;
                     }
                     else {
@@ -541,7 +541,7 @@ public class CommandChatColor implements CommandExecutor {
                     }
                 }
                 else {
-                    sender.sendMessage("Invalid color code inputted!");
+                    sender.sendMessage("Invalid color code provided!");
                     sender.sendMessage("Use /colors to see available color codes!");
                 }
             }
