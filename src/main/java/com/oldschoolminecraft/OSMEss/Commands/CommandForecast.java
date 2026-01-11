@@ -48,7 +48,7 @@ public class CommandForecast implements CommandExecutor {
                     return true;
                 }
                 else {
-                    player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                    player.sendMessage(plugin.noPermission);
                     return true;
                 }
             }
