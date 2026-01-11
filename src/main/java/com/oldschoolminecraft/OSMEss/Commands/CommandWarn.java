@@ -32,7 +32,7 @@ public class CommandWarn implements CommandExecutor {
                     Player other = Bukkit.getServer().getPlayer(args[0].toLowerCase());
 
                     if (other == null) {
-                        player.sendMessage("§cPlayer is not online!");
+                        player.sendMessage(plugin.playerNotFound);
                         return true;
                     }
 
@@ -50,19 +50,19 @@ public class CommandWarn implements CommandExecutor {
                     return true;
                 }
                 else {
-                    player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                    player.sendMessage(plugin.noPermission);
                     return true;
                 }
             }
             if (args.length < 2) {
-                sender.sendMessage("§cUsage: /warn <player> <reason>");
+                sender.sendMessage("Usage: /warn <player> <reason>");
                 return true;
             }
 
             Player other = Bukkit.getServer().getPlayer(args[0]);
 
             if (other == null) {
-                sender.sendMessage("§cPlayer is not online!");
+                sender.sendMessage("Error: Player not found.");
                 return true;
             }
 
