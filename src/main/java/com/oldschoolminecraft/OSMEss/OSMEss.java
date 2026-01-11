@@ -144,16 +144,20 @@ public class OSMEss extends JavaPlugin {
         new CommandDenyBid(this);
         new CommandDiscord(this);
         new CommandForecast(this);
+        new CommandHighlightWarp(this);
+        new CommandHome(this);
+        new CommandHomes(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
         new CommandOSMEss(this);
-//        new CommandPing(this); Disabled until further notice.
         new CommandPTT(this);
         new CommandRainbow(this);
         new CommandSeen(this);
         new CommandStaff(this);
         new CommandWarn(this);
         new CommandWarnings(this);
+        new CommandWarp(this);
+        new CommandWarps(this);
 
         if (!isAuctionSystemEnabled()) {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Auction System: Disabled");
@@ -172,7 +176,6 @@ public class OSMEss extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
         cancelUpdateTop10Lists();
         auctionHandler.endAuction();
     }
@@ -207,6 +210,8 @@ public class OSMEss extends JavaPlugin {
         else return false;
     }
 
+
+//  Warning Methods
     public boolean isPlayerInWarningLogs(OfflinePlayer player) {
         if (this.warningsCFG.getConfigOption("Players." + player.getName().toLowerCase()) != null) return true;
         else return false;
@@ -240,7 +245,10 @@ public class OSMEss extends JavaPlugin {
             }
         }
     }
+//  Warning Methods
 
+
+//  ChatColor Methods
     public void updateChatColorMessage(Player player, String chatColorCode) {
         try {
             this.colorMessageCFG.setProperty("Players." + player.getName().toLowerCase() + ".Color", chatColorCode);
@@ -269,7 +277,10 @@ public class OSMEss extends JavaPlugin {
     public String getChatColorMessageSetting(Player player) {
         return this.colorMessageCFG.getString("Players." + player.getName().toLowerCase() + ".Color");
     }
+//  ChatColor Methods
 
+
+// Auction Setting Methods
     public boolean isAuctionSystemEnabled() {
         if (this.configSettingCFG.getConfigOption("Settings.Auction.enabled").equals(true)) return true;
         else return false;
@@ -296,6 +307,54 @@ public class OSMEss extends JavaPlugin {
     public Integer getPercentageToRequireConfirmation() {
         return (int) this.configSettingCFG.getConfigOption("Settings.Auction.percentageToRequireConfirmation");
     }
+// Auction Setting Methods
+
+
+//  Warp Highlight Methods
+    public boolean isWarpNameHighlighted(String warpName) {
+        if (this.configSettingCFG.getConfigOption("Warps.Highlight." + warpName.toLowerCase()) != null) return true;
+        else return false;
+    }
+
+    public boolean isWarpNameHighlightedInRGB1(String warpName) {
+        if (isWarpNameHighlighted(warpName) && getWarpNameHighlightColor(warpName).equals("&rgb1")) return true;
+        else return false;
+    }
+
+    public boolean isWarpNameHighlightedInRGB2(String warpName) {
+        if (isWarpNameHighlighted(warpName) && getWarpNameHighlightColor(warpName).equals("&rgb2")) return true;
+        else return false;
+    }
+
+    public String getWarpNameHighlightColor(String warpName) {
+        return this.configSettingCFG.getString("Warps.Highlight." + warpName.toLowerCase());
+    }
+
+    public void setWarpNameHighlightColor(String warpName, String chatColorCode) {
+        try {
+            if (essentials.getWarps().getWarp(warpName) != null) {
+                this.configSettingCFG.setProperty("Warps.Highlight." + warpName.toLowerCase(), chatColorCode);
+                this.configSettingCFG.save();
+            }
+        } catch (Exception ex) {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    public void delWarpNameHighlighted(String warpName) {
+        if (isWarpNameHighlighted(warpName)) {
+            try {
+                this.configSettingCFG.removeProperty("Warps.Highlight." + warpName.toLowerCase());
+                this.configSettingCFG.save();
+            } catch (Exception ex) {
+                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
+//  Warp Highlight Methods
+
 
     public void initAutoBC() {
 
@@ -440,4 +499,15 @@ public class OSMEss extends JavaPlugin {
 
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
+
+
+    public String auctionNotEnabled = "§cThe auction system is currently disabled!";
+    public String cmdDisabledRestart = "§cCommand is disabled as the server is about to restart!";
+    public String errorNeverJoinedEss = "§cError: Player never logged in before. (no Essentials data)";
+    public String errorNeverJoinedNoData = "§cError: Player never logged in before.";
+    public String invalidPageNum = "§cError: Invalid page number provided.";
+    public String invalidNumPara = "§cError: Invalid integer provided.";
+    public String noPermission = "§cYou do not have access to that command.";
+    public String playerNotFound = "§cError: Player not found.";
+    public String warpNotDefined = "§cError: No warps defined.";
 }
