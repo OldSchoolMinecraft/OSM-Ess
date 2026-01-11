@@ -23,7 +23,7 @@ public class CommandPTT implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("ptt")) {
             if (plugin.isScheduledDeathEnabled()) {
                 if (plugin.scheduledDeath.getTimeToLive() <= 30) {
-                    sender.sendMessage("§cCommand is disabled as the server is about to restart!");
+                    sender.sendMessage(plugin.cmdDisabledRestart);
                     return true;
                 }
             }
@@ -105,3 +105,4 @@ public class CommandPTT implements CommandExecutor {
         return sb.toString().trim();
     }
 }
+
