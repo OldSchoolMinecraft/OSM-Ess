@@ -32,7 +32,6 @@ public class CommandWarnings implements CommandExecutor {
                         return true;
                     }
                     if (args.length == 1) {
-                        //Todo: Check if player exists in the warning logs and list all their warnings.
                         Player other = Bukkit.getServer().getPlayer(args[0]);
 
                         if (other == null) {
@@ -49,7 +48,7 @@ public class CommandWarnings implements CommandExecutor {
                                 return true;
                             }
                             else { //Their records don't exist. Never been warned before or have had their records cleared.
-                                player.sendMessage("§cPlayer doesn't have any warnings!");
+                                player.sendMessage("§cError: Player doesn't have any warnings.");
                                 return true;
                             }
                         }
@@ -64,13 +63,12 @@ public class CommandWarnings implements CommandExecutor {
                             return true;
                         }
                         else { //Their records don't exist. Never been warned before or have had their records cleared.
-                            player.sendMessage("§cPlayer doesn't have any warnings!");
+                            player.sendMessage("§cError: Player doesn't have any warnings.");
                             return true;
                         }
                     }
                     if (args.length == 2) {
                         if (args[1].equalsIgnoreCase("clear")) {
-                            //Todo: Check if player exits in warnings log and clear/remove them from the logs.
                             Player other = Bukkit.getServer().getPlayer(args[0].toLowerCase());
 
                             if (other == null) {
@@ -82,7 +80,7 @@ public class CommandWarnings implements CommandExecutor {
                                     return true;
                                 }
                                 else { //Their records don't exist. Never been warned before or have had their records cleared.
-                                    player.sendMessage("§cPlayer doesn't have any warnings!");
+                                    player.sendMessage("§cError: Player doesn't have any warnings.");
                                     return true;
                                 }
                             }
@@ -92,7 +90,7 @@ public class CommandWarnings implements CommandExecutor {
                                 return true;
                             }
                             else { //Their records don't exist. Never been warned before or have had their records cleared.
-                                player.sendMessage("§cPlayer doesn't have any warnings!");
+                                player.sendMessage("§cError: Player doesn't have any warnings.");
                                 return true;
                             }
                         }
@@ -103,13 +101,13 @@ public class CommandWarnings implements CommandExecutor {
                     }
                 }
                 else {
-                    player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                    player.sendMessage(plugin.noPermission);
                     return true;
                 }
             }
             else {
                 if (args.length == 0 || args.length > 2) {
-                    sender.sendMessage("§cUsage: /warnings <player> [clear]");
+                    sender.sendMessage("Usage: /warnings <player> [clear]");
                     return true;
                 }
                 if (args.length == 1) {
@@ -120,32 +118,32 @@ public class CommandWarnings implements CommandExecutor {
                         OfflinePlayer offline = Bukkit.getServer().getOfflinePlayer(args[0]);
 
                         if (plugin.isPlayerInWarningLogs(offline)) { //Their records exist & have been warned before.
-                            sender.sendMessage("§8" + offline.getName() + "§7's Warnings:");
+                            sender.sendMessage(offline.getName() + "'s Warnings:");
 
                             List<String> warnings = plugin.warningsCFG.getStringList("Players." + offline.getName().toLowerCase() + ".Warnings",  new ArrayList<>());
 
                             for (String warning : warnings) {
-                                sender.sendMessage("§8- §7" + warning);
+                                sender.sendMessage("- " + warning);
                             }
                             return true;
                         }
                         else { //Their records don't exist. Never been warned before or have had their records cleared.
-                            sender.sendMessage("§cPlayer doesn't have any warnings!");
+                            sender.sendMessage("Error: Player doesn't have any warnings.");
                             return true;
                         }
                     }
                     if (plugin.isPlayerInWarningLogs(other)) { //Their records exist & have been warned before.
-                        sender.sendMessage("§8" + other.getName() + "§7's Warnings:");
+                        sender.sendMessage(other.getName() + "'s Warnings:");
 
                         List<String> warnings = plugin.warningsCFG.getStringList("Players." + other.getName().toLowerCase() + ".Warnings",  new ArrayList<>());
 
                         for (String warning : warnings) {
-                            sender.sendMessage("§8- §7" + warning);
+                            sender.sendMessage("- " + warning);
                         }
                         return true;
                     }
                     else { //Their records don't exist. Never been warned before or have had their records cleared.
-                        sender.sendMessage("§cPlayer doesn't have any warnings!");
+                        sender.sendMessage("Error: Player doesn't have any warnings.");
                         return true;
                     }
                 }
@@ -159,26 +157,26 @@ public class CommandWarnings implements CommandExecutor {
 
                             if (plugin.isPlayerInWarningLogs(offline)) { //Their records exist & have been warned before.
                                 plugin.clearWarnings(offline);
-                                sender.sendMessage("§8" + offline.getName() + "§7's warnings have been cleared!");
+                                sender.sendMessage(offline.getName() + "'s warnings have been cleared!");
                                 return true;
                             }
                             else { //Their records don't exist. Never been warned before or have had their records cleared.
-                                sender.sendMessage("§cPlayer doesn't have any warnings!");
+                                sender.sendMessage("Error: Player doesn't have any warnings.");
                                 return true;
                             }
                         }
                         if (plugin.isPlayerInWarningLogs(other)) { //Their records exist & have been warned before.
                             plugin.clearWarnings(other);
-                            sender.sendMessage("§8" + other.getName() + "§7's warnings have been cleared!");
+                            sender.sendMessage( other.getName() + "'s warnings have been cleared!");
                             return true;
                         }
                         else { //Their records don't exist. Never been warned before or have had their records cleared.
-                            sender.sendMessage("§cPlayer doesn't have any warnings!");
+                            sender.sendMessage("Error: Player doesn't have any warnings.");
                             return true;
                         }
                     }
                     else {
-                        sender.sendMessage("§cUsage: /warnings <player> [clear]");
+                        sender.sendMessage("Usage: /warnings <player> [clear]");
                         return true;
                     }
                 }
