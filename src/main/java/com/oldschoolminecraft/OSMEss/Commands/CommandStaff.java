@@ -25,7 +25,7 @@ public class CommandStaff implements CommandExecutor {
                 if (player.isOp() || player.hasPermission("osmess.staff")) {
                     if (plugin.isScheduledDeathEnabled()) {
                         if (plugin.scheduledDeath.getTimeToLive() <= 30) {
-                            player.sendMessage("§cCommand is disabled as the server is about to restart!");
+                            player.sendMessage(plugin.cmdDisabledRestart);
                             return true;
                         }
                     }
@@ -49,7 +49,7 @@ public class CommandStaff implements CommandExecutor {
                     }
                 }
                 else {
-                    player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                    player.sendMessage(plugin.noPermission);
                     return true;
                 }
             }
