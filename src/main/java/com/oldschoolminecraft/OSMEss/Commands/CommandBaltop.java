@@ -18,6 +18,13 @@ public class CommandBaltop implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
         if (cmd.getName().equalsIgnoreCase("baltop")) {
+            if (plugin.isScheduledDeathEnabled()) {
+                if (plugin.scheduledDeath.getTimeToLive() <= 30) {
+                    sender.sendMessage(plugin.cmdDisabledRestart);
+                    return true;
+                }
+            }
+
             sender.sendMessage("§7Users with the top balances (refreshes hourly):");
             java.util.List<java.util.Map.Entry<String, Integer>> topBalances = getTopBalances(10);
 
