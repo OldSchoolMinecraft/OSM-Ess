@@ -31,7 +31,7 @@ public class CommandBid implements CommandExecutor {
                 Player player = (Player) sender;
 
                 if (!plugin.isAuctionSystemEnabled()) {
-                    player.sendMessage("§cThe auction system is currently disabled!");
+                    player.sendMessage(plugin.auctionNotEnabled);
                     return true;
                 }
 
@@ -39,7 +39,7 @@ public class CommandBid implements CommandExecutor {
                     if (args.length != 1) {
                         if (plugin.isScheduledDeathEnabled()) {
                             if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
-                                player.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                player.sendMessage(plugin.cmdDisabledRestart);
                                 return true;
                             }
                         }
@@ -90,7 +90,7 @@ public class CommandBid implements CommandExecutor {
                                 if (plugin.auctionHandler.getTopBidAmount() != 0) {
                                     double percentage = (amount / plugin.auctionHandler.getTopBidAmount());
 
-                                    if (percentage >= plugin.getPercentageToRequireConfirmation()) { // Default: 5%. Bidder has to /confirmbid to bid that amount.
+                                    if (percentage >= plugin.getPercentageToRequireConfirmation() || amount >= 1500) { // Bidder has to /confirmbid to bid that amount.
                                         confirmBidList.put(player.getName(), amount);
                                         player.sendMessage("§cBid amount seems irregular! §4(§e$" + amount + "§4)");
                                         player.sendMessage("§cTo proceed, type §e/confirmbid §cbefore the auction ends.");
@@ -110,7 +110,7 @@ public class CommandBid implements CommandExecutor {
                                     plugin.auctionHandler.addToAuction(player, amount);
                                 }
                             } catch (NumberFormatException ex) {
-                                player.sendMessage("§cInvalid integer provided!");
+                                player.sendMessage(plugin.invalidNumPara);
                             }
 
                             return true;
@@ -127,6 +127,3 @@ public class CommandBid implements CommandExecutor {
         return true;
     }
 }
-
-
-
