@@ -46,7 +46,7 @@ public class CommandOSMEss implements CommandExecutor {
                             return true;
                         }
                         else {
-                            player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                            player.sendMessage(plugin.noPermission);
                             return true;
                         }
                     }
@@ -61,7 +61,7 @@ public class CommandOSMEss implements CommandExecutor {
                             return true;
                         }
                         else {
-                            player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                            player.sendMessage(plugin.noPermission);
                             return true;
                         }
                     }
@@ -90,7 +90,7 @@ public class CommandOSMEss implements CommandExecutor {
                             }
                         }
                         else {
-                            player.sendMessage("§cI'm sorry, Dave. I'm afraid I can't do that.");
+                            player.sendMessage(plugin.noPermission);
                             return true;
                         }
                     }
@@ -114,6 +114,7 @@ public class CommandOSMEss implements CommandExecutor {
                     sender.sendMessage("Administration Commands:");
                     sender.sendMessage("/osmess endauction - Ends a current auction.");
                     sender.sendMessage("/osmess reload - Reloads all yml files.");
+//                    sender.sendMessage("/osmess setplaytime - Modifies a player's playtime data. (CONSOLE only)"); // Coming Soon.
                     sender.sendMessage("/osmess toggleauction - Enables/Disables the auction system.");
                     return true;
                 }
