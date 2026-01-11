@@ -27,7 +27,7 @@ public class CommandAuction implements CommandExecutor {
                 Player player = (Player) sender;
 
                 if (!plugin.isAuctionSystemEnabled()) {
-                    player.sendMessage("§cThe auction system is currently disabled!");
+                    player.sendMessage(plugin.auctionNotEnabled);
                     return true;
                 }
 
@@ -45,7 +45,7 @@ public class CommandAuction implements CommandExecutor {
                         else {
                             if (plugin.isScheduledDeathEnabled()) {
                                 if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
-                                    player.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                    player.sendMessage(plugin.cmdDisabledRestart);
                                     return true;
                                 }
                             }
@@ -59,7 +59,7 @@ public class CommandAuction implements CommandExecutor {
                     if (args.length != 1) {
                         if (plugin.isScheduledDeathEnabled()) {
                             if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
-                                player.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                player.sendMessage(plugin.cmdDisabledRestart);
                                 return true;
                             }
                         }
@@ -77,7 +77,7 @@ public class CommandAuction implements CommandExecutor {
                         else {
                             if (plugin.isScheduledDeathEnabled()) {
                                 if (plugin.scheduledDeath.getTimeToLive() <= 180) { // Disallow the command within 3 minutes of a restart.
-                                    player.sendMessage("§cCommand is disabled as the server is about to restart!");
+                                    player.sendMessage(plugin.cmdDisabledRestart);
                                     return true;
                                 }
                             }
@@ -119,7 +119,7 @@ public class CommandAuction implements CommandExecutor {
                                 }
 
                             } catch (NumberFormatException ex) {
-                                player.sendMessage("§cInvalid integer provided!");
+                                player.sendMessage(plugin.invalidNumPara);
                             }
 
                             return true;
@@ -143,7 +143,7 @@ public class CommandAuction implements CommandExecutor {
                     return true;
                 }
                 else {
-                    sender.sendMessage("§cThere is no auction to look at!");
+                    sender.sendMessage("There is no auction to look at!");
                     return true;
                 }
             }
