@@ -9,6 +9,9 @@
 - /denybid - Denies a bid you have on hold.
 - /discord - Gives you the link to the discord server.
 - /forecast - Shows the weather forecast.
+- /highlightwarp - Sets an existing warp to a specific color from dark gray.
+- /home - Reformatted look of /home.
+- /homes - Paginated homes. (5 warps per page)
 - /ignorebroadcast - Toggle visibility of the auto broadcast messages.
 - /list - Reformatted look of online players.
 - /osmess endauction - Forcefully ends an auction
@@ -20,6 +23,8 @@
 - /staff - Toggles staff mode & saves regular inventory.
 - /warn - Warns a player with a reason.
 - /warnings - Shows a player's list of warnings, or choose to clear them.
+- /warp - Reformated look of /warp.
+- /warps - Paginated warps. (5 warps per page)
 
 **Permissions:**
 - `osmess.chatcolor` - Permission to use /chatcolor.
@@ -28,6 +33,7 @@
 - `osmess.command.reload` - Permission to use /osmess reload. [Requires `osmess.command`]
 - `osmess.command.toggleauction` - Permission to use /osmess toggleauction. [Requires `osmess.command`
 - `osmess.forecast` - Permission to use /forecast.
+- `osmess.highlightwarp` - Permission to use /highlightwarp.
 - `osmess.rainbow` - Permission to use /rainbow.
 - `osmess.staff` - Permission to use /staff.
 - `osmess.warn` - Permission to use /warn.
