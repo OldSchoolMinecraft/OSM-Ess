@@ -104,8 +104,8 @@ public class CommandHome implements CommandExecutor {
                                 return true;
                             }
                         }
-                        else {
-                            player.sendMessage(plugin.noPermission);
+                        else { // No Permission
+                            player.sendMessage("§cError: You do not have permission to view the homes of others");
                             return true;
                         }
                     }
@@ -145,9 +145,7 @@ public class CommandHome implements CommandExecutor {
                                                 return true;
                                             }
                                         } catch (Exception ex) {
-                                            player.sendMessage("§cError whilst teleporting to '" + args[0] + "'");
-                                            player.sendMessage("§cReport to system administrator or plugin developer:");
-                                            player.sendMessage("§b" + ex.getMessage());
+                                            player.sendMessage("§cError: " + ex.getMessage());
 
                                             Bukkit.getLogger().severe("Error whilst teleporting " + player.getName() + " to " + args[0] + "!");
                                             Bukkit.getServer().getLogger().severe(ex.getMessage());
@@ -188,9 +186,7 @@ public class CommandHome implements CommandExecutor {
                                             return true;
                                         }
                                     } catch (Exception ex) {
-                                        player.sendMessage("§cError whilst teleporting to '" + args[0] + "'");
-                                        player.sendMessage("§cReport to system administrator or plugin developer:");
-                                        player.sendMessage("§b" + ex.getMessage());
+                                        player.sendMessage("§cError: " + ex.getMessage());
 
                                         Bukkit.getLogger().severe("Error whilst teleporting " + player.getName() + " to " + args[0] + "!");
                                         Bukkit.getServer().getLogger().severe(ex.getMessage());
@@ -207,12 +203,12 @@ public class CommandHome implements CommandExecutor {
                                 return true;
                             }
                         }
-                        else {
-                            player.sendMessage(plugin.noPermission);
+                        else { // No Permission
+                            player.sendMessage("§cError: You do not have permission to view the homes of others");
                             return true;
                         }
                     }
-                    else { // No ':' at the end; therefore its the player's own home.
+                    else { // No ':' at the end; therefore it's the player's own home.
                         if (plugin.essentials.getUser(player).hasHome() || !plugin.essentials.getUser(player).getHomes().isEmpty()) {
                             try {
                                 if (plugin.essentials.getUser(player).getHome(args[0]) != null) {
@@ -231,9 +227,7 @@ public class CommandHome implements CommandExecutor {
                                     return true;
                                 }
                             } catch (Exception ex) {
-                                player.sendMessage("§cError whilst teleporting to '" + args[0] + "'");
-                                player.sendMessage("§cReport to system administrator or plugin developer:");
-                                player.sendMessage("§b" + ex.getMessage());
+                                player.sendMessage("§cError: " + ex.getMessage());
 
                                 Bukkit.getLogger().severe("Error whilst teleporting " + player.getName() + " to " + args[0] + "!");
                                 Bukkit.getServer().getLogger().severe(ex.getMessage());
@@ -244,6 +238,16 @@ public class CommandHome implements CommandExecutor {
                             player.sendMessage("§cError: You don't have any homes.");
                             return true;
                         }
+                    }
+                }
+                else {
+                    if (player.isOp() || player.hasPermission("essentials.home.others")) {
+                        player.sendMessage("§cUsage: /home <home name> or /home [player]:<home name>");
+                        return true;
+                    }
+                    else {
+                        player.sendMessage("§cUsage: /home <home name> ");
+                        return true;
                     }
                 }
             }
