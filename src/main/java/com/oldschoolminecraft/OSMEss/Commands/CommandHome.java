@@ -1,11 +1,11 @@
 package com.oldschoolminecraft.OSMEss.Commands;
 
+import com.earth2me.essentials.Trade;
+import com.earth2me.essentials.User;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -130,15 +130,20 @@ public class CommandHome implements CommandExecutor {
 
                                         try {
                                             if (plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline) != null) {
-                                                World world = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getWorld();
-                                                double x = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getBlockX() + 0.5;
-                                                double y = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getBlockY();
-                                                double z = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getBlockZ() + 0.5;
-                                                float yaw = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getYaw();
-                                                float pitch = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getPitch();
+//                                                World world = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getWorld();
+//                                                double x = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getBlockX() + 0.5;
+//                                                double y = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getBlockY();
+//                                                double z = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getBlockZ() + 0.5;
+//                                                float yaw = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getYaw();
+//                                                float pitch = plugin.essentials.getUser(offline.getName().toLowerCase()).getHome(homeOfOffline).getPitch();
+//
+//                                                player.teleport(new Location(world, x, y, z, yaw, pitch));
 
-                                                player.teleport(new Location(world, x, y, z, yaw, pitch));
-                                                return true;
+
+                                                User user = plugin.essentials.getUser(player);
+                                                Trade trade = new Trade(player.getName(), plugin.essentials);
+                                                user.getTeleport().home(plugin.essentials.getUser(offline.getName().toLowerCase()), homeOfOffline, trade);
+                                                return true; /* Fixed */
                                             }
                                             else {
                                                 player.sendMessage("§cError: Player doesn't have a home with that name.");
@@ -167,19 +172,23 @@ public class CommandHome implements CommandExecutor {
                                 int separatorIndex = args[0].indexOf(seperator);
 
                                 if (separatorIndex != -1) {
-                                    String homeOfOffline = args[0].substring(separatorIndex + 1);
+                                    String homeOfOnline = args[0].substring(separatorIndex + 1);
 
                                     try {
-                                        if (plugin.essentials.getUser(other).getHome(homeOfOffline) != null) {
-                                            World world = plugin.essentials.getUser(other).getHome(homeOfOffline).getWorld();
-                                            double x = plugin.essentials.getUser(other).getHome(homeOfOffline).getBlockX() + 0.5;
-                                            double y = plugin.essentials.getUser(other).getHome(homeOfOffline).getBlockY();
-                                            double z = plugin.essentials.getUser(other).getHome(homeOfOffline).getBlockZ() + 0.5;
-                                            float yaw = plugin.essentials.getUser(other).getHome(homeOfOffline).getYaw();
-                                            float pitch = plugin.essentials.getUser(other).getHome(homeOfOffline).getPitch();
+                                        if (plugin.essentials.getUser(other).getHome(homeOfOnline) != null) {
+//                                            World world = plugin.essentials.getUser(other).getHome(homeOfOffline).getWorld();
+//                                            double x = plugin.essentials.getUser(other).getHome(homeOfOffline).getBlockX() + 0.5;
+//                                            double y = plugin.essentials.getUser(other).getHome(homeOfOffline).getBlockY();
+//                                            double z = plugin.essentials.getUser(other).getHome(homeOfOffline).getBlockZ() + 0.5;
+//                                            float yaw = plugin.essentials.getUser(other).getHome(homeOfOffline).getYaw();
+//                                            float pitch = plugin.essentials.getUser(other).getHome(homeOfOffline).getPitch();
+//
+//                                            player.teleport(new Location(world, x, y, z, yaw, pitch));
 
-                                            player.teleport(new Location(world, x, y, z, yaw, pitch));
-                                            return true;
+                                            User user = plugin.essentials.getUser(player);
+                                            Trade trade = new Trade(player.getName(), plugin.essentials);
+                                            user.getTeleport().home(plugin.essentials.getUser(other), homeOfOnline, trade);
+                                            return true; /* Fixed */
                                         }
                                         else {
                                             player.sendMessage("§cError: Player doesn't have a home with that name.");
@@ -212,15 +221,19 @@ public class CommandHome implements CommandExecutor {
                         if (plugin.essentials.getUser(player).hasHome() || !plugin.essentials.getUser(player).getHomes().isEmpty()) {
                             try {
                                 if (plugin.essentials.getUser(player).getHome(args[0]) != null) {
-                                    World world = plugin.essentials.getUser(player).getHome(args[0]).getWorld();
-                                    double x = plugin.essentials.getUser(player).getHome(args[0]).getBlockX() + 0.5;
-                                    double y = plugin.essentials.getUser(player).getHome(args[0]).getBlockY();
-                                    double z = plugin.essentials.getUser(player).getHome(args[0]).getBlockZ() + 0.5;
-                                    float yaw = plugin.essentials.getUser(player).getHome(args[0]).getYaw();
-                                    float pitch = plugin.essentials.getUser(player).getHome(args[0]).getPitch();
+//                                    World world = plugin.essentials.getUser(player).getHome(args[0]).getWorld();
+//                                    double x = plugin.essentials.getUser(player).getHome(args[0]).getBlockX() + 0.5;
+//                                    double y = plugin.essentials.getUser(player).getHome(args[0]).getBlockY();
+//                                    double z = plugin.essentials.getUser(player).getHome(args[0]).getBlockZ() + 0.5;
+//                                    float yaw = plugin.essentials.getUser(player).getHome(args[0]).getYaw();
+//                                    float pitch = plugin.essentials.getUser(player).getHome(args[0]).getPitch();
+//
+//                                    player.teleport(new Location(world, x, y, z, yaw, pitch));
 
-                                    player.teleport(new Location(world, x, y, z, yaw, pitch));
-                                    return true;
+                                    User user = plugin.essentials.getUser(player);
+                                    Trade trade = new Trade(player.getName(), plugin.essentials);
+                                    user.getTeleport().home(user, args[0], trade);
+                                    return true; /* Fixed */
                                 }
                                 else {
                                     player.sendMessage("§cError: You don't have a home with that name.");
