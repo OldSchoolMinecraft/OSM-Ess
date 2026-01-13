@@ -1,10 +1,10 @@
 package com.oldschoolminecraft.OSMEss.Commands;
 
+import com.earth2me.essentials.Trade;
+import com.earth2me.essentials.User;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -127,32 +127,38 @@ public class CommandWarp implements CommandExecutor {
                     if (!plugin.essentials.getWarps().isEmpty()) {
                         try {
                             if (plugin.essentials.getWarps().getWarp(args[0]) != null) {
-                                World world = plugin.essentials.getWarps().getWarp(args[0]).getWorld();
-                                double x = plugin.essentials.getWarps().getWarp(args[0]).getBlockX() + 0.5;
-                                double y = plugin.essentials.getWarps().getWarp(args[0]).getBlockY();
-                                double z = plugin.essentials.getWarps().getWarp(args[0]).getBlockZ() + 0.5;
-                                float yaw = plugin.essentials.getWarps().getWarp(args[0]).getYaw();
-                                float pitch = plugin.essentials.getWarps().getWarp(args[0]).getPitch();
+//                                World world = plugin.essentials.getWarps().getWarp(args[0]).getWorld();
+//                                double x = plugin.essentials.getWarps().getWarp(args[0]).getBlockX() + 0.5;
+//                                double y = plugin.essentials.getWarps().getWarp(args[0]).getBlockY();
+//                                double z = plugin.essentials.getWarps().getWarp(args[0]).getBlockZ() + 0.5;
+//                                float yaw = plugin.essentials.getWarps().getWarp(args[0]).getYaw();
+//                                float pitch = plugin.essentials.getWarps().getWarp(args[0]).getPitch();
 
-                                player.teleport(new Location(world, x, y, z, yaw, pitch));
+//                                other.teleport(new Location(world, x, y, z, yaw, pitch));
 
-                                if (plugin.isWarpNameHighlighted(args[0])) {
-                                    if (plugin.isWarpNameHighlightedInRGB1(args[0])) {
-                                        player.sendMessage("§7Warping to " + applyRainbowSet1(args[0]) + "§7.");
-                                    }
-                                    else if (plugin.isWarpNameHighlightedInRGB2(args[0])) {
-                                        player.sendMessage("§7Warping to " + applyRainbowSet2(args[0]) + "§7.");
-                                    }
-                                    else {
-                                        player.sendMessage("§7Warping to " + plugin.getWarpNameHighlightColor(args[0]) + args[0] + "§7.");
-                                    }
+                                User user = plugin.essentials.getUser(player);
+                                Trade trade = new Trade(player.getName(), plugin.essentials);
+                                user.getTeleport().warp(args[0], trade);
 
-                                    return true;
-                                }
-                                else {
-                                    player.sendMessage("§7Warping to §8" + args[0] + "§7.");
-                                    return true;
-                                }
+
+//                                if (plugin.isWarpNameHighlighted(args[0])) {
+//                                    if (plugin.isWarpNameHighlightedInRGB1(args[0])) {
+//                                        player.sendMessage("§7Warping to " + applyRainbowSet1(args[0]) + "§7.");
+//                                    }
+//                                    else if (plugin.isWarpNameHighlightedInRGB2(args[0])) {
+//                                        player.sendMessage("§7Warping to " + applyRainbowSet2(args[0]) + "§7.");
+//                                    }
+//                                    else {
+//                                        player.sendMessage("§7Warping to " + plugin.getWarpNameHighlightColor(args[0]) + args[0] + "§7.");
+//                                    }
+//
+//                                    return true;
+//                                }
+//                                else {
+//                                    player.sendMessage("§7Warping to §8" + args[0] + "§7.");
+//                                    return true;
+//                                }
+                                return true;
                             }
                             else {
                                 player.sendMessage("§cError: That warp does not exist.");
@@ -184,32 +190,38 @@ public class CommandWarp implements CommandExecutor {
                         if (!plugin.essentials.getWarps().isEmpty()) {
                             try {
                                 if (plugin.essentials.getWarps().getWarp(args[0]) != null) {
-                                    World world = plugin.essentials.getWarps().getWarp(args[0]).getWorld();
-                                    double x = plugin.essentials.getWarps().getWarp(args[0]).getBlockX() + 0.5;
-                                    double y = plugin.essentials.getWarps().getWarp(args[0]).getBlockY();
-                                    double z = plugin.essentials.getWarps().getWarp(args[0]).getBlockZ() + 0.5;
-                                    float yaw = plugin.essentials.getWarps().getWarp(args[0]).getYaw();
-                                    float pitch = plugin.essentials.getWarps().getWarp(args[0]).getPitch();
+//                                    World world = plugin.essentials.getWarps().getWarp(args[0]).getWorld();
+//                                    double x = plugin.essentials.getWarps().getWarp(args[0]).getBlockX() + 0.5;
+//                                    double y = plugin.essentials.getWarps().getWarp(args[0]).getBlockY();
+//                                    double z = plugin.essentials.getWarps().getWarp(args[0]).getBlockZ() + 0.5;
+//                                    float yaw = plugin.essentials.getWarps().getWarp(args[0]).getYaw();
+//                                    float pitch = plugin.essentials.getWarps().getWarp(args[0]).getPitch();
+//
+//                                    other.teleport(new Location(world, x, y, z, yaw, pitch));
 
-                                    other.teleport(new Location(world, x, y, z, yaw, pitch));
+                                    User user = plugin.essentials.getUser(other);
+                                    Trade trade = new Trade(other.getName(), plugin.essentials);
+                                    user.getTeleport().warp(args[0], trade);
 
-                                    if (plugin.isWarpNameHighlighted(args[0])) {
-                                        if (plugin.isWarpNameHighlightedInRGB1(args[0])) {
-                                            player.sendMessage("§7Warping §8" + other.getName() + " §7to " + applyRainbowSet1(args[0]) + "§7.");
-                                        }
-                                        else if (plugin.isWarpNameHighlightedInRGB2(args[0])) {
-                                            player.sendMessage("§7Warping §8" + other.getName() + " §7to " + applyRainbowSet2(args[0]) + "§7.");
-                                        }
-                                        else {
-                                            player.sendMessage("§7Warping §8" + other.getName() + " §7to " + plugin.getWarpNameHighlightColor(args[0]) + args[0] + "§7.");
-                                        }
 
-                                        return true;
-                                    }
-                                    else {
-                                        player.sendMessage("§7Warping §8" + other.getName() + " §7to §8" + args[0] + "§7.");
-                                        return true;
-                                    }
+//                                    if (plugin.isWarpNameHighlighted(args[0])) {
+//                                        if (plugin.isWarpNameHighlightedInRGB1(args[0])) {
+//                                            player.sendMessage("§7Warping §8" + other.getName() + " §7to " + applyRainbowSet1(args[0]) + "§7.");
+//                                        }
+//                                        else if (plugin.isWarpNameHighlightedInRGB2(args[0])) {
+//                                            player.sendMessage("§7Warping §8" + other.getName() + " §7to " + applyRainbowSet2(args[0]) + "§7.");
+//                                        }
+//                                        else {
+//                                            player.sendMessage("§7Warping §8" + other.getName() + " §7to " + plugin.getWarpNameHighlightColor(args[0]) + args[0] + "§7.");
+//                                        }
+//
+//                                        return true;
+//                                    }
+//                                    else {
+//                                        player.sendMessage("§7Warping §8" + other.getName() + " §7to §8" + args[0] + "§7.");
+//                                        return true;
+//                                    }
+                                    return true;
                                 }
                                 else {
                                     player.sendMessage("§cError: That warp does not exist.");
@@ -334,16 +346,20 @@ public class CommandWarp implements CommandExecutor {
                     if (!plugin.essentials.getWarps().isEmpty()) {
                         try {
                             if (plugin.essentials.getWarps().getWarp(args[0]) != null) {
-                                World world = plugin.essentials.getWarps().getWarp(args[0]).getWorld();
-                                double x = plugin.essentials.getWarps().getWarp(args[0]).getBlockX() + 0.5;
-                                double y = plugin.essentials.getWarps().getWarp(args[0]).getBlockY();
-                                double z = plugin.essentials.getWarps().getWarp(args[0]).getBlockZ() + 0.5;
-                                float yaw = plugin.essentials.getWarps().getWarp(args[0]).getYaw();
-                                float pitch = plugin.essentials.getWarps().getWarp(args[0]).getPitch();
+//                                World world = plugin.essentials.getWarps().getWarp(args[0]).getWorld();
+//                                double x = plugin.essentials.getWarps().getWarp(args[0]).getBlockX() + 0.5;
+//                                double y = plugin.essentials.getWarps().getWarp(args[0]).getBlockY();
+//                                double z = plugin.essentials.getWarps().getWarp(args[0]).getBlockZ() + 0.5;
+//                                float yaw = plugin.essentials.getWarps().getWarp(args[0]).getYaw();
+//                                float pitch = plugin.essentials.getWarps().getWarp(args[0]).getPitch();
+//
+//                                other.teleport(new Location(world, x, y, z, yaw, pitch));
 
-                                other.teleport(new Location(world, x, y, z, yaw, pitch));
+                                User user = plugin.essentials.getUser(other);
+                                Trade trade = new Trade(other.getName(), plugin.essentials);
+                                user.getTeleport().warp(args[0], trade);
 
-                                sender.sendMessage("Warping " + other.getName() + " to " + args[0] + ".");
+//                                sender.sendMessage("Warping " + other.getName() + " to " + args[0] + ".");
                                 return true;
                             }
                             else {
