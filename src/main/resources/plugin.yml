@@ -29,6 +29,8 @@ commands:
     description: Denies a bid you have on hold.
   discord:
     description: Gives you the link to the discord server.
+  findhome:
+    description: Searches and see if a home exists with that name.
   forecast:
     description: Shows the weather forecast.
   highlightwarp:
