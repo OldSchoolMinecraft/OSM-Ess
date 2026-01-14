@@ -300,6 +300,8 @@ public class CommandHome implements CommandExecutor {
                         sender.sendMessage("Error: Player doesn't have any homes.");
                         return true;
                     }
+
+                    return true;
                 }
 
                 // Show the online player's homes to the CONSOLE.
@@ -316,12 +318,12 @@ public class CommandHome implements CommandExecutor {
                     }
 
                     sender.sendMessage(other.getName() + "'s Homes (" + homes.size() + "): " + stringBuilder.toString());
-                    return true;
                 }
                 else {
                     sender.sendMessage("Error: Player doesn't have any homes.");
                     return true;
                 }
+                return true;
             }
         }
 
