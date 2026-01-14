@@ -143,6 +143,7 @@ public class OSMEss extends JavaPlugin {
         new CommandConfirmBid(this);
         new CommandDenyBid(this);
         new CommandDiscord(this);
+        new CommandFindHome(this);
         new CommandForecast(this);
         new CommandHighlightWarp(this);
         new CommandHome(this);
