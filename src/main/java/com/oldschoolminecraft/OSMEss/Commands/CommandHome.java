@@ -266,8 +266,6 @@ public class CommandHome implements CommandExecutor {
                 }
             }
             else {
-                sender.sendMessage("Command can only be executed by a player!");
-
                 if (args.length != 1) {
                     sender.sendMessage("Usage: /home <player>");
                     return true;
