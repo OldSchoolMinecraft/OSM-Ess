@@ -29,6 +29,7 @@ public class CommandHome implements CommandExecutor {
                 Player player = (Player) sender;
 
                 if (args.length == 0) {
+                    // Show the player's own homes.
                     if (plugin.essentials.getUser(player).hasHome() || !plugin.essentials.getUser(player).getHomes().isEmpty()) {
                         List<String> homes = plugin.essentials.getUser(player).getHomes();
                         StringBuilder stringBuilder = new StringBuilder();
@@ -266,7 +267,63 @@ public class CommandHome implements CommandExecutor {
             }
             else {
                 sender.sendMessage("Command can only be executed by a player!");
-                return true;
+
+                if (args.length != 1) {
+                    sender.sendMessage("Usage: /home <player>");
+                    return true;
+                }
+
+                Player other = Bukkit.getServer().getPlayer(args[0]);
+
+                if (other == null) {
+                    // Show the offline player's homes to the CONSOLE.
+                    OfflinePlayer offline = Bukkit.getServer().getOfflinePlayer(args[0]);
+
+                    if (plugin.essentials.getOfflineUser(offline.getName()) == null) {
+                        sender.sendMessage("Error: Player never logged in before. (no Essentials data)");
+                        return true;
+                    }
+
+                    if (plugin.essentials.getUser(offline.getName().toLowerCase()).hasHome() || !plugin.essentials.getUser(offline.getName().toLowerCase()).getHomes().isEmpty()) {
+                        List<String> homes = plugin.essentials.getUser(offline.getName().toLowerCase()).getHomes();
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        for (String home : homes) {
+                            if (stringBuilder.length() > 0) {
+                                stringBuilder.append(", ");
+                            }
+
+                            stringBuilder.append(home);
+                        }
+
+                        sender.sendMessage(offline.getName() + "'s Homes (" + homes.size() + "): " + stringBuilder.toString());
+                    }
+                    else {
+                        sender.sendMessage("Error: Player doesn't have any homes.");
+                        return true;
+                    }
+                }
+
+                // Show the online player's homes to the CONSOLE.
+                if (plugin.essentials.getUser(other).hasHome() || !plugin.essentials.getUser(other).getHomes().isEmpty()) {
+                    List<String> homes = plugin.essentials.getUser(other).getHomes();
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    for (String home : homes) {
+                        if (stringBuilder.length() > 0) {
+                            stringBuilder.append(", ");
+                        }
+
+                        stringBuilder.append(home);
+                    }
+
+                    sender.sendMessage(other.getName() + "'s Homes (" + homes.size() + "): " + stringBuilder.toString());
+                    return true;
+                }
+                else {
+                    sender.sendMessage("Error: Player doesn't have any homes.");
+                    return true;
+                }
             }
         }
 
