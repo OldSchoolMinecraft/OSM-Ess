@@ -8,15 +8,20 @@
 - /confirmbid - Confirms a bid you have on hold.
 - /denybid - Denies a bid you have on hold.
 - /discord - Gives you the link to the discord server.
+- /findhome - Searches for any existing home with the given characters.
 - /forecast - Shows the weather forecast.
 - /highlightwarp - Sets an existing warp to a specific color from dark gray.
 - /home - Reformatted look of /home.
 - /homes - Paginated homes. (5 warps per page)
 - /ignorebroadcast - Toggle visibility of the auto broadcast messages.
 - /list - Reformatted look of online players.
+- /osmess addtoeablacklist - Adds a player to the blacklist for /ea. (CONSOLE Only)
+- /osmess delfromeablacklist - Removes a player from the blacklist for /ea. (CONSOLE Only)
+- /osmess eablacklist - Shows a list of players blocked from /ea.
 - /osmess endauction - Forcefully ends an auction
 - /osmess reload - Reloads all yml files.
 - /osmess toggleauction - Enables/Disables the auction system.
+- /osmess toggleea - Enables/Disables explosive arrows.
 - /ptt - See the top 10 playtimes of players.
 - /rainbow - Gives you a rainbow name.
 - /seen - See player's playtime, first join date, & more.
@@ -29,9 +34,11 @@
 **Permissions:**
 - `osmess.chatcolor` - Permission to use /chatcolor.
 - `osmess.command` - Permission to use /osmess.
+- `osmess.command.eablacklist` - Permission to use /osmess blacklist. [Requires `osmess.command`]
 - `osmess.command.endauction` - Permission to use /osmess endauction. [Requires `osmess.command`]
 - `osmess.command.reload` - Permission to use /osmess reload. [Requires `osmess.command`]
-- `osmess.command.toggleauction` - Permission to use /osmess toggleauction. [Requires `osmess.command`
+- `osmess.command.toggleauction` - Permission to use /osmess toggleauction. [Requires `osmess.command`]
+- `osmess.command.toggleea` - Permission to use /osmess toggleea [Requires `osmess.command`]
 - `osmess.forecast` - Permission to use /forecast.
 - `osmess.highlightwarp` - Permission to use /highlightwarp.
 - `osmess.rainbow` - Permission to use /rainbow.
@@ -42,4 +49,4 @@
 **NOTE:**
 
 Requires **Essentials** to work.
-**Invisiman**, **Landmarks**, **OSAS**, **PermissionsEx** & **ScheduledDeath** are optional but reccommended for other features to work.
+**Invisiman**, **Landmarks**, **Lockette**, **OSAS**, **PermissionsEx** & **ScheduledDeath** are optional but reccommended for other features to work.
