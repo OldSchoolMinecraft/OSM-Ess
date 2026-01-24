@@ -28,7 +28,7 @@ public class CommandFindHome implements CommandExecutor {
                 Player player = (Player) sender;
 
                 if (args.length == 0 || args.length > 2) {
-                    if (player.isOp() || player.hasPermission("")) {
+                    if (player.isOp() || player.hasPermission("essentials.home.others")) {
                         player.sendMessage("§cUsage: /findhome <name> [player]");
                         return true;
                     }
