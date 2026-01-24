@@ -28,6 +28,14 @@ public class ConfigSettingCFG extends Configuration {
         generateConfigOption("Settings.StaffTools.slot2", 345);
         generateConfigOption("Settings.StaffTools.slot3", 7);
         generateConfigOption("Settings.StaffTools.slot4", 287);
+
+        // Warp Highlight Settings
+        generateConfigOption("Warps.Highlight", null);
+
+        // Explosive Arrow Settings
+        generateConfigOption("ExplosiveArrows.enabled", true);
+        generateConfigOption("ExplosiveArrows.blastRadius", 3);
+        generateConfigOption("ExplosiveArrows.disallowedPlayers", null);
     }
 
     private void generateConfigOption(String key, Object defaultValue) {
