@@ -114,7 +114,7 @@ public class CommandWarp implements CommandExecutor {
                             }
                         }
 
-                        player.sendMessage("§7Warps: §8" + stringBuilder.toString());
+                        player.sendMessage("§7Warps (§3" + warps.size() + "§7): §8" + stringBuilder.toString());
                         return true;
                     }
                     else {
@@ -267,7 +267,7 @@ public class CommandWarp implements CommandExecutor {
                                 }
                             }
 
-                            player.sendMessage("§7Warps: §8" + stringBuilder.toString());
+                            player.sendMessage("§7Warps (§3" + warps.size() + "§7): §8" + stringBuilder.toString());
                             return true;
                         }
                         else {
@@ -303,7 +303,7 @@ public class CommandWarp implements CommandExecutor {
                             }
                         }
 
-                        player.sendMessage("§7Warps: §8" + stringBuilder.toString());
+                        player.sendMessage("§7Warps (§3" + warps.size() + "§7): §8" + stringBuilder.toString());
                         return true;
                     }
                     else {
@@ -327,7 +327,7 @@ public class CommandWarp implements CommandExecutor {
                             stringBuilder.append(warp);
                         }
 
-                        sender.sendMessage("Warps: " + stringBuilder.toString());
+                        sender.sendMessage("Warps (" + warps.size() + "): " + stringBuilder.toString());
                         return true;
                     }
                     else {
@@ -378,7 +378,7 @@ public class CommandWarp implements CommandExecutor {
                 }
 
                 else {
-                    sender.sendMessage("Usage /warp or /warp <warp name> <player>");
+                    sender.sendMessage("Usage: /warp or /warp <warp> <player>");
                     return true;
                 }
 
