@@ -143,6 +143,7 @@ public class OSMEss extends JavaPlugin {
         new CommandConfirmBid(this);
         new CommandDenyBid(this);
         new CommandDiscord(this);
+        new CommandExplosiveArrows(this);
         new CommandFindHome(this);
         new CommandForecast(this);
         new CommandHighlightWarp(this);
@@ -165,6 +166,33 @@ public class OSMEss extends JavaPlugin {
         }
         else {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Auction System: Enabled");
+        }
+
+        if (!isExplosiveArrowsEnabled()) {
+            Bukkit.getServer().getLogger().info("[OSM-Ess] Exploding Arrows: Disabled");
+        }
+        else {
+            Bukkit.getServer().getLogger().info("[OSM-Ess] Exploding Arrows: Enabled");
+            Bukkit.getServer().getLogger().info("[OSM-Ess] Blast Radius: " + getEABlastRadius());
+
+            List<String> eaBlacklist = this.configSettingCFG.getStringList("ExplosiveArrows.disallowedPlayers", new ArrayList<>());
+
+            if (eaBlacklist.isEmpty()) {
+                Bukkit.getServer().getLogger().info("[OSM-Ess] Blacklisted Players (" + eaBlacklist.size() + "): None");
+            }
+            else {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                for (String blacklisted : eaBlacklist) {
+                    if (stringBuilder.length() > 0) {
+                        stringBuilder.append(", ");
+                    }
+
+                    stringBuilder.append(blacklisted);
+                }
+
+                Bukkit.getServer().getLogger().info("[OSM-Ess] Blacklisted Players (" + eaBlacklist.size() + "): " + stringBuilder);
+            }
         }
 
         auctionStatus = AuctionStatus.INACTIVE;
@@ -355,6 +383,98 @@ public class OSMEss extends JavaPlugin {
         }
     }
 //  Warp Highlight Methods
+
+
+//  Explosive Arrows Methods
+    // Online
+    public void addToEABlacklist(Player player) {
+        if (!isOnEABlacklist(player)) {
+            try {
+                List<String> eaBlacklist = this.configSettingCFG.getStringList("ExplosiveArrows.disallowedPlayers", new ArrayList<>());
+                eaBlacklist.add(player.getName().toLowerCase());
+                this.configSettingCFG.setProperty("ExplosiveArrows.disallowedPlayers", eaBlacklist);
+                this.configSettingCFG.save();
+            } catch (Exception ex) {
+                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
+    public void delFromEABlacklist(Player player) {
+        if (isOnEABlacklist(player)) {
+            try {
+                List<String> eaBlacklist = this.configSettingCFG.getStringList("ExplosiveArrows.disallowedPlayers", new ArrayList<>());
+                eaBlacklist.remove(player.getName().toLowerCase());
+                this.configSettingCFG.setProperty("ExplosiveArrows.disallowedPlayers", eaBlacklist);
+                this.configSettingCFG.save();
+            } catch (Exception ex) {
+                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
+
+    public boolean isOnEABlacklist(OfflinePlayer player) {
+        List<String> eaBlacklist = this.configSettingCFG.getStringList("ExplosiveArrows.disallowedPlayers", new ArrayList<>());
+
+        if (!eaBlacklist.isEmpty() && eaBlacklist.contains(player.getName().toLowerCase())) return true;
+        else return false;
+    }
+
+    // Offline
+    public void addToEABlacklist(OfflinePlayer player) {
+        if (!isOnEABlacklist(player)) {
+            try {
+                List<String> eaBlacklist = this.configSettingCFG.getStringList("ExplosiveArrows.disallowedPlayers", new ArrayList<>());
+                eaBlacklist.add(player.getName().toLowerCase());
+                this.configSettingCFG.setProperty("ExplosiveArrows.disallowedPlayers", eaBlacklist);
+                this.configSettingCFG.save();
+            } catch (Exception ex) {
+                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
+    public void delFromEABlacklist(OfflinePlayer player) {
+        if (isOnEABlacklist(player)) {
+            try {
+                List<String> eaBlacklist = this.configSettingCFG.getStringList("ExplosiveArrows.disallowedPlayers", new ArrayList<>());
+                eaBlacklist.remove(player.getName().toLowerCase());
+                this.configSettingCFG.setProperty("ExplosiveArrows.disallowedPlayers", eaBlacklist);
+                this.configSettingCFG.save();
+            } catch (Exception ex) {
+                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
+
+    public boolean isOnEABlacklist(Player player) {
+        List<String> eaBlacklist = this.configSettingCFG.getStringList("ExplosiveArrows.disallowedPlayers", new ArrayList<>());
+
+        if (!eaBlacklist.isEmpty() && eaBlacklist.contains(player.getName().toLowerCase())) return true;
+        else return false;
+    }
+
+    public boolean isExplosiveArrowsEnabled() {
+        if (this.configSettingCFG.getConfigOption("ExplosiveArrows.enabled").equals(true)) return true;
+        else return false;
+    }
+
+    public void setExplodingArrows(boolean option) {
+        try {
+            this.configSettingCFG.setProperty("ExplosiveArrows.enabled", option);
+            configSettingCFG.save();
+        } catch (Exception ex) {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    public Integer getEABlastRadius() {
+        return (int) this.configSettingCFG.getConfigOption("ExplosiveArrows.blastRadius");
+    }
+//  Explosive Arrows Blacklist Methods
 
 
     public void initAutoBC() {
