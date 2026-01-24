@@ -107,7 +107,7 @@ public class AuctionHandler {
         }
 
         Bukkit.broadcastMessage("§b" + player.getName() + " §2won §9the auction for:");
-        Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
+        Bukkit.broadcastMessage("§4-> §b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
 
         auctionHoster.clear();
         bidders.clear();
@@ -128,10 +128,10 @@ public class AuctionHandler {
 
         if (getTopBidder() == null) {
             Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §2won §9the auction for:");
-            Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
+            Bukkit.broadcastMessage("§4-> §b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
         }
         Bukkit.broadcastMessage("§b" + player.getName() + " §2won §9the auction for:");
-        Bukkit.broadcastMessage("§b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
+        Bukkit.broadcastMessage("§4-> §b" + getAuctionItem().getAmount() + "x " + getAuctionItemName());
 
         auctionHoster.clear();
         bidders.clear();
@@ -144,7 +144,7 @@ public class AuctionHandler {
     public void runOfflineCheck2() {
         if (getTopBidder() == null) {
             if (!doesOfflineWinnerHaveTheMoney(getOfflineTopBidder())) {
-                Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §4didn't §9have the money. §bDisqualified§9!");
                 removeOfflinePlayerFromAuction(getOfflineTopBidder());
                 // Offline Strike 2.
 
@@ -163,7 +163,7 @@ public class AuctionHandler {
                     auctionHoster.clear();
                     CommandBid.confirmBidList.clear();
                     wipeAuctionFile();
-                    Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+                    Bukkit.broadcastMessage("§9Auction ended with §4no §9bidders!");
                 }
             }
             else { offlineWinner(getOfflineTopBidder()); }
@@ -175,7 +175,7 @@ public class AuctionHandler {
     public void runOnlineCheck2() {
         if (getTopBidder() != null) {
             if (!doesOnlineWinnerHaveTheMoney(getTopBidder())) {
-                Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §4didn't §9have the money. §bDisqualified§9!");
                 removeOnlinePlayerFromAuction(getTopBidder());
                 // Online Strike 2.
 
@@ -194,7 +194,7 @@ public class AuctionHandler {
                     auctionHoster.clear();
                     CommandBid.confirmBidList.clear();
                     wipeAuctionFile();
-                    Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+                    Bukkit.broadcastMessage("§9Auction ended with §4no §9bidders!");
                 }
             }
             else { onlineWinner(getTopBidder()); }
@@ -208,7 +208,7 @@ public class AuctionHandler {
     public void runFinalOfflineCheck() {
         if (getTopBidder() == null) {
             if (!doesOfflineWinnerHaveTheMoney(getOfflineTopBidder())) {
-                Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §4didn't §9have the money. §bDisqualified§9!");
                 removeOfflinePlayerFromAuction(getOfflineTopBidder());
                 // Offline Strike 3. End Auction w/o a winner.
 
@@ -225,7 +225,7 @@ public class AuctionHandler {
                 totalBidders = 0;
                 wipeAuctionFile();
 
-                Bukkit.broadcastMessage("§9Auction ended with too many winners without the money!");
+                Bukkit.broadcastMessage("§9Auction ended with too many winners §4without §9the money!");
             }
             else { offlineWinner(getOfflineTopBidder()); }
         }
@@ -236,7 +236,7 @@ public class AuctionHandler {
     public void runFinalOnlineCheck() {
         if (getTopBidder() != null) {
             if (!doesOnlineWinnerHaveTheMoney(getTopBidder())) {
-                Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §4didn't §9have the money. §bDisqualified§9!");
                 removeOnlinePlayerFromAuction(getTopBidder());
                 // Online Strike 3. End Auction w/o a winner.
 
@@ -253,7 +253,7 @@ public class AuctionHandler {
                 totalBidders = 0;
                 wipeAuctionFile();
 
-                Bukkit.broadcastMessage("§9Auction ended with too many winners without the money!");
+                Bukkit.broadcastMessage("§9Auction ended with too many winners §4without §9the money!");
             }
             else { onlineWinner(getTopBidder()); }
         }
@@ -279,13 +279,13 @@ public class AuctionHandler {
                 CommandBid.confirmBidList.clear();
                 wipeAuctionFile();
 
-                Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+                Bukkit.broadcastMessage("§9Auction ended with §4no §9bidders!");
             }
             else { // Auction ended with a bidder.
                 if (getTopBidder() == null) { // Winner is offline.
 
                     if (!doesOfflineWinnerHaveTheMoney(getOfflineTopBidder())) { // Offline winner doesn't have the money.
-                        Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                        Bukkit.broadcastMessage("§b" + getOfflineTopBidder().getName() + " §4didn't §9have the money. §bDisqualified§9!");
                         removeOfflinePlayerFromAuction(getOfflineTopBidder());
                         // Offline Strike 1.
 
@@ -305,14 +305,14 @@ public class AuctionHandler {
                             auctionHoster.clear();
                             CommandBid.confirmBidList.clear();
                             wipeAuctionFile();
-                            Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+                            Bukkit.broadcastMessage("§9Auction ended with §4no §9bidders!");
                         }
                     }
                     else { offlineWinner(getOfflineTopBidder()); } // Offline winner has the money.
                 }
                 else {
                     if (!doesOnlineWinnerHaveTheMoney(getTopBidder())) { // Online winner doesn't have the money.
-                        Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §9didn't have the money. Disqualified!");
+                        Bukkit.broadcastMessage("§b" + getTopBidder().getName() + " §4didn't §9have the money. §bDisqualified§9!");
                         removeOnlinePlayerFromAuction(getTopBidder());
                         // Online Strike 1.
 
@@ -332,7 +332,7 @@ public class AuctionHandler {
                             auctionHoster.clear();
                             CommandBid.confirmBidList.clear();
                             wipeAuctionFile();
-                            Bukkit.broadcastMessage("§9Auction ended with no bidders!");
+                            Bukkit.broadcastMessage("§9Auction ended with §4no §9bidders!");
                         }
                     }
                     else { onlineWinner(getTopBidder()); } // Online winner has the money.
