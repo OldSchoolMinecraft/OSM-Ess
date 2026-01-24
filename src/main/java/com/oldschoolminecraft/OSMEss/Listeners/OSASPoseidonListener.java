@@ -1,5 +1,6 @@
 package com.oldschoolminecraft.OSMEss.Listeners;
 
+import com.oldschoolminecraft.OSMEss.Commands.CommandExplosiveArrows;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import com.oldschoolminecraft.osas.impl.event.PlayerAuthenticationEvent;
 import org.bukkit.Bukkit;
@@ -38,6 +39,9 @@ public class OSASPoseidonListener extends CustomEventListener {
                     all.sendMessage("§9Items you won from an auction have been §bgiven§9!");
                 }
 
+                if (CommandExplosiveArrows.explodeArrow.contains(all.getName().toLowerCase())) { // Unlikely.
+                    all.sendMessage("§7Your arrows currently §awill §fEXPLODE§7! Use §e/ea §7to disable it.");
+                }
                 return;
             }
         }
