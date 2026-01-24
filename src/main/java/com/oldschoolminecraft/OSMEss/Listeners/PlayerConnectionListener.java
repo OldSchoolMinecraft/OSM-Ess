@@ -1,5 +1,6 @@
 package com.oldschoolminecraft.OSMEss.Listeners;
 
+import com.oldschoolminecraft.OSMEss.Commands.CommandExplosiveArrows;
 import com.oldschoolminecraft.OSMEss.Commands.CommandList;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import com.oldschoolminecraft.vanish.Invisiman;
@@ -17,12 +18,6 @@ public class PlayerConnectionListener extends PlayerListener {
         this.plugin = plugin;
     }
 
-//    @EventHandler
-//    public void on(PlayerPreLoginEvent event) {}
-//
-//    @EventHandler
-//    public void on(PlayerLoginEvent event) {}
-
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -34,7 +29,7 @@ public class PlayerConnectionListener extends PlayerListener {
             plugin.playtimeHandler.updateLastLogin(player);
             Bukkit.getServer().getLogger().info("[OSM-Ess] Retrieved data for " + player.getName() + "! (Filename: " + player.getName().toLowerCase() + ".json)");
         }
-        
+
         if (!plugin.isOSASEnabled()) { // Fallback option if OSAS is not installed.
             if (plugin.auctionHandler.hasHostItemsToReturn(player)) {
                 plugin.auctionHandler.returnAuctionHostItems(player);
@@ -57,6 +52,10 @@ public class PlayerConnectionListener extends PlayerListener {
             if (CommandList.vanished.contains(player)) {
                 CommandList.vanished.remove(player);
             }
+        }
+
+        if (CommandExplosiveArrows.explodeArrow.contains(player.getName().toLowerCase())) { // Remove them from arraylist if they quit with explosive arrows on.
+            CommandExplosiveArrows.explodeArrow.remove(player.getName().toLowerCase());
         }
     }
 }
