@@ -1,23 +1,30 @@
 package com.oldschoolminecraft.OSMEss.Listeners;
 
+import com.oldschoolminecraft.OSMEss.Commands.CommandExplosiveArrows;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import net.oldschoolminecraft.lmk.LandmarkData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Random;
 
 public class PlayerWorldListener implements Listener {
     public OSMEss plugin;
@@ -207,6 +214,59 @@ public class PlayerWorldListener implements Listener {
                 if (plugin.lockette.isProtected(block) && !plugin.lockette.isOwner(block, player.getName())) {
                     if (player.isOp() || player.hasPermission("osmess.lockettebypass")) {
                         event.setCancelled(false);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void on(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
+        if (block.getType() == Material.OBSIDIAN) {
+            Block relative1 = block.getRelative(BlockFace.EAST);
+            Block relative2 = block.getRelative(BlockFace.WEST);
+            Block relative3 = block.getRelative(BlockFace.NORTH);
+            Block relative4 = block.getRelative(BlockFace.SOUTH);
+            Block relative5 = block.getRelative(BlockFace.UP);
+            Block relative6 = block.getRelative(BlockFace.DOWN);
+
+            if (relative1.getType() == Material.PORTAL ||
+                    relative2.getType() == Material.PORTAL ||
+                    relative3.getType() == Material.PORTAL ||
+                    relative4.getType() == Material.PORTAL ||
+                    relative5.getType() == Material.PORTAL ||
+                    relative6.getType() == Material.PORTAL) {
+
+                if (player.isOp() /* ||player.hasPermission("osmess.portaldrop") */) {
+                    Random random = new Random();
+                    int result = random.nextInt(100) + 1;
+                    int chance = 1; // 1% chance for portal block drop. (Random must fall at or below 1)
+
+                    if (result <= chance) {
+                        block.getWorld().dropItem(block.getLocation(),new ItemStack(Material.PORTAL, 1));
+                        player.sendMessage("§3[Debug] §5Portal block dropped. §7(Result: " + result + ")");
+                    }
+                    else {
+                        player.sendMessage("§3[Debug] §cNo portal block. §7(Result: " + result + ")");
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void on(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof Arrow && ((Arrow) event.getEntity()).getShooter() instanceof Player) {
+            Player player = (Player) ((Arrow) event.getEntity()).getShooter();
+
+            if (plugin.isExplosiveArrowsEnabled()) {
+                if (CommandExplosiveArrows.explodeArrow.contains(player.getName().toLowerCase())) {
+                    if (player.isOp() || player.hasPermission("osmess.explosivearrows")) {
+                        event.getEntity().getWorld().createExplosion(event.getEntity().getLocation(), plugin.getEABlastRadius(), false);
+                        event.getEntity().remove();
                     }
                 }
             }
