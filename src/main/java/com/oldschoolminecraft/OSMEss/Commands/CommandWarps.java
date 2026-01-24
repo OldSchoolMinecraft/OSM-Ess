@@ -38,7 +38,7 @@ public class CommandWarps implements CommandExecutor {
                                 return true;
                             }
 
-                            int linesPerPage = 5;
+                            int linesPerPage = 10;
                             int totalPages = (int)Math.ceil((double)warps.size() / (double)linesPerPage);
                             int startingRecord = page * linesPerPage;
                             int titlePageNum = page+1;
@@ -48,10 +48,10 @@ public class CommandWarps implements CommandExecutor {
                                 return true;
                             }
 
-                            player.sendMessage("§7Page §8" + titlePageNum + " §7of §8" + totalPages + "§7.");
+                            player.sendMessage("§7Warps (§3" + warps.size() + "§7) Page §8" + titlePageNum + " §7of §8" + totalPages + "§7:");
 
                             for (int i = startingRecord; i < warps.size() && i < startingRecord + linesPerPage; i++) {
-                                player.sendMessage("§7- §8" + warps.get(i) + " §7(§8/warp " + warps.get(i) + "§7)");
+                                player.sendMessage("§7- §8" + warps.get(i) + " §7(§b/warp §3" + warps.get(i) + "§7)");
                             }
 
                             return true;
@@ -87,7 +87,7 @@ public class CommandWarps implements CommandExecutor {
                                 return true;
                             }
 
-                            int linesPerPage = 5;
+                            int linesPerPage = 10;
                             int totalPages = (int)Math.ceil((double)warps.size() / (double)linesPerPage);
                             int startingRecord = page * linesPerPage;
                             int titlePageNum = page+1;
@@ -97,7 +97,7 @@ public class CommandWarps implements CommandExecutor {
                                 return true;
                             }
 
-                            sender.sendMessage("Page " + titlePageNum + " of " + totalPages + ".");
+                            sender.sendMessage("Warps (" + warps.size() + ") Page " + titlePageNum + " of " + totalPages + ":");
 
                             for (int i = startingRecord; i < warps.size() && i < startingRecord + linesPerPage; i++) {
                                 sender.sendMessage("- " + warps.get(i) + " (/warp " + warps.get(i) + ")");
