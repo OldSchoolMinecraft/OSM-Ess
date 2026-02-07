@@ -41,7 +41,7 @@ public class CommandSeen implements CommandExecutor {
                 }
 
                 if (args.length == 1) {
-                    Player other = Bukkit.getPlayer(args[0]);
+                    Player other = Bukkit.getPlayerExact(args[0]);
 
                     if (other == null) {
                         OfflinePlayer offline = Bukkit.getOfflinePlayer(args[0]);
@@ -93,7 +93,7 @@ public class CommandSeen implements CommandExecutor {
                     return true;
                 }
 
-                Player other = Bukkit.getPlayer(args[0]);
+                Player other = Bukkit.getPlayerExact(args[0]);
 
                 if (other == null) {
                     OfflinePlayer offline = Bukkit.getOfflinePlayer(args[0]);
@@ -138,3 +138,4 @@ public class CommandSeen implements CommandExecutor {
         return true;
     }
 }
+
