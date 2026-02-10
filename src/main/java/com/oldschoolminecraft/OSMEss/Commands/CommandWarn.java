@@ -29,7 +29,7 @@ public class CommandWarn implements CommandExecutor {
                         return true;
                     }
 
-                    Player other = Bukkit.getServer().getPlayer(args[0].toLowerCase());
+                    Player other = Bukkit.getServer().getPlayerExact(args[0].toLowerCase());
 
                     if (other == null) {
                         player.sendMessage(plugin.playerNotFound);
@@ -44,9 +44,10 @@ public class CommandWarn implements CommandExecutor {
 
                     plugin.addWarning(other, reason.trim());
                     Bukkit.broadcastMessage("§c" + other.getName() + " warned by " + player.getName() + " for:");
-                    Bukkit.broadcastMessage("§4'§e" + reason.replaceAll("\\s+", " ").trim() + "§4'");
+                    Bukkit.broadcastMessage("§4-> §e" + reason.replaceAll("\\s+", " ").trim());
 
-                    Bukkit.getLogger().info(other.getName() + " (" + other.getAddress().getAddress().getHostAddress() + ") warned by " + player.getName() + " for: '" + reason.replaceAll("\\s+", " ").trim() + "'");
+                    Bukkit.getLogger().warning(other.getName() + " (" + other.getAddress().getAddress().getHostAddress() + ") warned by " + player.getName() + " for:");
+                    Bukkit.getLogger().warning(reason.replaceAll("\\s+", " ").trim());
                     return true;
                 }
                 else {
@@ -59,7 +60,7 @@ public class CommandWarn implements CommandExecutor {
                 return true;
             }
 
-            Player other = Bukkit.getServer().getPlayer(args[0]);
+            Player other = Bukkit.getServer().getPlayerExact(args[0]);
 
             if (other == null) {
                 sender.sendMessage("Error: Player not found.");
@@ -73,9 +74,10 @@ public class CommandWarn implements CommandExecutor {
 
             plugin.addWarning(other, reason.trim());
             Bukkit.broadcastMessage("§c" + other.getName() + " warned by CONSOLE for:");
-            Bukkit.broadcastMessage("§4'§e" + reason.replaceAll("\\s+", " ").trim() + "§4'");
+            Bukkit.broadcastMessage("§4-> §e" + reason.replaceAll("\\s+", " ").trim());
 
-            Bukkit.getLogger().info(other.getName() + " (" + other.getAddress().getAddress().getHostAddress() + ") has warned by CONSOLE for: '" + reason.replaceAll("\\s+", " ").trim() + "'");
+            Bukkit.getLogger().warning(other.getName() + " (" + other.getAddress().getAddress().getHostAddress() + ") warned by CONSOLE for:");
+            Bukkit.getLogger().warning(reason.replaceAll("\\s+", " ").trim());
             return true;
         }
 
