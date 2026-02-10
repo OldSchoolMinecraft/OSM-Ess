@@ -1,6 +1,6 @@
 name: OSM-Ess
 main: com.oldschoolminecraft.OSMEss.OSMEss
-version: 1.3.5
+version: 1.4.0
 authors: [SavageUser, moderator_man, ItsVollx]
 depend:
   - Essentials
@@ -29,8 +29,7 @@ commands:
     description: Denies a bid you have on hold.
   discord:
     description: Gives you the link to the discord server.
-  explosivearrows:
-    aliases: [explodingarrows, ea]
+  ea:
     description: Toggles explosive arrows.
   findhome:
     description: Searches for any existing home with the given characters.
