@@ -2,23 +2,19 @@ package com.oldschoolminecraft.OSMEss;
 
 import com.earth2me.essentials.Essentials;
 import com.oldschoolminecraft.OSMEss.Commands.*;
-import com.oldschoolminecraft.OSMEss.Handlers.AuctionHandler;
-import com.oldschoolminecraft.OSMEss.Handlers.InventoryHandler;
-import com.oldschoolminecraft.OSMEss.Handlers.PlayerDataHandler;
-import com.oldschoolminecraft.OSMEss.Handlers.PlaytimeHandler;
+import com.oldschoolminecraft.OSMEss.Handlers.*;
 import com.oldschoolminecraft.OSMEss.Listeners.CommandPreProcessListener;
 import com.oldschoolminecraft.OSMEss.Listeners.OSASPoseidonListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerConnectionListener;
 import com.oldschoolminecraft.OSMEss.Listeners.PlayerWorldListener;
-import com.oldschoolminecraft.OSMEss.Util.ColorMessageCFG;
-import com.oldschoolminecraft.OSMEss.Util.ConfigSettingCFG;
-import com.oldschoolminecraft.OSMEss.Util.WarningsCFG;
+import com.oldschoolminecraft.OSMEss.Util.*;
 import com.oldschoolminecraft.osas.OSAS;
 import com.oldschoolminecraft.vanish.Invisiman;
 import net.oldschoolminecraft.lmk.Landmarks;
 import net.oldschoolminecraft.sd.ScheduledDeath;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -41,11 +37,14 @@ public class OSMEss extends JavaPlugin {
     public PermissionsEx permissionsEx;
     public ScheduledDeath scheduledDeath;
 
+    public AutoBroadcastCFG autoBroadcastCFG;
+    public BlocksReqPlaytimeCFG blocksReqPlaytimeCFG;
     public ColorMessageCFG colorMessageCFG;
     public ConfigSettingCFG configSettingCFG;
     public WarningsCFG warningsCFG;
 
     public AuctionHandler auctionHandler;
+    public HerobrineTotemHandler totemHandler;
     public InventoryHandler inventoryHandler;
     public PlaytimeHandler playtimeHandler;
     public PlayerDataHandler playerDataHandler;
@@ -54,6 +53,7 @@ public class OSMEss extends JavaPlugin {
     public java.util.List<java.util.Map.Entry<String, Long>> cachedTopPlaytimes;
 
     public AuctionStatus auctionStatus;
+    public HerobrineStatus herobrineStatus;
 
     public int cacheTaskId = -1;
     public long lastCacheRefreshBalTime = 0;
@@ -131,7 +131,11 @@ public class OSMEss extends JavaPlugin {
         auctionHandler = new AuctionHandler(this);
         playerDataHandler = new PlayerDataHandler(this);
         playtimeHandler = new PlaytimeHandler(this);
+        totemHandler = new HerobrineTotemHandler(this);
         inventoryHandler = new InventoryHandler(this);
+
+        autoBroadcastCFG = new AutoBroadcastCFG(new File(this.getDataFolder(), "autobroadcast-msgs.yml"));
+        blocksReqPlaytimeCFG = new BlocksReqPlaytimeCFG(new File(this.getDataFolder(), "blocks-with-playtime-req.yml"));
         colorMessageCFG = new ColorMessageCFG(new File(this.getDataFolder().getAbsolutePath(), "color-message-settings.yml"));
         configSettingCFG = new ConfigSettingCFG(new File(this.getDataFolder().getAbsolutePath(), "config.yml"));
         warningsCFG = new WarningsCFG(new File(this.getDataFolder().getAbsolutePath(), "warning-logs.yml"));
@@ -196,10 +200,13 @@ public class OSMEss extends JavaPlugin {
         }
 
         auctionStatus = AuctionStatus.INACTIVE;
+        herobrineStatus = HerobrineStatus.INACTIVE;
 
 //      Refresh Balance Top 10 & Playtime Top 10
         updateTop10Lists();
 
+        List<String> autoBCMessages = autoBroadcastCFG.getStringList("Settings.Messages", new ArrayList<>());
+        if (autoBCMessages.isEmpty()) {addDefaultBCMessages();}
         initAutoBC();
     }
 
@@ -325,8 +332,12 @@ public class OSMEss extends JavaPlugin {
         }
     }
 
-    public Integer getMinimumRequiredPlaytimeToAuction() {
-        return (int) this.configSettingCFG.getConfigOption("Settings.Auction.minPlaytimeToAuction");
+//    public Integer getMinimumRequiredPlaytimeToAuction() { Old Method; Possible equivalency issue & why people with enough playtime still couldn't /auction.
+//        return (int) this.configSettingCFG.getConfigOption("Settings.Auction.minPlaytimeToAuction");
+//    }
+
+    public Long getMinimumRequiredPlaytimeToAuction() {
+        return Math.max(0L, Long.parseLong(this.configSettingCFG.getString("Settings.Auction.minPlaytimeToAuction")));
     }
 
     public Integer getMaxAllowedStartingBid() {
@@ -338,6 +349,16 @@ public class OSMEss extends JavaPlugin {
     }
 // Auction Setting Methods
 
+// Fish Treasure Methods
+
+    public boolean isFishTreasureEnabled() {
+        if (this.configSettingCFG.getConfigOption("Settings.FishTreasure.enabled").equals(true)) return true;
+        else return false;
+    }
+
+    public Double getChanceForFishTreasure() {
+        return (double) this.configSettingCFG.getConfigOption("Settings.FishTreasure.chanceForTreasure");
+    }
 
 //  Warp Highlight Methods
     public boolean isWarpNameHighlighted(String warpName) {
@@ -477,21 +498,82 @@ public class OSMEss extends JavaPlugin {
 //  Explosive Arrows Blacklist Methods
 
 
+//  Block Req Playtime Methods
+    public void addBlocktoPTReq(Material material) {
+        if (!isBlockOnPTReq(material)) {
+            try {
+                List<String> blockPTReqList = this.blocksReqPlaytimeCFG.getStringList("Settings.blocksAffected", new ArrayList<>());
+                blockPTReqList.add(material.name().toLowerCase());
+                this.blocksReqPlaytimeCFG.setProperty("Settings.blocksAffected", blockPTReqList);
+                this.blocksReqPlaytimeCFG.save();
+            } catch (Exception ex) {
+                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating blocks-with-playtime-req.yml!");
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
+
+    public void delBlockFromPTReq(Material material) {
+        if (isBlockOnPTReq(material)) {
+            try {
+                List<String> blockPTReqList = this.blocksReqPlaytimeCFG.getStringList("Settings.blocksAffected", new ArrayList<>());
+                blockPTReqList.remove(material.name().toLowerCase());
+                this.blocksReqPlaytimeCFG.setProperty("Settings.blocksAffected", blockPTReqList);
+                this.blocksReqPlaytimeCFG.save();
+            } catch (Exception ex) {
+                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating blocks-with-playtime-req.yml!");
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
+
+    public boolean isBlockOnPTReq(Material material) {
+        List<String> blockPTReqList = this.blocksReqPlaytimeCFG.getStringList("Settings.blocksAffected", new ArrayList<>());
+
+
+        if (!blockPTReqList.isEmpty() && blockPTReqList.contains(material.name().toLowerCase())) return true;
+        else return false;
+    }
+
+    public Long getMinimumRequiredPlaytimeToPlaceBlock() {
+        return Math.max(0L, Long.parseLong(this.blocksReqPlaytimeCFG.getString("Settings.minPlaytimeToPlace")));
+    }
+//  Block Req Playtime Methods
+
+
+//  Auto Broadcast Methods
+    public void addDefaultBCMessages() {
+        try {
+            List<String> autoBCMessages = autoBroadcastCFG.getStringList("Settings.Messages", new ArrayList<>());
+
+            autoBCMessages.add("&f[&aOSM&f] &bWe have a ZERO tolerance griefing policy. If it isn't yours, don't touch it!");
+            autoBCMessages.add("&f[&aOSM&f] &bYou can do /landmarks to see all the landmarks on the server.");
+            autoBCMessages.add("&f[&aOSM&f] &bToggle seeing these messages with /ignorebroadcast!");
+            autoBCMessages.add("&f[&aOSM&f] &bUsing /vote day is easier than using beds!");
+            autoBCMessages.add("&f[&aOSM&f] &bHave a question? Join our discord or ask a staff member!");
+            autoBCMessages.add("&f[&aOSM&f] &bCreepers don't do block damage!");
+            autoBCMessages.add("&f[&aOSM&f] &bIf you want to join our discord, do /discord!");
+            autoBCMessages.add("&f[&aOSM&f] &bDid you know you can also join with &aoldschoolminecraft.net&b!");
+            autoBCMessages.add("&f[&aOSM&f] &bYou should join our subreddit r/OldSchoolMinecraft");
+            this.autoBroadcastCFG.setProperty("Settings.Messages", autoBCMessages);
+            this.autoBroadcastCFG.save();
+
+        } catch (Exception ex) {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating autobroadcast-msgs.yml!");
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    public Integer getAutoBCDuration() {
+        return (int) this.autoBroadcastCFG.getConfigOption("Settings.autoBCDuration");
+    }
+
     public void initAutoBC() {
 
-        List<String> autoBCMessages = new ArrayList<>();
+        List<String> autoBCMessages = autoBroadcastCFG.getStringList("Settings.Messages", new ArrayList<>());
 
-        autoBCMessages.add("&f[&aOSM&f] &bWe have a ZERO tolerance griefing policy. If it isn't yours, don't touch it!");
-        autoBCMessages.add("&f[&aOSM&f] &bYou can do /landmarks to see all the landmarks on the server.");
-        autoBCMessages.add("&f[&aOSM&f] &bToggle seeing these messages with /ignorebroadcast!");
-        autoBCMessages.add("&f[&aOSM&f] &bUsing /vote day is easier than using beds!");
-        autoBCMessages.add("&f[&aOSM&f] &bHave a question? Join our discord or ask a staff member!");
-        autoBCMessages.add("&f[&aOSM&f] &bCreepers don't do block damage!");
-        autoBCMessages.add("&f[&aOSM&f] &bIf you want to join our discord, do /discord!");
-        autoBCMessages.add("&f[&aOSM&f] &bDid you know you can also join with &aoldschoolminecraft.net&b!");
-        autoBCMessages.add("&f[&aOSM&f] &bYou should join our subreddit r/OldSchoolMinecraft");
 
-        int perMinute = 5; // 5 Minutes
+        int perMinute = getAutoBCDuration();
         long perMinTicks = perMinute * 60 * 20L; // Convert minutes to ticks (20 ticks = 1 second)
 
         this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
@@ -509,6 +591,8 @@ public class OSMEss extends JavaPlugin {
             }
         }, perMinute, perMinTicks);
     }
+
+//  Auto Broadcast Methods
 
     public void updateTop10Lists() {
         refreshBalanceTop();
