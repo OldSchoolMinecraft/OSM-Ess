@@ -32,7 +32,7 @@ public class CommandWarnings implements CommandExecutor {
                         return true;
                     }
                     if (args.length == 1) {
-                        Player other = Bukkit.getServer().getPlayer(args[0]);
+                        Player other = Bukkit.getServer().getPlayerExact(args[0]);
 
                         if (other == null) {
                             OfflinePlayer offline = Bukkit.getServer().getOfflinePlayer(args[0]);
@@ -69,7 +69,7 @@ public class CommandWarnings implements CommandExecutor {
                     }
                     if (args.length == 2) {
                         if (args[1].equalsIgnoreCase("clear")) {
-                            Player other = Bukkit.getServer().getPlayer(args[0].toLowerCase());
+                            Player other = Bukkit.getServer().getPlayerExact(args[0].toLowerCase());
 
                             if (other == null) {
                                 OfflinePlayer offline = Bukkit.getServer().getOfflinePlayer(args[0].toLowerCase());
@@ -112,7 +112,7 @@ public class CommandWarnings implements CommandExecutor {
                 }
                 if (args.length == 1) {
                     //Todo: Check if player exists in the warning logs and list all their warnings.
-                    Player other = Bukkit.getServer().getPlayer(args[0]);
+                    Player other = Bukkit.getServer().getPlayerExact(args[0]);
 
                     if (other == null) {
                         OfflinePlayer offline = Bukkit.getServer().getOfflinePlayer(args[0]);
@@ -150,7 +150,7 @@ public class CommandWarnings implements CommandExecutor {
                 if (args.length == 2) {
                     if (args[1].equalsIgnoreCase("clear")) {
                         //Todo: Check if player exits in warnings log and clear/remove them from the logs.
-                        Player other = Bukkit.getServer().getPlayer(args[0].toLowerCase());
+                        Player other = Bukkit.getServer().getPlayerExact(args[0].toLowerCase());
 
                         if (other == null) {
                             OfflinePlayer offline = Bukkit.getServer().getOfflinePlayer(args[0].toLowerCase());
