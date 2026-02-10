@@ -23,19 +23,23 @@ public class ConfigSettingCFG extends Configuration {
         generateConfigOption("Settings.Auction.maxStartingBid", 10000);
         generateConfigOption("Settings.Auction.percentageToRequireConfirmation", 5); // 5%
 
+        // Fish Treasure Settings
+        generateConfigOption("Settings.FishTreasure.enabled", true);
+        generateConfigOption("Settings.FishTreasure.chanceForTreasure", 2.5); // 2.5%
+
         // Staff Tool Settings
         generateConfigOption("Settings.StaffTools.slot1", 271);
         generateConfigOption("Settings.StaffTools.slot2", 345);
         generateConfigOption("Settings.StaffTools.slot3", 7);
         generateConfigOption("Settings.StaffTools.slot4", 287);
 
-        // Warp Highlight Settings
+        //Warp Highlight Settings
         generateConfigOption("Warps.Highlight", null);
 
-        // Explosive Arrow Settings
         generateConfigOption("ExplosiveArrows.enabled", true);
         generateConfigOption("ExplosiveArrows.blastRadius", 3);
         generateConfigOption("ExplosiveArrows.disallowedPlayers", null);
+
     }
 
     private void generateConfigOption(String key, Object defaultValue) {
