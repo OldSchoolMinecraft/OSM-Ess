@@ -29,7 +29,7 @@ public class CommandHomes implements CommandExecutor {
 
                 if (args.length == 2) {
                     if (player.isOp() || player.hasPermission("essentials.home.others")) {
-                        Player other = Bukkit.getServer().getPlayer(args[1]);
+                        Player other = Bukkit.getServer().getPlayerExact(args[1]);
 
                         if (other == null) {
                             // Paginate the offline player's homes to the player command sender.
@@ -193,7 +193,7 @@ public class CommandHomes implements CommandExecutor {
                     return true;
                 }
 
-                Player other = Bukkit.getServer().getPlayer(args[1]);
+                Player other = Bukkit.getServer().getPlayerExact(args[1]);
 
                 if (other == null) {
                     OfflinePlayer offline = Bukkit.getServer().getOfflinePlayer(args[1]);
