@@ -287,7 +287,7 @@ public class PlayerWorldListener implements Listener {
             if (plugin.totemHandler.meetsTotemCriteriaLayer0(block) && plugin.totemHandler.meetsTotemCriteriaLayerNeg1(block) && plugin.totemHandler.meetsTotemCriteriaLayerNeg2(block)) {
                 Random random = new Random();
                 int result = random.nextInt(100) + 1;
-                int chance = 20; // 2% chance for Herobrine scare. (Random must fall at or below 1)
+                int chance = 2; // 2% chance for Herobrine scare.
 
                 if (result <= chance) {
                     synchronized (lock) {
