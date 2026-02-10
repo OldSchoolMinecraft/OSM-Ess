@@ -3,6 +3,7 @@ package com.oldschoolminecraft.OSMEss.Commands;
 import com.oldschoolminecraft.OSMEss.AuctionStatus;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -92,6 +93,8 @@ public class CommandOSMEss implements CommandExecutor {
 
                     if (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("reloadcfg")) {
                         if (player.isOp() || player.hasPermission("osmess.command.reload")) {
+                            plugin.autoBroadcastCFG.reload();
+                            plugin.blocksReqPlaytimeCFG.reload();
                             plugin.configSettingCFG.reload();
                             plugin.colorMessageCFG.reload();
                             plugin.warningsCFG.reload();
@@ -107,7 +110,6 @@ public class CommandOSMEss implements CommandExecutor {
 
                     if (args[0].equalsIgnoreCase("toggleauction") || args[0].equalsIgnoreCase("toggleauctionsystem")) {
                         if (player.isOp() || player.hasPermission("osmess.command.toggleauction")) {
-
                             if (plugin.isAuctionSystemEnabled()) {
                                 if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
                                     player.sendMessage("§cThere is currently an active auction!");
@@ -135,7 +137,6 @@ public class CommandOSMEss implements CommandExecutor {
                     }
                     if (args[0].equalsIgnoreCase("toggleea")) {
                         if (player.isOp() || player.hasPermission("osmess.command.toggleea")) {
-
                             if (plugin.isExplosiveArrowsEnabled()) {
                                 plugin.setExplodingArrows(false);
 
@@ -182,13 +183,42 @@ public class CommandOSMEss implements CommandExecutor {
                 if (args.length == 0) {
                     sender.sendMessage("OSM-Ess version " + plugin.getDescription().getVersion());
                     sender.sendMessage("Administration Commands:");
+                    sender.sendMessage("/osmess addblocktoptreq - Adds a block to playtime requirement for placement.");
                     sender.sendMessage("/osmess addtoeablacklist - Adds a player to the blacklist for /ea.");
+                    sender.sendMessage("/osmess delblockfromptreq - Removes a block from playtime requirement.");
                     sender.sendMessage("/osmess delfromeablacklist - Removes a player from the blacklist for /ea.");
                     sender.sendMessage("/osmess eablacklist - Shows a list of players blocked from /ea.");
                     sender.sendMessage("/osmess endauction - Ends a current auction.");
                     sender.sendMessage("/osmess reload - Reloads all yml files.");
                     sender.sendMessage("/osmess toggleauction - Enables/Disables the auction system.");
                     sender.sendMessage("/osmess toggleea - Enables/Disables exploding arrows.");
+                    return true;
+                }
+
+                if (args[0].equalsIgnoreCase("addblocktoptreq")) {
+                    if (args.length != 2) {
+                        sender.sendMessage("Usage: /osmess addblocktoptreq <block name>");
+                        return true;
+                    }
+
+                    Material material = Material.matchMaterial(args[1]);
+                    if (material == null || material == Material.AIR) {
+                        sender.sendMessage("Error: Unknown block name or id.");
+                        return true;
+                    }
+
+                    if (!material.isBlock()) {
+                        sender.sendMessage("Error: Not a block.");
+                        return true;
+                    }
+
+                    if (plugin.isBlockOnPTReq(material)) {
+                        sender.sendMessage("Error Block name or id is already on the list.");
+                        return true;
+                    }
+
+                    plugin.addBlocktoPTReq(material);
+                    sender.sendMessage(material.name().toUpperCase() + " (" + material.getId() + ") added to playime requirement.");
                     return true;
                 }
 
@@ -233,6 +263,28 @@ public class CommandOSMEss implements CommandExecutor {
                         sender.sendMessage(other.getName() + " added to explosive arrow blacklist.");
                         return true;
                     }
+                }
+
+                if (args[0].equalsIgnoreCase("delblockfromptreq")) {
+                    if (args.length != 2) {
+                        sender.sendMessage("Usage: /osmess delblockfromptreq <block name>");
+                        return true;
+                    }
+
+                    Material material = Material.matchMaterial(args[1]);
+                    if (material == null || material == Material.AIR) {
+                        sender.sendMessage("Error: Unknown block name or id.");
+                        return true;
+                    }
+
+                    if (!plugin.isBlockOnPTReq(material)) {
+                        sender.sendMessage("Error Block name or id isn't on the list.");
+                        return true;
+                    }
+
+                    plugin.delBlockFromPTReq(material);
+                    sender.sendMessage(material.name().toUpperCase() + " (" + material.getId() + ") removed from playime requirement.");
+                    return true;
                 }
 
                 if (args[0].equalsIgnoreCase("delfromeablacklist")) {
@@ -329,6 +381,8 @@ public class CommandOSMEss implements CommandExecutor {
                         return true;
                     }
 
+                    plugin.autoBroadcastCFG.reload();
+                    plugin.blocksReqPlaytimeCFG.reload();
                     plugin.configSettingCFG.reload();
                     plugin.colorMessageCFG.reload();
                     plugin.warningsCFG.reload();
@@ -336,6 +390,7 @@ public class CommandOSMEss implements CommandExecutor {
                     sender.sendMessage("Reloaded all yml files!");
                     return true;
                 }
+
                 if (args[0].equalsIgnoreCase("toggleauction") ||  args[0].equalsIgnoreCase("toggleauctionsystem")) {
                     if (args.length != 1) {
                         sender.sendMessage("Usage: /osmess toggleauction");
@@ -387,7 +442,9 @@ public class CommandOSMEss implements CommandExecutor {
 
                 sender.sendMessage("OSM-Ess version " + plugin.getDescription().getVersion());
                 sender.sendMessage("Administration Commands:");
+                sender.sendMessage("/osmess addblocktoptreq - Adds a block to playtime requirement for placement.");
                 sender.sendMessage("/osmess addtoeablacklist - Adds a player to the blacklist for /ea.");
+                sender.sendMessage("/osmess delblockfromptreq - Removes a block from playtime requirement.");
                 sender.sendMessage("/osmess delfromeablacklist - Removes a player from the blacklist for /ea.");
                 sender.sendMessage("/osmess eablacklist - Shows a list of players blocked from /ea.");
                 sender.sendMessage("/osmess endauction - Ends a current auction.");
