@@ -54,7 +54,7 @@ public class CommandHome implements CommandExecutor {
                 if (args.length == 1) {
                     if (args[0].endsWith(":")) { // Nothing after ':'; view a specific player's homes.
                         if (player.isOp() || player.hasPermission("essentials.home.others")) {
-                            Player other = Bukkit.getServer().getPlayer(args[0].substring(0, args[0].length() - 1));
+                            Player other = Bukkit.getServer().getPlayerExact(args[0].substring(0, args[0].length() - 1));
 
                             if (other == null) {
                                 OfflinePlayer offline = Bukkit.getServer().getOfflinePlayer(args[0].substring(0, args[0].length() - 1));
@@ -113,7 +113,7 @@ public class CommandHome implements CommandExecutor {
                     else if (args[0].contains(":")) { // Contains ':' somewhere; use it to define a player and get the home name after ':'.
                         if (player.isOp() || player.hasPermission("essentials.home.others")) {
                             char seperator = ':';
-                            Player other = Bukkit.getServer().getPlayer(StringUtils.substringBefore(args[0], seperator));
+                            Player other = Bukkit.getServer().getPlayerExact(StringUtils.substringBefore(args[0], seperator));
 
                             if (other == null) {
                                 OfflinePlayer offline = Bukkit.getServer().getOfflinePlayer(StringUtils.substringBefore(args[0], seperator));
@@ -271,7 +271,7 @@ public class CommandHome implements CommandExecutor {
                     return true;
                 }
 
-                Player other = Bukkit.getServer().getPlayer(args[0]);
+                Player other = Bukkit.getServer().getPlayerExact(args[0]);
 
                 if (other == null) {
                     // Show the offline player's homes to the CONSOLE.
