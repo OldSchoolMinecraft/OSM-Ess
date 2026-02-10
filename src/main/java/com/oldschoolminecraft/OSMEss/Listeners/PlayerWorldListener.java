@@ -1,7 +1,10 @@
 package com.oldschoolminecraft.OSMEss.Listeners;
 
 import com.oldschoolminecraft.OSMEss.Commands.CommandExplosiveArrows;
+import com.oldschoolminecraft.OSMEss.HerobrineStatus;
+import com.oldschoolminecraft.OSMEss.HerobrineThread;
 import com.oldschoolminecraft.OSMEss.OSMEss;
+import net.minecraft.server.Packet20NamedEntitySpawn;
 import net.oldschoolminecraft.lmk.LandmarkData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,25 +12,33 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class PlayerWorldListener implements Listener {
     public OSMEss plugin;
+
+    public HerobrineThread herobrineThread;
+    public final Object lock = new Object();
 
     public PlayerWorldListener(OSMEss plugin) {
         this.plugin = plugin;
@@ -258,6 +269,99 @@ public class PlayerWorldListener implements Listener {
     }
 
     @EventHandler
+    public void on(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+
+        if (plugin.isBlockOnPTReq(block.getType())) {
+            if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) >= plugin.getMinimumRequiredPlaytimeToPlaceBlock()) { // 6 hours
+                event.setCancelled(false);
+            }
+            else {
+                event.setCancelled(true);
+                player.sendMessage("§cYou do not have enough playtime to place " + block.getType().name().toUpperCase().replaceAll("_", " ") + "!");
+            }
+        }
+
+        if (block.getLocation().getBlock().getType() == Material.FIRE) {
+            if (plugin.totemHandler.meetsTotemCriteriaLayer0(block) && plugin.totemHandler.meetsTotemCriteriaLayerNeg1(block) && plugin.totemHandler.meetsTotemCriteriaLayerNeg2(block)) {
+                Random random = new Random();
+                int result = random.nextInt(100) + 1;
+                int chance = 20; // 2% chance for Herobrine scare. (Random must fall at or below 1)
+
+                if (result <= chance) {
+                    synchronized (lock) {
+                        if (getHerobrineStatus() == HerobrineStatus.INACTIVE) {
+
+                            player.getWorld().strikeLightningEffect(block.getLocation());
+
+                            Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn();
+                            packet.a = 957192; // Entity ID
+                            packet.b = "Herobrine"; // Name (limit 16 chars)
+                            packet.c = block.getX() * 32; // X pos
+                            packet.d = block.getY() * 32; // Y pos
+                            packet.e = block.getZ() * 32; // Z pos
+
+
+                            double dx = (int) player.getLocation().getX() * 32 - packet.c;
+                            double dy = (int) player.getLocation().getY() * 32 - packet.d;
+                            double dz = (int) player.getLocation().getZ() * 32 - packet.e;
+
+                            double length = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                            if (length != 0.0) {
+                                dx /= length;
+                                dy /= length;
+                                dz /= length;
+                            }
+
+                            // yaw: rotation around Y axis (left/right)
+                            float yaw = (float) (Math.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0f;
+                            // pitch: up/down
+                            float pitch = (float) -(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)) * (180.0 / Math.PI));
+
+                            packet.f = (byte) yaw; // Rotation
+                            packet.g = (byte) pitch; // Pitch
+
+                            packet.h = 276; // Current Item (Diamond Sword)
+
+                            // Send to client
+                            ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(packet);
+
+                            setHerobrineStatus(HerobrineStatus.ACTIVE);
+                            herobrineThread = new HerobrineThread(player, 5, this::endScare);
+                            herobrineThread.start();
+
+                            player.sendMessage("§7[Herobrine -> You] §fYou are not alone.");
+                        }
+                    }
+
+//                    Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, () -> {
+//                        Packet29DestroyEntity killPacket = new Packet29DestroyEntity();
+//                        packet.a = 957192;
+//                        ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(killPacket);
+//
+//                    }, 100L);
+
+                }
+            }
+        }
+    }
+
+    public void endScare() {
+        synchronized (lock) {
+            if (getHerobrineStatus() == HerobrineStatus.INACTIVE) return;
+
+            setHerobrineStatus(HerobrineStatus.INACTIVE);
+            if (herobrineThread.isAlive()) {herobrineThread.interrupt();}
+        }
+    }
+
+    public void setHerobrineStatus(HerobrineStatus herobrineStatus) {
+        plugin.herobrineStatus = herobrineStatus;
+    }
+    public HerobrineStatus getHerobrineStatus() {return plugin.herobrineStatus;}
+
+    @EventHandler
     public void on(ProjectileHitEvent event) {
         if (event.getEntity() instanceof Arrow && ((Arrow) event.getEntity()).getShooter() instanceof Player) {
             Player player = (Player) ((Arrow) event.getEntity()).getShooter();
@@ -272,4 +376,74 @@ public class PlayerWorldListener implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void on(PlayerFishEvent event) {
+        Player player = event.getPlayer();
+
+        if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
+            if (plugin.isFishTreasureEnabled()) {
+                if (player.isOp()) { // Operator/Admin only for now. Will be removed later when deemed ready for public use.
+                    if (event.getCaught() instanceof Item) {
+                        Random random = new Random();
+                        double result = random.nextInt(100) + random.nextDouble();
+                        double chance = plugin.getChanceForFishTreasure();
+
+                        if (result <= chance) { // Within boundary of configured chance.
+                            String resultFormatted = String.format("%.2f%%", result);
+                            Item itemEntity = (Item) event.getCaught();
+
+                            List<ItemStack> allPossibleTreasures = new ArrayList<>(); {
+                                allPossibleTreasures.add(new ItemStack(Material.APPLE, 1));
+                                allPossibleTreasures.add(new ItemStack(Material.DIAMOND, 1));
+                                allPossibleTreasures.add(new ItemStack(Material.GOLD_INGOT, 1));
+                                allPossibleTreasures.add(new ItemStack(Material.IRON_INGOT, 1));
+                                allPossibleTreasures.add(new ItemStack(Material.REDSTONE, 1));
+                            }
+
+                            Random randomTreasure = new Random();
+                            int randomIndex = randomTreasure.nextInt(allPossibleTreasures.size());
+                            ItemStack treasureToGive = allPossibleTreasures.get(randomIndex);
+
+                            itemEntity.setItemStack(treasureToGive);
+
+                            player.sendMessage("§3[Debug] §aTreasure caught! §7(Result: " + resultFormatted + ")");
+                        }
+                        else { // Outside configured chance.
+                            String resultFormatted = String.format("%.2f%%", result);
+                            Item itemEntity = (Item) event.getCaught();
+                            ItemStack itemStack = new ItemStack(Material.RAW_FISH, 1);
+                            itemEntity.setItemStack(itemStack);
+                            player.sendMessage("§3[Debug] §cNo treasure. §7(Result: " + resultFormatted + ")");
+                        }
+                    }
+                }
+                else { // No permission. (Temporary)
+                    if (event.getCaught() instanceof Item) {
+                        Item itemEntity = (Item) event.getCaught();
+                        ItemStack itemStack = new ItemStack(Material.RAW_FISH, 1);
+                        itemEntity.setItemStack(itemStack);
+                    }
+                }
+            }
+            else { // Feature disabled.
+                if (event.getCaught() instanceof Item) {
+                    Item itemEntity = (Item) event.getCaught();
+                    ItemStack itemStack = new ItemStack(Material.RAW_FISH, 1);
+                    itemEntity.setItemStack(itemStack);
+                }
+            }
+        }
+    }
+
+
+
+//                  Spawn Behind Player (Doesn't include Y check; will spawn in the air or the wall) [Scrapped]
+//                    Location playerLoc = player.getLocation();
+//                    Vector direction = playerLoc.getDirection();
+//                    Vector behindVector = direction.multiply(-2);
+//                    Location locationBehind = playerLoc.add(behindVector.toLocation(player.getWorld()));
+//                    playerLoc.setX(locationBehind.getX());
+//                    playerLoc.setY(locationBehind.getY());
+//                    playerLoc.setZ(locationBehind.getZ());
 }
