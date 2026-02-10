@@ -16,14 +16,14 @@ public class CommandExplosiveArrows implements CommandExecutor {
 
     public CommandExplosiveArrows(OSMEss plugin) {
         this.plugin = plugin;
-        this.plugin.getCommand("explosivearrows").setExecutor(this);
+        this.plugin.getCommand("ea").setExecutor(this);
     }
 
     public static ArrayList<String> explodeArrow = new ArrayList<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("explosivearrows") || cmd.getName().equalsIgnoreCase("explodingarrows") || cmd.getName().equalsIgnoreCase("ea")) {
+        if (cmd.getName().equalsIgnoreCase("ea")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
 
