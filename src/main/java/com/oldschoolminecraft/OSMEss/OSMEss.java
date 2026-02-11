@@ -351,8 +351,8 @@ public class OSMEss extends JavaPlugin {
     }
 // Auction Setting Methods
 
+    
 // Fish Treasure Methods
-
     public boolean isFishTreasureEnabled() {
         if (this.configSettingCFG.getConfigOption("Settings.FishTreasure.enabled").equals(true)) return true;
         else return false;
@@ -361,7 +361,25 @@ public class OSMEss extends JavaPlugin {
     public Double getChanceForFishTreasure() {
         return (double) this.configSettingCFG.getConfigOption("Settings.FishTreasure.chanceForTreasure");
     }
+// Fish Treasure Methods
 
+    
+// Herobrine Methods
+    public boolean isHerobrineEnabled() {
+        if (this.configSettingCFG.getConfigOption("Settings.Herobrine.enabled").equals(true)) return true;
+        else return false;
+    }
+
+    public Integer getChanceForHerobrineScare() {
+        return (int) this.configSettingCFG.getConfigOption("Settings.Herobrine.chanceToScare");
+    }
+
+    public Double getHerobrineDamageFactor() {
+        return (double) this.configSettingCFG.getConfigOption("Settings.Herobrine.damageFactor");
+    }
+// Herobrine Methods
+
+    
 //  Warp Highlight Methods
     public boolean isWarpNameHighlighted(String warpName) {
         if (this.configSettingCFG.getConfigOption("Warps.Highlight." + warpName.toLowerCase()) != null) return true;
@@ -407,7 +425,7 @@ public class OSMEss extends JavaPlugin {
     }
 //  Warp Highlight Methods
 
-
+    
 //  Explosive Arrows Methods
     // Online
     public void addToEABlacklist(Player player) {
@@ -718,3 +736,4 @@ public class OSMEss extends JavaPlugin {
     public String playerNotFound = "§cError: Player not found.";
     public String warpNotDefined = "§cError: No warps defined.";
 }
+
