@@ -147,6 +147,7 @@ public class OSMEss extends JavaPlugin {
         new CommandConfirmBid(this);
         new CommandDenyBid(this);
         new CommandDiscord(this);
+        new CommandExplosiveArrows(this);
         new CommandFindHome(this);
         new CommandForecast(this);
         new CommandHighlightWarp(this);
@@ -732,5 +733,6 @@ public class OSMEss extends JavaPlugin {
     public String playerNotFound = "§cError: Player not found.";
     public String warpNotDefined = "§cError: No warps defined.";
 }
+
 
 
