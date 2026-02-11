@@ -373,10 +373,6 @@ public class OSMEss extends JavaPlugin {
     public Integer getChanceForHerobrineScare() {
         return (int) this.configSettingCFG.getConfigOption("Settings.Herobrine.chanceToScare");
     }
-
-    public Double getHerobrineDamageFactor() {
-        return (double) this.configSettingCFG.getConfigOption("Settings.Herobrine.damageFactor");
-    }
 // Herobrine Methods
 
     
@@ -736,4 +732,5 @@ public class OSMEss extends JavaPlugin {
     public String playerNotFound = "§cError: Player not found.";
     public String warpNotDefined = "§cError: No warps defined.";
 }
+
 
