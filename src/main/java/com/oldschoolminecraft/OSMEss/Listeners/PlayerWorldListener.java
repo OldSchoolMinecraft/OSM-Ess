@@ -31,6 +31,7 @@ import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -287,66 +288,67 @@ public class PlayerWorldListener implements Listener {
         }
 
         if (block.getLocation().getBlock().getType() == Material.FIRE) {
-            if (plugin.totemHandler.meetsTotemCriteriaLayer0(block) && plugin.totemHandler.meetsTotemCriteriaLayerNeg1(block) && plugin.totemHandler.meetsTotemCriteriaLayerNeg2(block)) {
-                Random random = new Random();
-                int result = random.nextInt(100) + 1;
-                int chance = 2; // 2% chance for Herobrine scare.
+            if (plugin.isHerobrineEnabled()) {
+                if (plugin.totemHandler.meetsTotemCriteriaLayer0(block) && plugin.totemHandler.meetsTotemCriteriaLayerNeg1(block) && plugin.totemHandler.meetsTotemCriteriaLayerNeg2(block)) {
+                    Random random = new Random();
+                    int result = random.nextInt(100) + 1;
+                    int chance = plugin.getChanceForHerobrineScare(); // Chance for herobrine to scare based on config.yml.
 
-                if (result <= chance) {
-                    synchronized (lock) {
-                        if (getHerobrineStatus() == HerobrineStatus.INACTIVE) {
+                    if (result <= chance) {
+                        synchronized (lock) {
+                            if (getHerobrineStatus() == HerobrineStatus.INACTIVE) {
 
-                            player.getWorld().strikeLightningEffect(block.getLocation());
+                                player.getWorld().strikeLightningEffect(block.getLocation());
 
-                            Location fakeLoc = block.getLocation().add(0.5, 0, 0.5);
-                            Location playerLoc = player.getLocation();
+                                Location fakeLoc = block.getLocation().add(0.5, 0, 0.5);
+                                Location playerLoc = player.getLocation();
 
-                            // Aim at eyes
-                            double fakeEyeY   = fakeLoc.getY() + 1.62;
-                            double playerEyeY = playerLoc.getY() + 1.62;
+                                // Aim at eyes
+                                double fakeEyeY   = fakeLoc.getY() + 1.62;
+                                double playerEyeY = playerLoc.getY() + 1.62;
 
-                            double dx = playerLoc.getX() - fakeLoc.getX();
-                            double dy = playerEyeY - fakeEyeY;
-                            double dz = playerLoc.getZ() - fakeLoc.getZ();
+                                double dx = playerLoc.getX() - fakeLoc.getX();
+                                double dy = playerEyeY - fakeEyeY;
+                                double dz = playerLoc.getZ() - fakeLoc.getZ();
 
 
-                            // Yaw: atan2(Z, X)
-                            float yaw = (float) (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90.0f;
+                                // Yaw: atan2(Z, X)
+                                float yaw = (float) (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90.0f;
 
-                            // Pitch: atan2(Y, horizontal distance)
-                            double horizontal = Math.sqrt(dx * dx + dz * dz);
-                            float pitch = (float) -(Math.atan2(dy, horizontal) * 180.0 / Math.PI);
+                                // Pitch: atan2(Y, horizontal distance)
+                                double horizontal = Math.sqrt(dx * dx + dz * dz);
+                                float pitch = (float) -(Math.atan2(dy, horizontal) * 180.0 / Math.PI);
 
-                            // Convert to packet bytes
-                            byte yawByte   = (byte) ((yaw   * 256.0f) / 360.0f);
-                            byte pitchByte = (byte) ((pitch * 256.0f) / 360.0f);
+                                // Convert to packet bytes
+                                byte yawByte   = (byte) ((yaw   * 256.0f) / 360.0f);
+                                byte pitchByte = (byte) ((pitch * 256.0f) / 360.0f);
 
-                            fakeLoc.setYaw(yawByte);
-                            fakeLoc.setPitch(pitchByte);
+                                fakeLoc.setYaw(yawByte);
+                                fakeLoc.setPitch(pitchByte);
 
-                            // Build packet
-                            Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn();
-                            packet.a = EntityIdAllocator.getHerobrineEntityID();
-                            packet.b = "Herobrine";
+                                // Build packet
+                                Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn();
+                                packet.a = EntityIdAllocator.getHerobrineEntityID();
+                                packet.b = "Herobrine";
 
-                            // Fixed-point position
-                            packet.c = (int) Math.floor(fakeLoc.getX() * 32.0);
-                            packet.d = (int) Math.floor(fakeLoc.getY() * 32.0);
-                            packet.e = (int) Math.floor(fakeLoc.getZ() * 32.0);
+                                // Fixed-point position
+                                packet.c = (int) Math.floor(fakeLoc.getX() * 32.0);
+                                packet.d = (int) Math.floor(fakeLoc.getY() * 32.0);
+                                packet.e = (int) Math.floor(fakeLoc.getZ() * 32.0);
 
-                            packet.f = yawByte;
-                            packet.g = pitchByte;
-                            packet.h = 276; // Diamond Sword
+                                packet.f = yawByte;
+                                packet.g = pitchByte;
+                                packet.h = 276; // Diamond Sword
 
-                            ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
+                                ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
 
-                            setHerobrineStatus(HerobrineStatus.ACTIVE);
-                            herobrineThread = new HerobrineThread(player, fakeLoc, 5, this::endScare);
-                            herobrineThread.start();
+                                setHerobrineStatus(HerobrineStatus.ACTIVE);
+                                herobrineThread = new HerobrineThread(player, fakeLoc, 5, this::endScare);
+                                herobrineThread.start();
 
-                            player.sendMessage("§7[Herobrine -> You] §fYou are not alone.");
+                                player.sendMessage("§7[Herobrine -> You] §fYou are not alone.");
+                            }
                         }
-                    }
 
 //                    Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, () -> {
 //                        Packet29DestroyEntity killPacket = new Packet29DestroyEntity();
@@ -354,6 +356,7 @@ public class PlayerWorldListener implements Listener {
 //                        ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(killPacket);
 //
 //                    }, 100L);
+                    }
                 }
             }
         }
@@ -447,9 +450,6 @@ public class PlayerWorldListener implements Listener {
             }
         }
     }
-
-
-
 //                  Spawn Behind Player (Doesn't include Y check; will spawn in the air or the wall) [Scrapped]
 //                    Location playerLoc = player.getLocation();
 //                    Vector direction = playerLoc.getDirection();
