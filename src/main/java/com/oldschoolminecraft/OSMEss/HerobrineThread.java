@@ -2,10 +2,7 @@ package com.oldschoolminecraft.OSMEss;
 
 import com.oldschoolminecraft.OSMEss.Handlers.EntityIdAllocator;
 import com.oldschoolminecraft.OSMEss.Util.HerobrineUtil;
-import net.minecraft.server.Packet20NamedEntitySpawn;
-import net.minecraft.server.Packet29DestroyEntity;
-import net.minecraft.server.Packet33RelEntityMoveLook;
-import net.minecraft.server.Packet34EntityTeleport;
+import net.minecraft.server.*;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
@@ -116,7 +113,20 @@ public class HerobrineThread extends Thread {
 
         cp.getHandle().netServerHandler.sendPacket(tp);
 
+        // send arm swing animation
+        sendArmSwing(player);
+
         // Optional damage effect
         player.damage(1);
+    }
+
+    private void sendArmSwing(Player player)
+    {
+        Packet18ArmAnimation packet = new Packet18ArmAnimation();
+        packet.a = EntityIdAllocator.getHerobrineEntityID();
+        packet.b = 1;
+
+        CraftPlayer cp = (CraftPlayer) player;
+        cp.getHandle().netServerHandler.sendPacket(packet);
     }
 }
