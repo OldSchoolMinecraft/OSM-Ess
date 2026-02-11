@@ -3,12 +3,16 @@ package com.oldschoolminecraft.OSMEss;
 import com.oldschoolminecraft.OSMEss.Handlers.EntityIdAllocator;
 import com.oldschoolminecraft.OSMEss.Util.HerobrineUtil;
 import net.minecraft.server.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
@@ -35,6 +39,16 @@ public class HerobrineThread extends Thread {
                 packet.a = EntityIdAllocator.getHerobrineEntityID();
                 ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(packet);
 
+                double range = 30.0; // the desired radius
+
+                List<Player> nearbyPlayers = getPlayersInRadius(player, range);
+
+                for (Player p : nearbyPlayers) {
+                    CraftPlayer np = (CraftPlayer) p;
+
+                    np.getHandle().netServerHandler.sendPacket(packet);
+                }
+
                 herobrineEndCallback.run();
 
                 running = false;
@@ -44,6 +58,18 @@ public class HerobrineThread extends Thread {
                 Packet29DestroyEntity packet = new Packet29DestroyEntity();
                 packet.a = EntityIdAllocator.getHerobrineEntityID();
                 ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(packet);
+                player.playEffect(HerobrineUtil.getCurrentLocation(), Effect.SMOKE, 1);
+
+                double range = 30.0; // the desired radius
+
+                List<Player> nearbyPlayers = getPlayersInRadius(player, range);
+
+                for (Player p : nearbyPlayers) {
+                    CraftPlayer np = (CraftPlayer) p;
+
+                    np.getHandle().netServerHandler.sendPacket(packet);
+                    p.playEffect(HerobrineUtil.getCurrentLocation(), Effect.SMOKE, 1);
+                }
             }
 
 
@@ -112,6 +138,15 @@ public class HerobrineThread extends Thread {
         HerobrineUtil.updateLocation(targetLoc);
 
         cp.getHandle().netServerHandler.sendPacket(tp);
+        double range = 30.0; // the desired radius
+
+        List<Player> nearbyPlayers = getPlayersInRadius(player, range);
+
+        for (Player p : nearbyPlayers) {
+            CraftPlayer np = (CraftPlayer) p;
+
+            np.getHandle().netServerHandler.sendPacket(tp);
+        }
 
         // send arm swing animation
         sendArmSwing(player);
@@ -128,5 +163,38 @@ public class HerobrineThread extends Thread {
 
         CraftPlayer cp = (CraftPlayer) player;
         cp.getHandle().netServerHandler.sendPacket(packet);
+
+        double range = 30.0; // the desired radius
+
+        List<Player> nearbyPlayers = getPlayersInRadius(player, range);
+
+        for (Player p : nearbyPlayers) {
+            CraftPlayer np = (CraftPlayer) p;
+
+            np.getHandle().netServerHandler.sendPacket(packet);
+        }
+    }
+
+    public static List<Player> getPlayersInRadius(Player centerPlayer, double radius) {
+        List<Player> playersInRadius = new ArrayList<>();
+        Location centerLocation = centerPlayer.getLocation();
+        double radiusSquared = radius * radius; // Use distanceSquared for performance
+
+        // Loop through all online players
+        for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
+            // Ensure both players are in the same world to avoid exceptions
+            if (!otherPlayer.getWorld().equals(centerPlayer.getWorld())) {
+                continue;
+            }
+
+            // Check if the distance squared is less than or equal to the radius squared
+            if (otherPlayer.getLocation().distanceSquared(centerLocation) <= radiusSquared) {
+                // Optionally exclude the center player themselves from the list
+                if (!otherPlayer.equals(centerPlayer)) {
+                    playersInRadius.add(otherPlayer);
+                }
+            }
+        }
+        return playersInRadius;
     }
 }
