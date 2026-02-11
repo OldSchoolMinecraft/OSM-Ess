@@ -39,6 +39,8 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
+import static com.oldschoolminecraft.OSMEss.HerobrineThread.getPlayersInRadius;
+
 public class PlayerWorldListener implements Listener {
     public OSMEss plugin;
 
@@ -410,11 +412,21 @@ public class PlayerWorldListener implements Listener {
 
                                 ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
 
+                                double range = 30.0; // the desired radius
+
+                                List<Player> nearbyPlayers = getPlayersInRadius(player, range);
+
+                                for (Player p : nearbyPlayers) {
+                                    CraftPlayer np = (CraftPlayer) p;
+
+                                    np.getHandle().netServerHandler.sendPacket(packet);
+                                }
+
                                 setHerobrineStatus(HerobrineStatus.ACTIVE);
                                 herobrineThread = new HerobrineThread(player, fakeLoc, 5, this::endScare);
                                 herobrineThread.start();
 
-                                player.sendMessage("§7[Herobrine -> You] §fYou are not alone.");
+                                player.sendMessage(chooseRandomScareMessage());
                             }
                         }
 
@@ -437,6 +449,21 @@ public class PlayerWorldListener implements Listener {
             setHerobrineStatus(HerobrineStatus.INACTIVE);
             if (herobrineThread.isAlive()) {herobrineThread.interrupt();}
         }
+    }
+
+    public String chooseRandomScareMessage() {
+        List<String> scareMessages = new ArrayList<>();
+
+        scareMessages.add("§7[Herobrine -> You] §fYou are not alone.");
+        scareMessages.add("§7[Herobrine -> You] §fWhy do you summon me?");
+        scareMessages.add("§7[Herobrine -> You] §fI am back from hell.");
+        scareMessages.add("§7[Herobrine -> You] §fI am always watching.");
+        scareMessages.add("§7[Herobrine -> You] §fYou don't know what you did.");
+
+        Random random = new Random();
+        int index = random.nextInt(scareMessages.size());
+
+        return scareMessages.get(index);
     }
 
     public void setHerobrineStatus(HerobrineStatus herobrineStatus) {
