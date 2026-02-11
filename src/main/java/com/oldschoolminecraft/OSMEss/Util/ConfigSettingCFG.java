@@ -27,6 +27,11 @@ public class ConfigSettingCFG extends Configuration {
         generateConfigOption("Settings.FishTreasure.enabled", true);
         generateConfigOption("Settings.FishTreasure.chanceForTreasure", 2.5); // 2.5%
 
+        // Herobrine Settings
+        generateConfigOption("Settings.Herobrine.enabled", this);
+        generateConfigOption("Settings.Herobrine.chanceToScare", 2); // 2%
+        generateConfigOption("Settings.Herobrine.damageFactor", 0.5);
+
         // Staff Tool Settings
         generateConfigOption("Settings.StaffTools.slot1", 271);
         generateConfigOption("Settings.StaffTools.slot2", 345);
