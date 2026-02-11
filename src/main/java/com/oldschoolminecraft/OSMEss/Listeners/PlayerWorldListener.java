@@ -5,8 +5,11 @@ import com.oldschoolminecraft.OSMEss.Handlers.EntityIdAllocator;
 import com.oldschoolminecraft.OSMEss.HerobrineStatus;
 import com.oldschoolminecraft.OSMEss.HerobrineThread;
 import com.oldschoolminecraft.OSMEss.OSMEss;
+import com.oldschoolminecraft.OSMEss.Util.HerobrineUtil;
 import net.minecraft.server.Packet20NamedEntitySpawn;
 import net.minecraft.server.Packet29DestroyEntity;
+import net.minecraft.server.Packet32EntityLook;
+import net.minecraft.server.Packet34EntityTeleport;
 import net.oldschoolminecraft.lmk.LandmarkData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,13 +33,11 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class PlayerWorldListener implements Listener {
     public OSMEss plugin;
@@ -235,6 +236,71 @@ public class PlayerWorldListener implements Listener {
         }
     }
 
+    private final Map<UUID, Long> lastLookUpdate = new HashMap<>();
+
+    @EventHandler
+    public void on(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+
+        if (plugin.herobrineStatus != HerobrineStatus.ACTIVE) return;
+
+        long now = System.currentTimeMillis();
+        UUID playerId = player.getUniqueId();
+
+        // Check if enough time has passed since last update
+        if (lastLookUpdate.containsKey(playerId)) {
+            long lastTime = lastLookUpdate.get(playerId);
+            if (now - lastTime < 100) return; // less than 50ms → skip
+        }
+
+        // Update Herobrine look
+        updateHerobrineLook(player, HerobrineUtil.getCurrentLocation());
+
+        // Record timestamp
+        lastLookUpdate.put(playerId, now);
+    }
+
+    public void updateHerobrineLook(Player player, Location fakeLoc) {
+        CraftPlayer cp = (CraftPlayer) player;
+
+        Location playerEye = player.getEyeLocation();
+
+        // Eye positions
+        // ---- Eye positions ----
+        double fakeEyeY   = fakeLoc.getY() + 1.62;
+        double playerEyeY = playerEye.getY();
+
+        // ---- Eye → eye deltas ----
+        double dx = playerEye.getX() - fakeLoc.getX();
+        double dy = playerEyeY - fakeEyeY;
+        double dz = playerEye.getZ() - fakeLoc.getZ();
+
+        // ---- Rotation ----
+        float yaw = (float) (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90.0f;
+        double horizontal = Math.sqrt(dx * dx + dz * dz);
+        float pitch = (float) -(Math.atan2(dy, horizontal) * 180.0 / Math.PI);
+
+        // Convert to protocol bytes
+        byte yawByte   = (byte) ((yaw   * 256.0f) / 360.0f);
+        byte pitchByte = (byte) ((pitch * 256.0f) / 360.0f);
+
+        fakeLoc.setYaw(yawByte);
+        fakeLoc.setPitch(pitchByte);
+
+        // ---- Teleport packet ----
+        Packet34EntityTeleport tp = new Packet34EntityTeleport();
+        tp.a = EntityIdAllocator.getHerobrineEntityID();
+        tp.b = (int) Math.floor(fakeLoc.getX() * 32.0);
+        tp.c = (int) Math.floor(fakeLoc.getY() * 32.0);
+        tp.d = (int) Math.floor(fakeLoc.getZ() * 32.0);
+        tp.e = yawByte;
+        tp.f = pitchByte;
+
+        HerobrineUtil.updateLocation(fakeLoc);
+
+        cp.getHandle().netServerHandler.sendPacket(tp);
+    }
+
     @EventHandler
     public void on(BlockBreakEvent event) {
         Player player = event.getPlayer();
@@ -339,6 +405,8 @@ public class PlayerWorldListener implements Listener {
                                 packet.f = yawByte;
                                 packet.g = pitchByte;
                                 packet.h = 276; // Diamond Sword
+
+                                HerobrineUtil.updateLocation(fakeLoc);
 
                                 ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
 

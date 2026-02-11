@@ -1,6 +1,7 @@
 package com.oldschoolminecraft.OSMEss;
 
 import com.oldschoolminecraft.OSMEss.Handlers.EntityIdAllocator;
+import com.oldschoolminecraft.OSMEss.Util.HerobrineUtil;
 import net.minecraft.server.Packet20NamedEntitySpawn;
 import net.minecraft.server.Packet29DestroyEntity;
 import net.minecraft.server.Packet33RelEntityMoveLook;
@@ -110,6 +111,8 @@ public class HerobrineThread extends Thread {
         tp.d = (int) Math.floor(targetLoc.getZ() * 32.0);
         tp.e = yawByte;
         tp.f = pitchByte;
+
+        HerobrineUtil.updateLocation(targetLoc);
 
         cp.getHandle().netServerHandler.sendPacket(tp);
 
