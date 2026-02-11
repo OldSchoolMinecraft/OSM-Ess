@@ -30,7 +30,6 @@ public class ConfigSettingCFG extends Configuration {
         // Herobrine Settings
         generateConfigOption("Settings.Herobrine.enabled", true);
         generateConfigOption("Settings.Herobrine.chanceToScare", 2);
-        generateConfigOption("Settings.Herobrine.damageFactor", 0.5);
 
         // Staff Tool Settings
         generateConfigOption("Settings.StaffTools.slot1", 271);
