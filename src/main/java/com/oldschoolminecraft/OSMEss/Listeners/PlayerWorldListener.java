@@ -1,13 +1,16 @@
 package com.oldschoolminecraft.OSMEss.Listeners;
 
 import com.oldschoolminecraft.OSMEss.Commands.CommandExplosiveArrows;
+import com.oldschoolminecraft.OSMEss.Handlers.EntityIdAllocator;
 import com.oldschoolminecraft.OSMEss.HerobrineStatus;
 import com.oldschoolminecraft.OSMEss.HerobrineThread;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import net.minecraft.server.Packet20NamedEntitySpawn;
+import net.minecraft.server.Packet29DestroyEntity;
 import net.oldschoolminecraft.lmk.LandmarkData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -295,40 +298,50 @@ public class PlayerWorldListener implements Listener {
 
                             player.getWorld().strikeLightningEffect(block.getLocation());
 
+                            Location fakeLoc = block.getLocation().add(0.5, 0, 0.5);
+                            Location playerLoc = player.getLocation();
+
+                            // Aim at eyes
+                            double fakeEyeY   = fakeLoc.getY() + 1.62;
+                            double playerEyeY = playerLoc.getY() + 1.62;
+
+                            double dx = playerLoc.getX() - fakeLoc.getX();
+                            double dy = playerEyeY - fakeEyeY;
+                            double dz = playerLoc.getZ() - fakeLoc.getZ();
+
+
+                            // Yaw: atan2(Z, X)
+                            float yaw = (float) (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90.0f;
+
+                            // Pitch: atan2(Y, horizontal distance)
+                            double horizontal = Math.sqrt(dx * dx + dz * dz);
+                            float pitch = (float) -(Math.atan2(dy, horizontal) * 180.0 / Math.PI);
+
+                            // Convert to packet bytes
+                            byte yawByte   = (byte) ((yaw   * 256.0f) / 360.0f);
+                            byte pitchByte = (byte) ((pitch * 256.0f) / 360.0f);
+
+                            fakeLoc.setYaw(yawByte);
+                            fakeLoc.setPitch(pitchByte);
+
+                            // Build packet
                             Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn();
-                            packet.a = 957192; // Entity ID
-                            packet.b = "Herobrine"; // Name (limit 16 chars)
-                            packet.c = block.getX() * 32; // X pos
-                            packet.d = block.getY() * 32; // Y pos
-                            packet.e = block.getZ() * 32; // Z pos
+                            packet.a = EntityIdAllocator.getHerobrineEntityID();
+                            packet.b = "Herobrine";
 
+                            // Fixed-point position
+                            packet.c = (int) Math.floor(fakeLoc.getX() * 32.0);
+                            packet.d = (int) Math.floor(fakeLoc.getY() * 32.0);
+                            packet.e = (int) Math.floor(fakeLoc.getZ() * 32.0);
 
-                            double dx = (int) player.getLocation().getX() * 32 - packet.c;
-                            double dy = (int) player.getLocation().getY() * 32 - packet.d;
-                            double dz = (int) player.getLocation().getZ() * 32 - packet.e;
+                            packet.f = yawByte;
+                            packet.g = pitchByte;
+                            packet.h = 276; // Diamond Sword
 
-                            double length = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                            if (length != 0.0) {
-                                dx /= length;
-                                dy /= length;
-                                dz /= length;
-                            }
-
-                            // yaw: rotation around Y axis (left/right)
-                            float yaw = (float) (Math.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0f;
-                            // pitch: up/down
-                            float pitch = (float) -(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)) * (180.0 / Math.PI));
-
-                            packet.f = (byte) yaw; // Rotation
-                            packet.g = (byte) pitch; // Pitch
-
-                            packet.h = 276; // Current Item (Diamond Sword)
-
-                            // Send to client
-                            ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(packet);
+                            ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
 
                             setHerobrineStatus(HerobrineStatus.ACTIVE);
-                            herobrineThread = new HerobrineThread(player, 5, this::endScare);
+                            herobrineThread = new HerobrineThread(player, fakeLoc, 5, this::endScare);
                             herobrineThread.start();
 
                             player.sendMessage("§7[Herobrine -> You] §fYou are not alone.");
@@ -337,11 +350,10 @@ public class PlayerWorldListener implements Listener {
 
 //                    Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, () -> {
 //                        Packet29DestroyEntity killPacket = new Packet29DestroyEntity();
-//                        packet.a = 957192;
+//                        killPacket.a = EntityIdAllocator.getHerobrineEntityID();
 //                        ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(killPacket);
 //
 //                    }, 100L);
-
                 }
             }
         }

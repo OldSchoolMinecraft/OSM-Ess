@@ -1,8 +1,12 @@
 package com.oldschoolminecraft.OSMEss;
 
+import com.oldschoolminecraft.OSMEss.Handlers.EntityIdAllocator;
 import net.minecraft.server.Packet20NamedEntitySpawn;
 import net.minecraft.server.Packet29DestroyEntity;
+import net.minecraft.server.Packet33RelEntityMoveLook;
+import net.minecraft.server.Packet34EntityTeleport;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -13,11 +17,12 @@ import java.util.concurrent.locks.LockSupport;
 public class HerobrineThread extends Thread {
 
     public Player player;
+    private Location currentHerobrineLocation;
     public int secondsRemaining;
     private final Runnable herobrineEndCallback;
     private boolean running;
 
-    public HerobrineThread(Player player, int durationInSeconds, Runnable herobrineEndCallback) {
+    public HerobrineThread(Player player, Location currentHerobrineLocation, int durationInSeconds, Runnable herobrineEndCallback) {
         this.player = player;
         this.secondsRemaining = durationInSeconds;
         this.herobrineEndCallback = herobrineEndCallback;
@@ -29,7 +34,7 @@ public class HerobrineThread extends Thread {
         while (running) {
             if (secondsRemaining == 0) {
                 Packet29DestroyEntity packet = new Packet29DestroyEntity();
-                packet.a = 957192;
+                packet.a = EntityIdAllocator.getHerobrineEntityID();
                 ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(packet);
 
                 herobrineEndCallback.run();
@@ -39,7 +44,7 @@ public class HerobrineThread extends Thread {
 
             if (secondsRemaining == 1) {
                 Packet29DestroyEntity packet = new Packet29DestroyEntity();
-                packet.a = 957192;
+                packet.a = EntityIdAllocator.getHerobrineEntityID();
                 ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(packet);
             }
 
@@ -53,46 +58,62 @@ public class HerobrineThread extends Thread {
         }
     }
 
+    private Location snapToGround(Location loc) {
+        World world = loc.getWorld();
+        int x = loc.getBlockX();
+        int z = loc.getBlockZ();
+
+        int y = world.getHighestBlockYAt(x, z);
+
+        // Feet go one block above the solid surface
+        return new Location(world,
+                loc.getX(),
+                y,
+                loc.getZ());
+    }
+
     public void putHerobrineInFront(Player player) {
-        Vector direction = player.getLocation().getDirection();
-        Vector frontVector = direction.multiply(2);
-        Location locationAhead = player.getEyeLocation().add(frontVector.toLocation(player.getWorld()));
-        player.getLocation().setX(locationAhead.getX());
-        player.getLocation().setY(locationAhead.getBlockY());
-        player.getLocation().setZ(locationAhead.getZ());
+        CraftPlayer cp = (CraftPlayer) player;
 
+        Location playerEye = player.getEyeLocation();
 
-        Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn();
-        packet.a = 957192; // Entity ID
-        packet.b = "Herobrine"; // Name (limit 16 chars)
-        packet.c = (int) locationAhead.getX() * 32; // X pos
-        packet.d = (int) locationAhead.getY() * 32; // Y pos
-        packet.e = (int) locationAhead.getZ() * 32; // Z pos
+        // 2 blocks in front of player
+        Vector forward = playerEye.getDirection().normalize().multiply(2.0);
+        Location targetLoc = playerEye.clone().add(forward.toLocation(player.getWorld()));
 
-        double dx = (int) player.getLocation().getX() * 32 - packet.c;
-        double dy = (int) player.getLocation().getY() * 32 - packet.d;
-        double dz = (int) player.getLocation().getZ() * 32 - packet.e;
+        // Snap to ground (feet position)
+        targetLoc = snapToGround(targetLoc);
 
-        double length = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (length != 0.0) {
-            dx /= length;
-            dy /= length;
-            dz /= length;
-        }
+        // ---- Eye positions ----
+        double fakeEyeY   = targetLoc.getY() + 1.62;
+        double playerEyeY = playerEye.getY();
 
-        // yaw: rotation around Y axis (left/right)
-        float yaw = (float) (Math.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0f;
-        // pitch: up/down
-        float pitch = (float) -(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)) * (180.0 / Math.PI));
+        // ---- Eye → eye deltas ----
+        double dx = playerEye.getX() - targetLoc.getX();
+        double dy = playerEyeY - fakeEyeY;
+        double dz = playerEye.getZ() - targetLoc.getZ();
 
-        packet.f = (byte) yaw; // Rotation
-        packet.g = (byte) pitch; // Pitch
+        // ---- Rotation ----
+        float yaw = (float) (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90.0f;
+        double horizontal = Math.sqrt(dx * dx + dz * dz);
+        float pitch = (float) -(Math.atan2(dy, horizontal) * 180.0 / Math.PI);
 
-        packet.h = 276; // Current Item (Diamond Sword)
+        // Convert to protocol bytes
+        byte yawByte   = (byte) ((yaw   * 256.0f) / 360.0f);
+        byte pitchByte = (byte) ((pitch * 256.0f) / 360.0f);
 
+        // ---- Teleport packet ----
+        Packet34EntityTeleport tp = new Packet34EntityTeleport();
+        tp.a = EntityIdAllocator.getHerobrineEntityID();
+        tp.b = (int) Math.floor(targetLoc.getX() * 32.0);
+        tp.c = (int) Math.floor(targetLoc.getY() * 32.0);
+        tp.d = (int) Math.floor(targetLoc.getZ() * 32.0);
+        tp.e = yawByte;
+        tp.f = pitchByte;
 
-        // Send to client
-        ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(packet);
-        player.damage((int) 0.5);
+        cp.getHandle().netServerHandler.sendPacket(tp);
+
+        // Optional damage effect
+        player.damage(1);
     }
 }

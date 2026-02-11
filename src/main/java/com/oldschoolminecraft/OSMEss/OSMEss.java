@@ -147,7 +147,6 @@ public class OSMEss extends JavaPlugin {
         new CommandConfirmBid(this);
         new CommandDenyBid(this);
         new CommandDiscord(this);
-        new CommandExplosiveArrows(this);
         new CommandFindHome(this);
         new CommandForecast(this);
         new CommandHighlightWarp(this);
@@ -164,6 +163,9 @@ public class OSMEss extends JavaPlugin {
         new CommandWarnings(this);
         new CommandWarp(this);
         new CommandWarps(this);
+
+        // modman comment: my copy of poseidon didnt like when it was registered inside the constructor for some reason
+//        getCommand("explosivearrows").setExecutor(new CommandExplosiveArrows(this));
 
         if (!isAuctionSystemEnabled()) {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Auction System: Disabled");
