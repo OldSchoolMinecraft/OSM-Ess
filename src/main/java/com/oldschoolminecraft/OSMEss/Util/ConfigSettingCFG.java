@@ -25,7 +25,8 @@ public class ConfigSettingCFG extends Configuration {
 
         // Fish Treasure Settings
         generateConfigOption("Settings.FishTreasure.enabled", true);
-        generateConfigOption("Settings.FishTreasure.chanceForTreasure", 2.5); // 2.5%
+        generateConfigOption("Settings.FishTreasure.chanceForTreasure", 2.5);
+        generateConfigOption("Settings.FishTreasure.treasureList", null);
 
         // Herobrine Settings
         generateConfigOption("Settings.Herobrine.enabled", true);
