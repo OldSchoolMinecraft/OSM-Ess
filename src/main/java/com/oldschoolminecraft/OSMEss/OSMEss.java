@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yi.acru.bukkit.Lockette.Lockette;
@@ -165,9 +166,6 @@ public class OSMEss extends JavaPlugin {
         new CommandWarp(this);
         new CommandWarps(this);
 
-        // modman comment: my copy of poseidon didnt like when it was registered inside the constructor for some reason
-//        getCommand("explosivearrows").setExecutor(new CommandExplosiveArrows(this));
-
         if (!isAuctionSystemEnabled()) {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Auction System: Disabled");
         }
@@ -211,6 +209,9 @@ public class OSMEss extends JavaPlugin {
         List<String> autoBCMessages = autoBroadcastCFG.getStringList("Settings.Messages", new ArrayList<>());
         if (autoBCMessages.isEmpty()) {addDefaultBCMessages();}
         initAutoBC();
+
+        List<String> allPossibleTreasures = this.configSettingCFG.getStringList("Settings.FishTreasure.treasureList", new ArrayList<>());
+        if (allPossibleTreasures.isEmpty()) {addFishTreasureDefaults();}
     }
 
     @Override
@@ -352,7 +353,7 @@ public class OSMEss extends JavaPlugin {
     }
 // Auction Setting Methods
 
-    
+
 // Fish Treasure Methods
     public boolean isFishTreasureEnabled() {
         if (this.configSettingCFG.getConfigOption("Settings.FishTreasure.enabled").equals(true)) return true;
@@ -362,10 +363,29 @@ public class OSMEss extends JavaPlugin {
     public Double getChanceForFishTreasure() {
         return (double) this.configSettingCFG.getConfigOption("Settings.FishTreasure.chanceForTreasure");
     }
+
+    public void addFishTreasureDefaults() {
+        List<String> allPossibleTreasures = this.configSettingCFG.getStringList("Settings.FishTreasure.treasureList", new ArrayList<>());
+
+        try {
+            allPossibleTreasures.add("APPLE");
+            allPossibleTreasures.add("DIAMOND");
+            allPossibleTreasures.add("GOLD_INGOT");
+            allPossibleTreasures.add("IRON_INGOT");
+            allPossibleTreasures.add("REDSTONE");
+
+            this.configSettingCFG.setProperty("Settings.FishTreasure.treasureList", allPossibleTreasures);
+            configSettingCFG.save();
+        } catch (Exception ex) {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+            ex.printStackTrace(System.err);
+        }
+    }
 // Fish Treasure Methods
 
-    
+
 // Herobrine Methods
+
     public boolean isHerobrineEnabled() {
         if (this.configSettingCFG.getConfigOption("Settings.Herobrine.enabled").equals(true)) return true;
         else return false;
@@ -376,7 +396,7 @@ public class OSMEss extends JavaPlugin {
     }
 // Herobrine Methods
 
-    
+
 //  Warp Highlight Methods
     public boolean isWarpNameHighlighted(String warpName) {
         if (this.configSettingCFG.getConfigOption("Warps.Highlight." + warpName.toLowerCase()) != null) return true;
@@ -422,7 +442,7 @@ public class OSMEss extends JavaPlugin {
     }
 //  Warp Highlight Methods
 
-    
+
 //  Explosive Arrows Methods
     // Online
     public void addToEABlacklist(Player player) {
@@ -733,6 +753,3 @@ public class OSMEss extends JavaPlugin {
     public String playerNotFound = "§cError: Player not found.";
     public String warpNotDefined = "§cError: No warps defined.";
 }
-
-
-
