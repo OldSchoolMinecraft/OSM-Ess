@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
+import static com.oldschoolminecraft.OSMEss.Listeners.PlayerWorldListener.lastLookUpdate;
+
 public class HerobrineThread extends Thread {
 
     public Player player;
@@ -35,19 +37,22 @@ public class HerobrineThread extends Thread {
 
         while (running) {
             if (secondsRemaining == 0) {
-                Packet29DestroyEntity packet = new Packet29DestroyEntity();
-                packet.a = EntityIdAllocator.getHerobrineEntityID();
-                ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(packet);
+//                Packet29DestroyEntity packet = new Packet29DestroyEntity();
+//                packet.a = EntityIdAllocator.getHerobrineEntityID();
+//                ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(packet);
+//
+//                double range = 30.0; // the desired radius
+//
+//                List<Player> nearbyPlayers = getPlayersInRadius(player, range);
+//
+//                for (Player p : nearbyPlayers) {
+//                    CraftPlayer np = (CraftPlayer) p;
+//
+//                    np.getHandle().netServerHandler.sendPacket(packet);
+//                }
+//                LIKELY SAFE TO REMOVE. REDUNDANT PACKET SEND.
 
-                double range = 30.0; // the desired radius
-
-                List<Player> nearbyPlayers = getPlayersInRadius(player, range);
-
-                for (Player p : nearbyPlayers) {
-                    CraftPlayer np = (CraftPlayer) p;
-
-                    np.getHandle().netServerHandler.sendPacket(packet);
-                }
+                lastLookUpdate.clear(); //Keep hashmap from being cluttered with timestamps.
 
                 herobrineEndCallback.run();
 
