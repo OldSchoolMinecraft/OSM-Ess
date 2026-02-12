@@ -454,11 +454,11 @@ public class PlayerWorldListener implements Listener {
     public String chooseRandomScareMessage() {
         List<String> scareMessages = new ArrayList<>();
 
-        scareMessages.add("§7[Herobrine -> You] §fYou are not alone.");
-        scareMessages.add("§7[Herobrine -> You] §fWhy do you summon me?");
-        scareMessages.add("§7[Herobrine -> You] §fI am back from hell.");
-        scareMessages.add("§7[Herobrine -> You] §fI am always watching.");
-        scareMessages.add("§7[Herobrine -> You] §fYou don't know what you did.");
+        scareMessages.add("§7[Herobrine -> me] §fYou are not alone.");
+        scareMessages.add("§7[Herobrine -> me] §fWhy do you summon me?");
+        scareMessages.add("§7[Herobrine -> me] §fI am back from hell.");
+        scareMessages.add("§7[Herobrine -> me] §fI am always watching.");
+        scareMessages.add("§7[Herobrine -> me] §fYou don't know what you did.");
 
         Random random = new Random();
         int index = random.nextInt(scareMessages.size());
@@ -493,40 +493,29 @@ public class PlayerWorldListener implements Listener {
 
         if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
             if (plugin.isFishTreasureEnabled()) {
-                if (player.isOp()) { // Operator/Admin only for now. Will be removed later when deemed ready for public use.
-                    if (event.getCaught() instanceof Item) {
-                        Random random = new Random();
-                        double result = random.nextInt(100) + random.nextDouble();
-                        double chance = plugin.getChanceForFishTreasure();
+                if (event.getCaught() instanceof Item) {
+                    Random random = new Random();
+                    double result = random.nextInt(100) + random.nextDouble();
+                    double chance = plugin.getChanceForFishTreasure();
 
-                        if (result <= chance) { // Within boundary of configured chance.
-                            String resultFormatted = String.format("%.2f%%", result);
-                            Item itemEntity = (Item) event.getCaught();
+                    if (result <= chance) { // Within boundary of configured chance.
+                        String resultFormatted = String.format("%.2f%%", result);
+                        Item itemEntity = (Item) event.getCaught();
 
-                            List<String> allPossibleTreasures = plugin.configSettingCFG.getStringList("Settings.FishTreasure.treasureList", new ArrayList<>());
+                        List<String> allPossibleTreasures = plugin.configSettingCFG.getStringList("Settings.FishTreasure.treasureList", new ArrayList<>());
 
-                            Random randomTreasure = new Random();
-                            int randomIndex = randomTreasure.nextInt(allPossibleTreasures.size());
-                            ItemStack treasureToGive = new ItemStack(Material.getMaterial(allPossibleTreasures.get(randomIndex)), 1);
+                        Random randomTreasure = new Random();
+                        int randomIndex = randomTreasure.nextInt(allPossibleTreasures.size());
+                        ItemStack treasureToGive = new ItemStack(Material.getMaterial(allPossibleTreasures.get(randomIndex)), 1);
 
-                            itemEntity.setItemStack(treasureToGive);
-
-                            player.sendMessage("§3[Debug] §aTreasure caught! §7(Result: " + resultFormatted + ")");
-                        }
-                        else { // Outside configured chance.
-                            String resultFormatted = String.format("%.2f%%", result);
-                            Item itemEntity = (Item) event.getCaught();
-                            ItemStack itemStack = new ItemStack(Material.RAW_FISH, 1);
-                            itemEntity.setItemStack(itemStack);
-                            player.sendMessage("§3[Debug] §cNo treasure. §7(Result: " + resultFormatted + ")");
-                        }
+                        itemEntity.setItemStack(treasureToGive);
                     }
-                }
-                else { // No permission. (Temporary)
-                    if (event.getCaught() instanceof Item) {
+                    else { // Outside configured chance.
+                        String resultFormatted = String.format("%.2f%%", result);
                         Item itemEntity = (Item) event.getCaught();
                         ItemStack itemStack = new ItemStack(Material.RAW_FISH, 1);
                         itemEntity.setItemStack(itemStack);
+//                        player.sendMessage("§3[Debug] §cNo treasure. §7(Result: " + resultFormatted + ")");
                     }
                 }
             }
