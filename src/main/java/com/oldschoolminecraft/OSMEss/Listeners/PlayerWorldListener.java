@@ -238,7 +238,7 @@ public class PlayerWorldListener implements Listener {
         }
     }
 
-    private final Map<UUID, Long> lastLookUpdate = new HashMap<>();
+    public static final Map<UUID, Long> lastLookUpdate = new HashMap<>();
 
     @EventHandler
     public void on(PlayerMoveEvent event) {
@@ -503,17 +503,11 @@ public class PlayerWorldListener implements Listener {
                             String resultFormatted = String.format("%.2f%%", result);
                             Item itemEntity = (Item) event.getCaught();
 
-                            List<ItemStack> allPossibleTreasures = new ArrayList<>(); {
-                                allPossibleTreasures.add(new ItemStack(Material.APPLE, 1));
-                                allPossibleTreasures.add(new ItemStack(Material.DIAMOND, 1));
-                                allPossibleTreasures.add(new ItemStack(Material.GOLD_INGOT, 1));
-                                allPossibleTreasures.add(new ItemStack(Material.IRON_INGOT, 1));
-                                allPossibleTreasures.add(new ItemStack(Material.REDSTONE, 1));
-                            }
+                            List<String> allPossibleTreasures = plugin.configSettingCFG.getStringList("Settings.FishTreasure.treasureList", new ArrayList<>());
 
                             Random randomTreasure = new Random();
                             int randomIndex = randomTreasure.nextInt(allPossibleTreasures.size());
-                            ItemStack treasureToGive = allPossibleTreasures.get(randomIndex);
+                            ItemStack treasureToGive = new ItemStack(Material.getMaterial(allPossibleTreasures.get(randomIndex)), 1);
 
                             itemEntity.setItemStack(treasureToGive);
 
@@ -545,12 +539,4 @@ public class PlayerWorldListener implements Listener {
             }
         }
     }
-//                  Spawn Behind Player (Doesn't include Y check; will spawn in the air or the wall) [Scrapped]
-//                    Location playerLoc = player.getLocation();
-//                    Vector direction = playerLoc.getDirection();
-//                    Vector behindVector = direction.multiply(-2);
-//                    Location locationBehind = playerLoc.add(behindVector.toLocation(player.getWorld()));
-//                    playerLoc.setX(locationBehind.getX());
-//                    playerLoc.setY(locationBehind.getY());
-//                    playerLoc.setZ(locationBehind.getZ());
 }
