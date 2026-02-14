@@ -18,7 +18,6 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yi.acru.bukkit.Lockette.Lockette;
@@ -160,6 +159,7 @@ public class OSMEss extends JavaPlugin {
         new CommandPTT(this);
         new CommandRainbow(this);
         new CommandSeen(this);
+        new CommandSetTimeZone(this);
         new CommandStaff(this);
         new CommandWarn(this);
         new CommandWarnings(this);
@@ -741,7 +741,6 @@ public class OSMEss extends JavaPlugin {
 
         Bukkit.getServer().getLogger().info("[OSM-Ess] Playtme top cache updated ! (" + topPlaytimes.size() + " players)");
     }
-
 
     public String auctionNotEnabled = "§cThe auction system is currently disabled!";
     public String cmdDisabledRestart = "§cCommand is disabled as the server is about to restart!";
