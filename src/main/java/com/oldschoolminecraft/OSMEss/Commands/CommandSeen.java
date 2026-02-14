@@ -1,6 +1,8 @@
 package com.oldschoolminecraft.OSMEss.Commands;
 
 import com.oldschoolminecraft.OSMEss.OSMEss;
+import com.oldschoolminecraft.OSMEss.compat.OSMPLUserData;
+import com.oldschoolminecraft.OSMEss.compat.TimeZoneUserData;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -8,6 +10,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.io.FileReader;
+
+import static com.oldschoolminecraft.OSMEss.Handlers.PlayerDataHandler.TIMEZONE_DATA_DIR;
 
 public class CommandSeen implements CommandExecutor {
 
@@ -33,11 +40,20 @@ public class CommandSeen implements CommandExecutor {
                     }
 
 //                  /seen (your own stats)
-                    player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(player));
-                    player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(player));
-                    player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytime(player));
-                    player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(player));
-                    return true;
+                    if (plugin.playerDataHandler.hasTimeZoneData(player) && !getPlayerTimeZone(player).endsWith("c")) {
+                        player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLoginByTimeZone(player, player));
+                        player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(player));
+                        player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytimeLive(player));
+                        player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDateByTimeZone(player, player));
+                        return true;
+                    }
+                    else {
+                        player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(player));
+                        player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(player));
+                        player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytimeLive(player));
+                        player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(player));
+                        return true;
+                    }
                 }
 
                 if (args.length == 1) {
@@ -63,10 +79,19 @@ public class CommandSeen implements CommandExecutor {
                         }
 
 //                      /seen <player> (who is offline)
-                        player.sendMessage("§8Last seen: §7" + plugin.playtimeHandler.getLastLogout(offline));
-                        player.sendMessage("§8Total Play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
-                        player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(offline));
-                        return true;
+
+                        if (plugin.playerDataHandler.hasTimeZoneData(player) && !getPlayerTimeZone(player).endsWith("c")) {
+                            player.sendMessage("§8Last seen: §7" + plugin.playtimeHandler.getLastLogoutByTimeZone(offline, player));
+                            player.sendMessage("§8Total Play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
+                            player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDateByTimeZone(offline, player));
+                            return true;
+                        }
+                        else {
+                            player.sendMessage("§8Last seen: §7" + plugin.playtimeHandler.getLastLogout(offline));
+                            player.sendMessage("§8Total Play time: §7" + plugin.playtimeHandler.getTotalPlaytime(offline));
+                            player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(offline));
+                            return true;
+                        }
                     }
 
 //                  /seen <player> who's online.
@@ -76,11 +101,20 @@ public class CommandSeen implements CommandExecutor {
                         player.sendMessage("§8Seen §7" + other.getName());
                     }
 
-                    player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(other));
-                    player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(other));
-                    player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytime(other));
-                    player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(other));
-                    return true;
+                    if (plugin.playerDataHandler.hasTimeZoneData(player) && !getPlayerTimeZone(player).endsWith("c")) {
+                        player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLoginByTimeZone(other, player));
+                        player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(other));
+                        player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytimeLive(other));
+                        player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDateByTimeZone(other, player));
+                        return true;
+                    }
+                    else {
+                        player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(other));
+                        player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(other));
+                        player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytimeLive(other));
+                        player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(other));
+                        return true;
+                    }
                 }
 
                 return true;
@@ -137,5 +171,15 @@ public class CommandSeen implements CommandExecutor {
         }
         return true;
     }
-}
 
+    public static String getPlayerTimeZone(CommandSender sender) {
+        try (FileReader reader = new FileReader(new File(TIMEZONE_DATA_DIR, sender.getName().toLowerCase() + ".json"))) {
+            TimeZoneUserData data = TimeZoneUserData.gson.fromJson(reader, TimeZoneUserData.class);
+            return data.timeZone;
+
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            return "utc";
+        }
+    }
+}
