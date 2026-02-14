@@ -1,6 +1,6 @@
 name: OSM-Ess
 main: com.oldschoolminecraft.OSMEss.OSMEss
-version: 1.4.0
+version: 1.4.5
 authors: [SavageUser, moderator_man, ItsVollx]
 depend:
   - Essentials
@@ -55,6 +55,8 @@ commands:
     description: Gives you a rainbow name.
   seen:
     description: Shows info on a player's playtime, first join date, and more.
+  settimezone:
+    description: Change the time zone format for /seen and more.
   staff:
     description: Toggles staff mode.
   warn:
