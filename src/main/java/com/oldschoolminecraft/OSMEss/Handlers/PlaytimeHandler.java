@@ -4,6 +4,7 @@ import com.oldschoolminecraft.OSMEss.OSMEss;
 import com.oldschoolminecraft.OSMEss.compat.OSMPLUserData;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
+import static com.oldschoolminecraft.OSMEss.Commands.CommandSeen.getPlayerTimeZone;
+
 public class PlaytimeHandler {
 
     public OSMEss plugin;
@@ -23,7 +26,6 @@ public class PlaytimeHandler {
         this.plugin = plugin;
         PLAYER_DATA_DIR = new File(plugin.getDataFolder().getAbsolutePath(), "player-logs");
     }
-
 
 //  Update Methods
     public void updateLastLogin(Player player) { //Update this when player logs in.
@@ -97,7 +99,7 @@ public class PlaytimeHandler {
     }
 
 
-//  Get Methods (Date Format)
+//  Get Methods (Date Format) (Locked to UTC)
     public String getLastLogin(Player player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
@@ -138,6 +140,46 @@ public class PlaytimeHandler {
         }
     }
 
+//  Get Methods (Date Format) (TimeZone Adjusted )
+    public String getLastLoginByTimeZone(Player player, CommandSender sender) {
+        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
+            OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
+            long firstJoinMillis = data.lastLogIn;
+            ZoneId zone = ZoneId.of(getPlayerTimeZone(sender));
+            LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(firstJoinMillis), zone);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' h:mm a").withZone(zone);
+            return dateTime.atZone(zone).format(formatter);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            return "N/A";
+        }
+    }
+    public String getLastLogoutByTimeZone(OfflinePlayer player, CommandSender sender) {
+        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
+            OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
+            long lastLogoutMillis = data.lastLogOut;
+            ZoneId zone = ZoneId.of(getPlayerTimeZone(sender));
+            LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastLogoutMillis), zone);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' h:mm a").withZone(zone);
+            return dateTime.atZone(zone).format(formatter);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            return "N/A";
+        }
+    }
+    public String getFirstJoinDateByTimeZone(OfflinePlayer player, CommandSender sender) {
+        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
+            OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
+            long firstJoinMillis = data.firstJoin;
+            ZoneId zone = ZoneId.of(getPlayerTimeZone(sender));
+            LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(firstJoinMillis), zone);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' h:mm a").withZone(zone);
+            return dateTime.atZone(zone).format(formatter);
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            return "N/A";
+        }
+    }
 
 //  Get Methods (currentTimeMillis Format)
     public long getTotalPlayTimeInMillis(OfflinePlayer player) {
@@ -239,12 +281,57 @@ public class PlaytimeHandler {
             return sb.toString().trim();
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
-            return "N/A";
+            return "0 minutes";
+        }
+    }
+
+    public String getTotalPlaytimeLive(OfflinePlayer player) {
+        try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
+            OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
+            long millis = getTotalPlayTimeInMillis(player) + (System.currentTimeMillis() - data.lastLogIn);
+            long firstJoinMillis = data.firstJoin;
+
+            if (millis < 60000) return "0 minutes"; //Less than 1 minute
+
+            Instant startInstant = Instant.ofEpochMilli(firstJoinMillis);
+            Instant endInstant = startInstant.plusMillis(millis);
+
+            ZoneId zone = ZoneOffset.UTC;
+            LocalDateTime start = LocalDateTime.ofInstant(startInstant, zone);
+            LocalDateTime end = LocalDateTime.ofInstant(endInstant, zone);
+
+            // calculate the calendar period (years, months, days)
+            Period dateDiff = Period.between(start.toLocalDate(), end.toLocalDate());
+
+            // calculate the remaining time-of-day difference (hours, minutes, seconds)
+            LocalDateTime intermediate = start.plusYears(dateDiff.getYears()).plusMonths(dateDiff.getMonths()).plusDays(dateDiff.getDays());
+            Duration timeDiff = Duration.between(intermediate, end);
+
+            long years = dateDiff.getYears();
+            long months = dateDiff.getMonths();
+            long days = dateDiff.getDays();
+            long hoursPart = timeDiff.toHours() % 24;
+            long minutesPart = timeDiff.toMinutes() % 60;
+
+            StringBuilder sb = new StringBuilder();
+
+            if (millis >= 86400000) { // 1 Day
+                if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
+                if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
+                if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
+            }
+            else {
+                if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
+                if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
+                if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
+                if (hoursPart > 0) sb.append(hoursPart).append(" hour").append(hoursPart > 1 ? "s " : " ");
+                if (minutesPart > 0) sb.append(minutesPart).append(" minute").append(minutesPart > 1 ? "s " : " ");
+            }
+
+            return sb.toString().trim();
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            return "0 minutes";
         }
     }
 }
-
-
-
-
-
