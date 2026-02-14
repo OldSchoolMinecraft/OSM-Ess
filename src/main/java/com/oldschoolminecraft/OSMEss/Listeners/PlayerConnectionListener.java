@@ -30,6 +30,10 @@ public class PlayerConnectionListener extends PlayerListener {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Retrieved data for " + player.getName() + "! (Filename: " + player.getName().toLowerCase() + ".json)");
         }
 
+        if (!plugin.playerDataHandler.hasTimeZoneData(player)) {
+            plugin.playerDataHandler.createPlayerTimeZoneSetting(player);
+        }
+
         if (!plugin.isOSASEnabled()) { // Fallback option if OSAS is not installed.
             if (plugin.auctionHandler.hasHostItemsToReturn(player)) {
                 plugin.auctionHandler.returnAuctionHostItems(player);
