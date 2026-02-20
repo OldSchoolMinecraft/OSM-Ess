@@ -57,6 +57,8 @@ commands:
     description: Shows info on a player's playtime, first join date, and more.
   settimezone:
     description: Change the time zone format for /seen and more.
+  setwarp:
+    description: Creates a new warp.
   staff:
     description: Toggles staff mode.
   warn:
@@ -64,6 +66,6 @@ commands:
   warnings:
     description: Shows a player's list of warnings, or choose to clear them.
   warp:
-    description: Shows a list of warps in normal form.
-  warps:
-    description: Shows a list of warps in page form.
+    description: Shows a list of warps to teleport to.
+  whitelist:
+    description: Shows a list of whitelist commands.
