@@ -160,11 +160,12 @@ public class OSMEss extends JavaPlugin {
         new CommandRainbow(this);
         new CommandSeen(this);
         new CommandSetTimeZone(this);
+        new CommandSetWarp(this);
         new CommandStaff(this);
         new CommandWarn(this);
         new CommandWarnings(this);
         new CommandWarp(this);
-        new CommandWarps(this);
+        new CommandWhitelist(this);
 
         if (!isAuctionSystemEnabled()) {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Auction System: Disabled");
