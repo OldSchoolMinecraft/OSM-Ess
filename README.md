@@ -25,11 +25,13 @@
 - /ptt - See the top 10 playtimes of players.
 - /rainbow - Gives you a rainbow name.
 - /seen - See player's playtime, first join date, & more.
+- /settimezone - Change the time zone format for /seen and more.
+- /setwarp - Creates a new warp. (Modified to exclude integers alone; ex: `/setwarp 2` would affect pages)
 - /staff - Toggles staff mode & saves regular inventory.
 - /warn - Warns a player with a reason.
 - /warnings - Shows a player's list of warnings, or choose to clear them.
 - /warp - Reformated look of /warp.
-- /warps - Paginated warps. (5 warps per page)
+- /whitelist - Modernized look of /whitelist and more.
 
 **Permissions:**
 - `osmess.chatcolor` - Permission to use /chatcolor.
@@ -45,6 +47,7 @@
 - `osmess.staff` - Permission to use /staff.
 - `osmess.warn` - Permission to use /warn.
 - `osmess.warnings` - Permission to use /warnings.
+- `bukkit.command.whitelist.find` - Permission to use /whitelist find; everything else is bukkit default.
 
 **NOTE:**
 
