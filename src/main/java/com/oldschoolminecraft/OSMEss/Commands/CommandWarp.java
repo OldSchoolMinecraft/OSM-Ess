@@ -81,40 +81,74 @@ public class CommandWarp implements CommandExecutor {
         return newMessage.toString();
     }
 
+    public String buildWarpPageString(List<String> items, int page, int size) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int startIndex = (page - 1) * size;
+        int endIndex = Math.min(startIndex + size, items.size());
+
+        if (startIndex >= items.size() || startIndex < 0) {
+            return "Error: Invalid page number provided.";
+        }
+
+        // Use a standard loop for explicit control
+        for (int i = startIndex; i < endIndex; i++) {
+            if (plugin.isWarpNameHighlighted(items.get(i))) {
+                if (plugin.isWarpNameHighlightedInRGB1(items.get(i))) {
+                    stringBuilder.append(applyRainbowSet1(items.get(i)) + "§7");
+                }
+                else if (plugin.isWarpNameHighlightedInRGB2(items.get(i))) {
+                    stringBuilder.append(applyRainbowSet2(items.get(i)) + "§7");
+                }
+                else {
+                    stringBuilder.append(ChatColor.translateAlternateColorCodes('&', plugin.getWarpNameHighlightColor(items.get(i)) + items.get(i) + "§7"));
+                }
+            }
+            else {
+                stringBuilder.append("§8" + items.get(i) + "§7");
+            }
+
+            if (i < endIndex - 1) {
+                stringBuilder.append(", "); // Add a separator
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    public String buildConsoleWarpPageString(List<String> items, int page, int size) { // Non colored format.
+        StringBuilder stringBuilder = new StringBuilder();
+        int startIndex = (page - 1) * size;
+        int endIndex = Math.min(startIndex + size, items.size());
+
+        if (startIndex >= items.size() || startIndex < 0) {
+            return "Error: Invalid page number provided.";
+        }
+
+        // Use a standard loop for explicit control
+        for (int i = startIndex; i < endIndex; i++) {
+            stringBuilder.append(items.get(i));
+
+            if (i < endIndex - 1) {
+                stringBuilder.append(", "); // Add a separator
+            }
+        }
+        return stringBuilder.toString();
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("warp")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
 
-                if (args.length == 0) { // Show all warps.
+                if (args.length == 0) {
                     if (!plugin.essentials.getWarps().isEmpty()) {
                         List<String> warps = (List<String>) plugin.essentials.getWarps().getWarpNames();
 
+                        int pageNumber = 1; // First page
+                        int pageSize = 20; // Max size per page
+                        String result = buildWarpPageString(warps, pageNumber, pageSize);
 
-                        StringBuilder stringBuilder = new StringBuilder();
-                        for (String warp : warps) {
-                            if (stringBuilder.length() > 0) {
-                                stringBuilder.append(", ");
-                            }
-
-                            if (plugin.isWarpNameHighlighted(warp)) {
-                                if (plugin.isWarpNameHighlightedInRGB1(warp)) {
-                                    stringBuilder.append(applyRainbowSet1(warp) + "§7");
-                                }
-                                else if (plugin.isWarpNameHighlightedInRGB2(warp)) {
-                                    stringBuilder.append(applyRainbowSet2(warp) + "§7");
-                                }
-                                else {
-                                    stringBuilder.append(ChatColor.translateAlternateColorCodes('&', plugin.getWarpNameHighlightColor(warp) + warp + "§7"));
-                                }
-                            }
-                            else {
-                                stringBuilder.append("§8" + warp + "§7");
-                            }
-                        }
-
-                        player.sendMessage("§7Warps (§3" + warps.size() + "§7): §8" + stringBuilder.toString());
+                        player.sendMessage("§7Warps §7(§3" + warps.size() + "§7) §7Page §8" + pageNumber + "§7: §8" + result);
                         return true;
                     }
                     else {
@@ -122,54 +156,45 @@ public class CommandWarp implements CommandExecutor {
                         return true;
                     }
                 }
-
-                if (args.length == 1) { // Teleport to an existing warp.
+                if (args.length == 1) { // Checking if it's a number, if not, it's a warp.
                     if (!plugin.essentials.getWarps().isEmpty()) {
                         try {
-                            if (plugin.essentials.getWarps().getWarp(args[0]) != null) {
-//                                World world = plugin.essentials.getWarps().getWarp(args[0]).getWorld();
-//                                double x = plugin.essentials.getWarps().getWarp(args[0]).getBlockX() + 0.5;
-//                                double y = plugin.essentials.getWarps().getWarp(args[0]).getBlockY();
-//                                double z = plugin.essentials.getWarps().getWarp(args[0]).getBlockZ() + 0.5;
-//                                float yaw = plugin.essentials.getWarps().getWarp(args[0]).getYaw();
-//                                float pitch = plugin.essentials.getWarps().getWarp(args[0]).getPitch();
+                            List<String> warps = (List<String>) plugin.essentials.getWarps().getWarpNames();
 
-//                                other.teleport(new Location(world, x, y, z, yaw, pitch));
+                            int pageNumber = Integer.valueOf(args[0]); // First page
+                            int pageSize = 20; // Max size per page
 
-                                User user = plugin.essentials.getUser(player);
-                                Trade trade = new Trade(player.getName(), plugin.essentials);
-                                user.getTeleport().warp(args[0], trade);
+                            int startIndex = (pageNumber - 1) * pageSize;
 
-
-//                                if (plugin.isWarpNameHighlighted(args[0])) {
-//                                    if (plugin.isWarpNameHighlightedInRGB1(args[0])) {
-//                                        player.sendMessage("§7Warping to " + applyRainbowSet1(args[0]) + "§7.");
-//                                    }
-//                                    else if (plugin.isWarpNameHighlightedInRGB2(args[0])) {
-//                                        player.sendMessage("§7Warping to " + applyRainbowSet2(args[0]) + "§7.");
-//                                    }
-//                                    else {
-//                                        player.sendMessage("§7Warping to " + plugin.getWarpNameHighlightColor(args[0]) + args[0] + "§7.");
-//                                    }
-//
-//                                    return true;
-//                                }
-//                                else {
-//                                    player.sendMessage("§7Warping to §8" + args[0] + "§7.");
-//                                    return true;
-//                                }
+                            if (startIndex >= warps.size() || startIndex < 0) {
+                                player.sendMessage(plugin.invalidPageNum);
                                 return true;
                             }
-                            else {
-                                player.sendMessage("§cError: That warp does not exist.");
-                                return true;
-                            }
-                        } catch (Exception ex) {
-                            player.sendMessage("§cError: " + ex.getMessage());
 
-                            Bukkit.getLogger().warning("Error whilst warping " + player.getName() + " to " + args[0] + "!");
-                            Bukkit.getServer().getLogger().warning(ex.getMessage());
+                            String result = buildWarpPageString(warps, pageNumber, pageSize);
+
+                            player.sendMessage("§7Warps §7(§3" + warps.size() + "§7) §7Page §8" + pageNumber + "§7: §8" + result);
                             return true;
+
+                        } catch (NumberFormatException numEx) { // Not a number, so probably a warp.
+                            try {
+                                if (plugin.essentials.getWarps().getWarp(args[0]) != null) {
+                                    User user = plugin.essentials.getUser(player);
+                                    Trade trade = new Trade(player.getName(), plugin.essentials);
+                                    user.getTeleport().warp(args[0], trade);
+                                    return true;
+                                }
+                                else {
+                                    player.sendMessage("§cError: That warp does not exist.");
+                                    return true;
+                                }
+                            } catch (Exception ex) {
+                                player.sendMessage("§cError: " + ex.getMessage());
+
+                                Bukkit.getLogger().warning("Error whilst warping " + player.getName() + " to " + args[0] + "!");
+                                Bukkit.getServer().getLogger().warning(ex.getMessage());
+                                return true;
+                            }
                         }
                     }
                     else {
@@ -177,8 +202,7 @@ public class CommandWarp implements CommandExecutor {
                         return true;
                     }
                 }
-
-                if (args.length == 2) { // Teleport a player to a specific warp.
+                if (args.length == 2) { // Teleport a player to a specific warp, if they have permission.
                     if (player.isOp() || player.hasPermission("essentials.warp.otherplayers")) {
                         Player other = Bukkit.getServer().getPlayer(args[1]);
 
@@ -190,37 +214,9 @@ public class CommandWarp implements CommandExecutor {
                         if (!plugin.essentials.getWarps().isEmpty()) {
                             try {
                                 if (plugin.essentials.getWarps().getWarp(args[0]) != null) {
-//                                    World world = plugin.essentials.getWarps().getWarp(args[0]).getWorld();
-//                                    double x = plugin.essentials.getWarps().getWarp(args[0]).getBlockX() + 0.5;
-//                                    double y = plugin.essentials.getWarps().getWarp(args[0]).getBlockY();
-//                                    double z = plugin.essentials.getWarps().getWarp(args[0]).getBlockZ() + 0.5;
-//                                    float yaw = plugin.essentials.getWarps().getWarp(args[0]).getYaw();
-//                                    float pitch = plugin.essentials.getWarps().getWarp(args[0]).getPitch();
-//
-//                                    other.teleport(new Location(world, x, y, z, yaw, pitch));
-
                                     User user = plugin.essentials.getUser(other);
                                     Trade trade = new Trade(other.getName(), plugin.essentials);
                                     user.getTeleport().warp(args[0], trade);
-
-
-//                                    if (plugin.isWarpNameHighlighted(args[0])) {
-//                                        if (plugin.isWarpNameHighlightedInRGB1(args[0])) {
-//                                            player.sendMessage("§7Warping §8" + other.getName() + " §7to " + applyRainbowSet1(args[0]) + "§7.");
-//                                        }
-//                                        else if (plugin.isWarpNameHighlightedInRGB2(args[0])) {
-//                                            player.sendMessage("§7Warping §8" + other.getName() + " §7to " + applyRainbowSet2(args[0]) + "§7.");
-//                                        }
-//                                        else {
-//                                            player.sendMessage("§7Warping §8" + other.getName() + " §7to " + plugin.getWarpNameHighlightColor(args[0]) + args[0] + "§7.");
-//                                        }
-//
-//                                        return true;
-//                                    }
-//                                    else {
-//                                        player.sendMessage("§7Warping §8" + other.getName() + " §7to §8" + args[0] + "§7.");
-//                                        return true;
-//                                    }
                                     return true;
                                 }
                                 else {
@@ -240,34 +236,15 @@ public class CommandWarp implements CommandExecutor {
                             return true;
                         }
                     }
-                    else { // No permission; show them the warp list again.
+                    else { // No Permission; Show them the warp list.
                         if (!plugin.essentials.getWarps().isEmpty()) {
                             List<String> warps = (List<String>) plugin.essentials.getWarps().getWarpNames();
 
+                            int pageNumber = 1; // First page
+                            int pageSize = 20; // Max size per page
+                            String result = buildWarpPageString(warps, pageNumber, pageSize);
 
-                            StringBuilder stringBuilder = new StringBuilder();
-                            for (String warp : warps) {
-                                if (stringBuilder.length() > 0) {
-                                    stringBuilder.append(", ");
-                                }
-
-                                if (plugin.isWarpNameHighlighted(warp)) {
-                                    if (plugin.isWarpNameHighlightedInRGB1(warp)) {
-                                        stringBuilder.append(applyRainbowSet1(warp));
-                                    }
-                                    else if (plugin.isWarpNameHighlightedInRGB2(warp)) {
-                                        stringBuilder.append(applyRainbowSet2(warp));
-                                    }
-                                    else {
-                                        stringBuilder.append(ChatColor.translateAlternateColorCodes('&', plugin.getWarpNameHighlightColor(warp) + warp + "§7"));
-                                    }
-                                }
-                                else {
-                                    stringBuilder.append("§8" + warp + "§7");
-                                }
-                            }
-
-                            player.sendMessage("§7Warps (§3" + warps.size() + "§7): §8" + stringBuilder.toString());
+                            player.sendMessage("§7Warps §7(§3" + warps.size() + "§7) §7Page §8" + pageNumber + "§7: §8" + result);
                             return true;
                         }
                         else {
@@ -276,34 +253,15 @@ public class CommandWarp implements CommandExecutor {
                         }
                     }
                 }
-                else {
+                else { // Args beyond scope; Show them the warp list.
                     if (!plugin.essentials.getWarps().isEmpty()) {
                         List<String> warps = (List<String>) plugin.essentials.getWarps().getWarpNames();
 
+                        int pageNumber = 1; // First page
+                        int pageSize = 20; // Max size per page
+                        String result = buildWarpPageString(warps, pageNumber, pageSize);
 
-                        StringBuilder stringBuilder = new StringBuilder();
-                        for (String warp : warps) {
-                            if (stringBuilder.length() > 0) {
-                                stringBuilder.append(", ");
-                            }
-
-                            if (plugin.isWarpNameHighlighted(warp)) {
-                                if (plugin.isWarpNameHighlightedInRGB1(warp)) {
-                                    stringBuilder.append(applyRainbowSet1(warp));
-                                }
-                                else if (plugin.isWarpNameHighlightedInRGB2(warp)) {
-                                    stringBuilder.append(applyRainbowSet2(warp));
-                                }
-                                else {
-                                    stringBuilder.append(ChatColor.translateAlternateColorCodes('&', plugin.getWarpNameHighlightColor(warp) + warp + "§7"));
-                                }
-                            }
-                            else {
-                                stringBuilder.append("§8" + warp + "§7");
-                            }
-                        }
-
-                        player.sendMessage("§7Warps (§3" + warps.size() + "§7): §8" + stringBuilder.toString());
+                        player.sendMessage("§7Warps §7(§3" + warps.size() + "§7) §7Page §8" + pageNumber + "§7: §8" + result);
                         return true;
                     }
                     else {
@@ -317,17 +275,11 @@ public class CommandWarp implements CommandExecutor {
                     if (!plugin.essentials.getWarps().isEmpty()) {
                         List<String> warps = (List<String>) plugin.essentials.getWarps().getWarpNames();
 
+                        int pageNumber = 1; // First page
+                        int pageSize = 20; // Max size per page
+                        String result = buildConsoleWarpPageString(warps, pageNumber, pageSize);
 
-                        StringBuilder stringBuilder = new StringBuilder();
-                        for (String warp : warps) {
-                            if (stringBuilder.length() > 0) {
-                                stringBuilder.append(", ");
-                            }
-
-                            stringBuilder.append(warp);
-                        }
-
-                        sender.sendMessage("Warps (" + warps.size() + "): " + stringBuilder.toString());
+                        sender.sendMessage("Warps (" + warps.size() + ") Page " + pageNumber + ": " + result);
                         return true;
                     }
                     else {
@@ -335,6 +287,37 @@ public class CommandWarp implements CommandExecutor {
                         return true;
                     }
                 }
+                if (args.length == 1) {
+                    if (!plugin.essentials.getWarps().isEmpty()) {
+                        try {
+                            List<String> warps = (List<String>) plugin.essentials.getWarps().getWarpNames();
+
+                            int pageNumber = Integer.valueOf(args[0]); // First page
+                            int pageSize = 20; // Max size per page
+
+                            int startIndex = (pageNumber - 1) * pageSize;
+
+                            if (startIndex >= warps.size() || startIndex < 0) {
+                                sender.sendMessage("Error: Invalid page number provided.");
+                                return true;
+                            }
+
+                            String result = buildWarpPageString(warps, pageNumber, pageSize);
+
+                            sender.sendMessage("Warps (" + warps.size() + ") Page " + pageNumber + ": " + result);
+                            return true;
+
+                        } catch (NumberFormatException numEx) { // Not a number.
+                            sender.sendMessage("Error: Invalid page number provided.");
+                            return true;
+                        }
+                    }
+                    else {
+                        sender.sendMessage("Error: No warps defined.");
+                        return true;
+                    }
+                }
+
                 if (args.length == 2) {
                     Player other = Bukkit.getServer().getPlayer(args[1]);
 
@@ -346,20 +329,9 @@ public class CommandWarp implements CommandExecutor {
                     if (!plugin.essentials.getWarps().isEmpty()) {
                         try {
                             if (plugin.essentials.getWarps().getWarp(args[0]) != null) {
-//                                World world = plugin.essentials.getWarps().getWarp(args[0]).getWorld();
-//                                double x = plugin.essentials.getWarps().getWarp(args[0]).getBlockX() + 0.5;
-//                                double y = plugin.essentials.getWarps().getWarp(args[0]).getBlockY();
-//                                double z = plugin.essentials.getWarps().getWarp(args[0]).getBlockZ() + 0.5;
-//                                float yaw = plugin.essentials.getWarps().getWarp(args[0]).getYaw();
-//                                float pitch = plugin.essentials.getWarps().getWarp(args[0]).getPitch();
-//
-//                                other.teleport(new Location(world, x, y, z, yaw, pitch));
-
                                 User user = plugin.essentials.getUser(other);
                                 Trade trade = new Trade(other.getName(), plugin.essentials);
                                 user.getTeleport().warp(args[0], trade);
-
-//                                sender.sendMessage("Warping " + other.getName() + " to " + args[0] + ".");
                                 return true;
                             }
                             else {
@@ -376,7 +348,6 @@ public class CommandWarp implements CommandExecutor {
                         return true;
                     }
                 }
-
                 else {
                     sender.sendMessage("Usage: /warp or /warp <warp> <player>");
                     return true;
