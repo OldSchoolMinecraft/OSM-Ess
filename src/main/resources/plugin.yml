@@ -5,6 +5,7 @@ authors: [SavageUser, moderator_man, ItsVollx]
 depend:
   - Essentials
 softdepend:
+  - BusinessBal
   - Invisiman
   - Landmarks
   - Lockette
@@ -55,6 +56,8 @@ commands:
     description: Gives you a rainbow name.
   seen:
     description: Shows info on a player's playtime, first join date, and more.
+  sethome:
+    description: Sets a home at your location.
   settimezone:
     description: Change the time zone format for /seen and more.
   setwarp:
