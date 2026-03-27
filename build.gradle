@@ -7,7 +7,8 @@ repositories {
 }
 
 dependencies {
-    implementation(files("libs/EssentialsB1.7.3.jar"))
+    implementation(files("libs/BusinessBal.jar"))
+    implementation(files("libs/Essentials.jar"))
     implementation(files("libs/Invisiman.jar"))
     implementation(files("libs/Landmarks.jar"))
     implementation(files("libs/Lockette.jar"))
