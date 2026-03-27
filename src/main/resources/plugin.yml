@@ -1,6 +1,6 @@
 name: OSM-Ess
 main: com.oldschoolminecraft.OSMEss.OSMEss
-version: 1.4.5
+version: 1.4.6
 authors: [SavageUser, moderator_man, ItsVollx]
 depend:
   - Essentials
