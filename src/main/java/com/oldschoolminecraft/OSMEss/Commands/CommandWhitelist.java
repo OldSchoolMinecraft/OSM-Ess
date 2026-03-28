@@ -243,8 +243,8 @@ public class CommandWhitelist implements CommandExecutor {
                                         continue;
                                     }
 
-                                    if (PermissionsEx.getPermissionManager().getUser(all.getName()).inGroup("Supporter++")
-                                            || PermissionsEx.getPermissionManager().getUser(all.getName()).inGroup("Supporter+")
+                                    if (PermissionsEx.getPermissionManager().getUser(all.getName()).inGroup("Supporter2")
+                                            || PermissionsEx.getPermissionManager().getUser(all.getName()).inGroup("Supporter1")
                                             || PermissionsEx.getPermissionManager().getUser(all.getName()).inGroup("Supporter")) {
                                         stringBuilder.append("§6" + all.getName()).append("§7");
                                         continue;
