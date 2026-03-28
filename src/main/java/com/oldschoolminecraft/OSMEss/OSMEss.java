@@ -173,7 +173,6 @@ public class OSMEss extends JavaPlugin {
         new CommandPTT(this);
         new CommandRainbow(this);
         new CommandSeen(this);
-        new CommandSetHome(this);
         new CommandSetTimeZone(this);
         new CommandSetWarp(this);
         new CommandStaff(this);
