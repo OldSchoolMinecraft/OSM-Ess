@@ -10,6 +10,8 @@ import com.oldschoolminecraft.OSMEss.Listeners.PlayerWorldListener;
 import com.oldschoolminecraft.OSMEss.Util.*;
 import com.oldschoolminecraft.osas.OSAS;
 import com.oldschoolminecraft.vanish.Invisiman;
+import net.oldschoolminecraft.bbal.AccountUtility;
+import net.oldschoolminecraft.bbal.BusinessBal;
 import net.oldschoolminecraft.lmk.Landmarks;
 import net.oldschoolminecraft.sd.ScheduledDeath;
 import org.bukkit.Bukkit;
@@ -29,6 +31,7 @@ import java.util.List;
 
 public class OSMEss extends JavaPlugin {
 
+    public BusinessBal businessBal;
     public Essentials essentials;
     public Invisiman invisiman;
     public Landmarks landmarks;
@@ -50,6 +53,7 @@ public class OSMEss extends JavaPlugin {
     public PlayerDataHandler playerDataHandler;
 
     public java.util.List<java.util.Map.Entry<String, Integer>> cachedTopBalances;
+    public java.util.List<java.util.Map.Entry<String, Double>> cachedTopBusinessBals;
     public java.util.List<java.util.Map.Entry<String, Long>> cachedTopPlaytimes;
 
     public AuctionStatus auctionStatus;
@@ -57,6 +61,7 @@ public class OSMEss extends JavaPlugin {
 
     public int cacheTaskId = -1;
     public long lastCacheRefreshBalTime = 0;
+    public long lastCacheRefreshBizBalTime = 0;
     public long lastCacheRefreshPTTTime = 0;
 
     private int index = 0; // For the auto broadcast sequence.
@@ -73,6 +78,14 @@ public class OSMEss extends JavaPlugin {
             Bukkit.getServer().getLogger().severe("[OSM-Ess] OSM-Ess requires Essentials to operate!");
             pm.disablePlugin(this);
 
+        }
+
+        if (pm.getPlugin("BusinessBal") != null && pm.isPluginEnabled("BusinessBal")) {
+            businessBal = (BusinessBal) pm.getPlugin("BusinessBal");
+            Bukkit.getServer().getLogger().info("[OSM-Ess] BusinessBal v" + businessBal.getDescription().getVersion() + " found!");
+        }
+        else {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] BusinessBal not found, thus its features are disabled!");
         }
 
         if (pm.getPlugin("Invisiman") != null && pm.isPluginEnabled("Invisiman")) {
@@ -150,6 +163,7 @@ public class OSMEss extends JavaPlugin {
         new CommandExplosiveArrows(this);
         new CommandFindHome(this);
         new CommandForecast(this);
+//        new CommandFriend(this); NOT READY YET.
         new CommandHighlightWarp(this);
         new CommandHome(this);
         new CommandHomes(this);
@@ -159,6 +173,7 @@ public class OSMEss extends JavaPlugin {
         new CommandPTT(this);
         new CommandRainbow(this);
         new CommandSeen(this);
+        new CommandSetHome(this);
         new CommandSetTimeZone(this);
         new CommandSetWarp(this);
         new CommandStaff(this);
@@ -219,6 +234,11 @@ public class OSMEss extends JavaPlugin {
     public void onDisable() {
         cancelUpdateTop10Lists();
         auctionHandler.endAuction();
+    }
+
+    public boolean isBusinessBalEnabled() {
+        if (Bukkit.getPluginManager().getPlugin("BusinessBal") != null && Bukkit.getPluginManager().isPluginEnabled("BusinessBal")) return true;
+        else return false;
     }
 
     public boolean isInvisimanEnabled() {
@@ -634,6 +654,7 @@ public class OSMEss extends JavaPlugin {
 
     public void updateTop10Lists() {
         refreshBalanceTop();
+        if (isBusinessBalEnabled()) {refreshBusinessBalTop();}
         refreshPlaytimeTop();
 
         int refreshMinutes = 60; //1 hour
@@ -642,6 +663,7 @@ public class OSMEss extends JavaPlugin {
         cacheTaskId = this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
             public void run() {
                 refreshBalanceTop();
+                if (isBusinessBalEnabled()) {refreshBusinessBalTop();}
                 refreshPlaytimeTop();
             }
         }, refreshTicks, refreshTicks);
@@ -698,6 +720,49 @@ public class OSMEss extends JavaPlugin {
         lastCacheRefreshBalTime = System.currentTimeMillis();
 
         Bukkit.getServer().getLogger().info("[OSM-Ess] Balance top cache updated ! (" + topBalances.size() + " players)");
+    }
+
+    public void refreshBusinessBalTop() {
+        java.util.List<java.util.Map.Entry<String, Double>> topBusinessBals = new java.util.ArrayList<>();
+
+        // Get all account data files
+        java.io.File accountDataDir = new java.io.File(businessBal.getDataFolder().getAbsolutePath(), "accounts");
+        if (!accountDataDir.exists()) {
+            cachedTopBusinessBals = topBusinessBals;
+            lastCacheRefreshBizBalTime = System.currentTimeMillis();
+            return;
+        }
+
+        java.io.File[] accountFiles = accountDataDir.listFiles();
+        if (accountFiles == null) {
+            cachedTopBusinessBals = topBusinessBals;
+            lastCacheRefreshBizBalTime = System.currentTimeMillis();
+            return;
+        }
+
+        // Read each account's balance.
+        for (java.io.File accountFile : accountFiles) {
+            if (accountFile.getName().endsWith(".json")) {
+                String accountName = accountFile.getName().substring(0, accountFile.getName().length() - 5);
+                double accountMoney = AccountUtility.loadAccount(accountName).balance;
+                if (accountMoney > 0) {
+                    topBusinessBals.add(new java.util.AbstractMap.SimpleEntry<>(accountName, accountMoney));
+                }
+            }
+        }
+
+        // Sort by longest streak descending
+        java.util.Collections.sort(topBusinessBals, new java.util.Comparator<java.util.Map.Entry<String, Double>>() {
+            public int compare(java.util.Map.Entry<String, Double> a, java.util.Map.Entry<String, Double> b) {
+                return b.getValue().compareTo(a.getValue());
+            }
+        });
+
+        // Update cache
+        cachedTopBusinessBals = topBusinessBals;
+        lastCacheRefreshBizBalTime = System.currentTimeMillis();
+
+        Bukkit.getServer().getLogger().info("[OSM-Ess] BusinessBal top cache updated ! (" + topBusinessBals.size() + " accounts)");
     }
 
     public void refreshPlaytimeTop() {
