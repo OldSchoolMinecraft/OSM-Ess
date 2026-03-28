@@ -7,8 +7,6 @@ import com.oldschoolminecraft.OSMEss.HerobrineThread;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import com.oldschoolminecraft.OSMEss.Util.HerobrineUtil;
 import net.minecraft.server.Packet20NamedEntitySpawn;
-import net.minecraft.server.Packet29DestroyEntity;
-import net.minecraft.server.Packet32EntityLook;
 import net.minecraft.server.Packet34EntityTeleport;
 import net.oldschoolminecraft.lmk.LandmarkData;
 import org.bukkit.Bukkit;
@@ -35,7 +33,6 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import java.util.*;
 
@@ -345,6 +342,7 @@ public class PlayerWorldListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
+
         if (plugin.isBlockOnPTReq(block.getType())) {
             if (plugin.playtimeHandler.getTotalPlayTimeInMillis(player) >= plugin.getMinimumRequiredPlaytimeToPlaceBlock()) { // 6 hours
                 event.setCancelled(false);
@@ -409,7 +407,6 @@ public class PlayerWorldListener implements Listener {
                                 packet.h = 276; // Diamond Sword
 
                                 HerobrineUtil.updateLocation(fakeLoc);
-
                                 ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
 
                                 double range = 30.0; // the desired radius
@@ -429,13 +426,6 @@ public class PlayerWorldListener implements Listener {
                                 player.sendMessage(chooseRandomScareMessage());
                             }
                         }
-
-//                    Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, () -> {
-//                        Packet29DestroyEntity killPacket = new Packet29DestroyEntity();
-//                        killPacket.a = EntityIdAllocator.getHerobrineEntityID();
-//                        ((CraftPlayer)player).getHandle().netServerHandler.sendPacket(killPacket);
-//
-//                    }, 100L);
                     }
                 }
             }
