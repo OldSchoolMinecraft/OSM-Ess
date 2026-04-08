@@ -175,6 +175,7 @@ public class OSMEss extends JavaPlugin {
         new CommandSeen(this);
         new CommandSetTimeZone(this);
         new CommandSetWarp(this);
+        new CommandSpawnNPC(this);
         new CommandStaff(this);
         new CommandWarn(this);
         new CommandWarnings(this);
@@ -542,7 +543,7 @@ public class OSMEss extends JavaPlugin {
     public void setExplodingArrows(boolean option) {
         try {
             this.configSettingCFG.setProperty("ExplosiveArrows.enabled", option);
-            configSettingCFG.save();
+            this.configSettingCFG.save();
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
             ex.printStackTrace(System.err);
@@ -597,7 +598,7 @@ public class OSMEss extends JavaPlugin {
     }
 //  Block Req Playtime Methods
 
-
+    
 //  Auto Broadcast Methods
     public void addDefaultBCMessages() {
         try {
