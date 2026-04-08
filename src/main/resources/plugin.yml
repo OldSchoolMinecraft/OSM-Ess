@@ -57,9 +57,11 @@ commands:
   seen:
     description: Shows info on a player's playtime, first join date, and more.
   settimezone:
-    description: Change the time zone format for /seen and more.
+    description: Changes the time zone format for /seen and more.
   setwarp:
     description: Creates a new warp.
+  spawnnpc:
+    description: Spawns an NPC.
   staff:
     description: Toggles staff mode.
   warn:
