@@ -43,6 +43,8 @@ public class CommandSeen implements CommandExecutor {
                     if (plugin.playerDataHandler.hasTimeZoneData(player) && !getPlayerTimeZone(player).endsWith("c")) {
                         player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLoginByTimeZone(player, player));
                         player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(player));
+                        if (plugin.essentials.getUser(player).isAfk()) {player.sendMessage("§8Is Player AFK?: §7Yes");}
+                        else {player.sendMessage("§8Is Player AFK?: §7No");}
                         player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytimeLive(player));
                         player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDateByTimeZone(player, player));
                         return true;
@@ -50,6 +52,8 @@ public class CommandSeen implements CommandExecutor {
                     else {
                         player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(player));
                         player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(player));
+                        if (plugin.essentials.getUser(player).isAfk()) {player.sendMessage("§8Is Player AFK?: §7Yes");}
+                        else {player.sendMessage("§8Is Player AFK?: §7No");}
                         player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytimeLive(player));
                         player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(player));
                         return true;
@@ -104,6 +108,8 @@ public class CommandSeen implements CommandExecutor {
                     if (plugin.playerDataHandler.hasTimeZoneData(player) && !getPlayerTimeZone(player).endsWith("c")) {
                         player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLoginByTimeZone(other, player));
                         player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(other));
+                        if (plugin.essentials.getUser(other).isAfk()) {player.sendMessage("§8Is Player AFK?: §7Yes");}
+                        else {player.sendMessage("§8Is Player AFK?: §7No");}
                         player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytimeLive(other));
                         player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDateByTimeZone(other, player));
                         return true;
@@ -111,6 +117,8 @@ public class CommandSeen implements CommandExecutor {
                     else {
                         player.sendMessage("§8Logged in at: §7" + plugin.playtimeHandler.getLastLogin(other));
                         player.sendMessage("§8Play time in session: §7" + plugin.playtimeHandler.getPlayTimeInSession(other));
+                        if (plugin.essentials.getUser(other).isAfk()) {player.sendMessage("§8Is Player AFK?: §7Yes");}
+                        else {player.sendMessage("§8Is Player AFK?: §7No");}
                         player.sendMessage("§8Total play time: §7" + plugin.playtimeHandler.getTotalPlaytimeLive(other));
                         player.sendMessage("§8First join date: §7" + plugin.playtimeHandler.getFirstJoinDate(other));
                         return true;
@@ -164,6 +172,8 @@ public class CommandSeen implements CommandExecutor {
 
                 sender.sendMessage("Logged in at: " + plugin.playtimeHandler.getLastLogin(other));
                 sender.sendMessage("Play time in session: " + plugin.playtimeHandler.getPlayTimeInSession(other));
+                if (plugin.essentials.getUser(other).isAfk()) {sender.sendMessage("Is Player AFK?: Yes");}
+                else {sender.sendMessage("Is Player AFK?: No");}
                 sender.sendMessage("Total play time: " + plugin.playtimeHandler.getTotalPlaytime(other));
                 sender.sendMessage("First join date: " + plugin.playtimeHandler.getFirstJoinDate(other));
                 return true;
