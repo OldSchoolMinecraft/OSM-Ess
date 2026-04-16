@@ -37,7 +37,7 @@ public class CommandChatColor implements CommandExecutor {
                     if (args.length == 1) {
                         if (args[0].equalsIgnoreCase("&0") || args[0].equalsIgnoreCase("black")) {
                             plugin.updateChatColorMessage(player, "&0");
-                            player.sendMessage("§aChat color message set to §aBLACK§a!");
+                            player.sendMessage("§aChat color message set to §0BLACK§a!");
                             return true;
                         }
                         if (args[0].equalsIgnoreCase("&1") || args[0].equalsIgnoreCase("darkblue")) {
@@ -140,7 +140,7 @@ public class CommandChatColor implements CommandExecutor {
                             if (args[0].equalsIgnoreCase("&0") || args[0].equalsIgnoreCase("black")) {
                                 if (plugin.hasChatColorMessageSet(other)) {
                                     plugin.updateChatColorMessage(other, "&0");
-                                    player.sendMessage("§aChat color message set to §aBLACK §afor " + other.getName() + "!");
+                                    player.sendMessage("§aChat color message set to §0BLACK §afor " + other.getName() + "!");
                                     return true;
                                 }
                                 else {
