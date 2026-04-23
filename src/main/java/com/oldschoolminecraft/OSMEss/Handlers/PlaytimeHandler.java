@@ -303,7 +303,8 @@ public class PlaytimeHandler {
             if (years <= 0)
             {
                 appendUnit(sb, hours, "hour");
-                appendUnit(sb, minutes, "minute");
+                if (months <= 0)
+                    appendUnit(sb, minutes, "minute");
             }
 
             if (sb.length() == 0 && seconds > 0)
