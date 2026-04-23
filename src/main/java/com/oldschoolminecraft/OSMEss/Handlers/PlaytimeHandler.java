@@ -239,44 +239,36 @@ public class PlaytimeHandler {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
             long millis = data.playTime;
-            long firstJoinMillis = data.firstJoin;
 
-            if (millis < 60000) return "0 minutes"; //Less than 1 minute
+            long totalSeconds = millis / 1000;
+            long years = totalSeconds / (86400 * 365);
+            long remainingAfterYears = totalSeconds % (86400 * 365);
+            long months = remainingAfterYears / (86400 * 30);
+            long remainingAfterMonths = remainingAfterYears % (86400 * 30);
+            long days = remainingAfterMonths / 86400;
+            long remainingAfterDays = remainingAfterMonths % 86400;
+            long hours = remainingAfterDays / 3600;
+            long minutes = (remainingAfterDays % 3600) / 60;
+            long seconds = remainingAfterDays % 60;
 
-            Instant startInstant = Instant.ofEpochMilli(firstJoinMillis);
-            Instant endInstant = startInstant.plusMillis(millis);
-
-            ZoneId zone = ZoneOffset.UTC;
-            LocalDateTime start = LocalDateTime.ofInstant(startInstant, zone);
-            LocalDateTime end = LocalDateTime.ofInstant(endInstant, zone);
-
-            // calculate the calendar period (years, months, days)
-            Period dateDiff = Period.between(start.toLocalDate(), end.toLocalDate());
-
-            // calculate the remaining time-of-day difference (hours, minutes, seconds)
-            LocalDateTime intermediate = start.plusYears(dateDiff.getYears()).plusMonths(dateDiff.getMonths()).plusDays(dateDiff.getDays());
-            Duration timeDiff = Duration.between(intermediate, end);
-
-            long years = dateDiff.getYears();
-            long months = dateDiff.getMonths();
-            long days = dateDiff.getDays();
-            long hoursPart = timeDiff.toHours() % 24;
-            long minutesPart = timeDiff.toMinutes() % 60;
+            if (minutes < 1 && seconds >= 0) return seconds + " second(s)"; //Less than 1 minute
 
             StringBuilder sb = new StringBuilder();
 
-            if (millis >= 86400000) { // 1 Day
-                if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
-                if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
-                if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
+            appendUnit(sb, years, "year");
+            appendUnit(sb, months, "month");
+            appendUnit(sb, days, "day");
+
+            if (years <= 0)
+            {
+                appendUnit(sb, hours, "hour");
+
+                if (months <= 0)
+                    appendUnit(sb, minutes, "minute");
             }
-            else {
-                if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
-                if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
-                if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
-                if (hoursPart > 0) sb.append(hoursPart).append(" hour").append(hoursPart > 1 ? "s " : " ");
-                if (minutesPart > 0) sb.append(minutesPart).append(" minute").append(minutesPart > 1 ? "s " : " ");
-            }
+
+            if (sb.length() == 0 && seconds > 0)
+                appendUnit(sb, seconds, "second");
 
             return sb.toString().trim();
         } catch (Exception ex) {
@@ -289,49 +281,44 @@ public class PlaytimeHandler {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
             long millis = getTotalPlayTimeInMillis(player) + (System.currentTimeMillis() - data.lastLogIn);
-            long firstJoinMillis = data.firstJoin;
+            long totalSeconds = millis / 1000;
+            long years = totalSeconds / (86400 * 365);
+            long remainingAfterYears = totalSeconds % (86400 * 365);
+            long months = remainingAfterYears / (86400 * 30);
+            long remainingAfterMonths = remainingAfterYears % (86400 * 30);
+            long days = remainingAfterMonths / 86400;
+            long remainingAfterDays = remainingAfterMonths % 86400;
+            long hours = remainingAfterDays / 3600;
+            long minutes = (remainingAfterDays % 3600) / 60;
+            long seconds = remainingAfterDays % 60;
 
-            if (millis < 60000) return "0 minutes"; //Less than 1 minute
-
-            Instant startInstant = Instant.ofEpochMilli(firstJoinMillis);
-            Instant endInstant = startInstant.plusMillis(millis);
-
-            ZoneId zone = ZoneOffset.UTC;
-            LocalDateTime start = LocalDateTime.ofInstant(startInstant, zone);
-            LocalDateTime end = LocalDateTime.ofInstant(endInstant, zone);
-
-            // calculate the calendar period (years, months, days)
-            Period dateDiff = Period.between(start.toLocalDate(), end.toLocalDate());
-
-            // calculate the remaining time-of-day difference (hours, minutes, seconds)
-            LocalDateTime intermediate = start.plusYears(dateDiff.getYears()).plusMonths(dateDiff.getMonths()).plusDays(dateDiff.getDays());
-            Duration timeDiff = Duration.between(intermediate, end);
-
-            long years = dateDiff.getYears();
-            long months = dateDiff.getMonths();
-            long days = dateDiff.getDays();
-            long hoursPart = timeDiff.toHours() % 24;
-            long minutesPart = timeDiff.toMinutes() % 60;
+            if (minutes < 1 && seconds >= 0) return seconds + " second(s)"; //Less than 1 minute
 
             StringBuilder sb = new StringBuilder();
 
-            if (millis >= 86400000) { // 1 Day
-                if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
-                if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
-                if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
-            }
-            else {
-                if (years > 0) sb.append(years).append(" year").append(years > 1 ? "s " : " ");
-                if (months > 0) sb.append(months).append(" month").append(months > 1 ? "s " : " ");
-                if (days > 0) sb.append(days).append(" day").append(days > 1 ? "s " : " ");
-                if (hoursPart > 0) sb.append(hoursPart).append(" hour").append(hoursPart > 1 ? "s " : " ");
-                if (minutesPart > 0) sb.append(minutesPart).append(" minute").append(minutesPart > 1 ? "s " : " ");
+            appendUnit(sb, years, "year");
+            appendUnit(sb, months, "month");
+            appendUnit(sb, days, "day");
+
+            if (years <= 0)
+            {
+                appendUnit(sb, hours, "hour");
+                appendUnit(sb, minutes, "minute");
             }
 
+            if (sb.length() == 0 && seconds > 0)
+                appendUnit(sb, seconds, "second");
             return sb.toString().trim();
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
             return "0 minutes";
         }
+    }
+
+    private void appendUnit(StringBuilder sb, long value, String unit)
+    {
+        if (value <= 0) return;
+        if (sb.length() > 0) sb.append(" ");
+        sb.append(value).append(" ").append(unit).append(value > 1 ? "s" : "");
     }
 }
