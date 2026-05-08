@@ -75,20 +75,14 @@ public class PlayerWorldListener implements Listener {
 
         return newMessage.toString();
     }
-
     @EventHandler
     public void onChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
-
-//        if (player.isOp() || player.hasPermission("osmess.chatcolor")) {
-//            if (!plugin.hasChatColorMessageSet(player)) {return;}
-//
-//            if (Objects.equals(plugin.getChatColorMessageSetting(player), "&rgb")) {event.setMessage(applyRainbow(event.getMessage()));}
-//            else {event.setMessage(plugin.getChatColorMessageSetting(player) + event.getMessage());}
-//        }
-
-
+        
         if (player.isOp() || player.hasPermission("osmess.chatcolor")) {
+            String message = event.getMessage().replaceAll("&([0-9a-fA-Fk-oK-OrR])", "§$1");
+            event.setMessage(message);
+
             if (!plugin.hasChatColorMessageSet(player)) {return;}
 
             switch (plugin.getChatColorMessageSetting(player)) {
