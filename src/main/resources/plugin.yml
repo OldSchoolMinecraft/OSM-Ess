@@ -10,6 +10,7 @@ softdepend:
   - Landmarks
   - Lockette
   - OSAS
+  - OSM-SG
   - PermissionsEx
   - ScheduledDeath
 
