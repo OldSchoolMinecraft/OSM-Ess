@@ -1,5 +1,3 @@
-package com.oldschoolminecraft.OSMEss;
-
 import com.earth2me.essentials.Essentials;
 import com.oldschoolminecraft.OSMEss.Commands.*;
 import com.oldschoolminecraft.OSMEss.Handlers.*;
@@ -10,6 +8,7 @@ import com.oldschoolminecraft.OSMEss.Listeners.PlayerWorldListener;
 import com.oldschoolminecraft.OSMEss.Util.*;
 import com.oldschoolminecraft.osas.OSAS;
 import com.oldschoolminecraft.vanish.Invisiman;
+import net.oldschoolminecraft.OSMSG.Core;
 import net.oldschoolminecraft.bbal.AccountUtility;
 import net.oldschoolminecraft.bbal.BusinessBal;
 import net.oldschoolminecraft.lmk.Landmarks;
@@ -37,6 +36,7 @@ public class OSMEss extends JavaPlugin {
     public Landmarks landmarks;
     public Lockette lockette;
     public OSAS osas;
+    public Core osmsg;
     public PermissionsEx permissionsEx;
     public ScheduledDeath scheduledDeath;
 
@@ -118,6 +118,14 @@ public class OSMEss extends JavaPlugin {
         }
         else {
             Bukkit.getServer().getLogger().severe("[OSM-Ess] OSAS not found, thus its features are disabled!");
+        }
+
+        if (pm.getPlugin("OSM-SG") != null && pm.isPluginEnabled("OSM-SG")) {
+            osmsg = (Core) pm.getPlugin("OSM-SG");
+            Bukkit.getServer().getLogger().info("[OSM-Ess] OSM-SG v" + osmsg.getDescription().getVersion() + " found!");
+        }
+        else {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] OSM-SG not found, thus its features are disabled!");
         }
 
         if (pm.getPlugin("PermissionsEx") != null && pm.isPluginEnabled("PermissionsEx")) {
@@ -261,6 +269,11 @@ public class OSMEss extends JavaPlugin {
         else return false;
     }
 
+    public boolean isOSMSGEnabled() {
+        if (Bukkit.getPluginManager().getPlugin("OSM-SG") != null && Bukkit.getPluginManager().isPluginEnabled("OSM-SG")) return true;
+        else return false;
+    }
+    
     public boolean isPermissionsExEnabled() {
         if (Bukkit.getPluginManager().getPlugin("PermissionsEx") != null && Bukkit.getPluginManager().isPluginEnabled("PermissionsEx")) return true;
         else return false;
