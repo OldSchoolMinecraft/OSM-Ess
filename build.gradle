@@ -13,6 +13,7 @@ dependencies {
     implementation(files("libs/Landmarks.jar"))
     implementation(files("libs/Lockette.jar"))
     implementation(files("libs/OSAS.jar"))
+    implementation(files("libs/OSM-SG.jar"))
     implementation(files("libs/PermissionsEx.jar"))
     implementation(files("libs/ScheduledDeath.jar"))
     implementation(files("libs/project-poseidon-1.1.8.jar"))
