@@ -478,33 +478,28 @@ public class PlayerWorldListener implements Listener {
         Player player = event.getPlayer();
 
         if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
-            if (isSpectator(player)) {event.setCancelled(true); /* DEBUG MSG (Remove later) */ player.sendMessage("§cNope!"); return;}
-
             if (plugin.isFishTreasureEnabled()) {
                 if (event.getCaught() instanceof Item) {
                     Random random = new Random();
                     double result = random.nextInt(100) + random.nextDouble();
                     double chance = plugin.getChanceForFishTreasure();
 
-                    if (plugin.isOSMSGEnabled()) {
-                        if (isTribute(player)) {
+                    if (result <= chance) { // Within boundary of configured chance.
+                        if (plugin.isOSMSGEnabled() && isTribute(player)) {
                             Item itemEntity = (Item) event.getCaught();
                             ItemStack itemStack = new ItemStack(Material.RAW_FISH, 1);
                             itemEntity.setItemStack(itemStack);
                         }
-                    }
+                        else {
+                            Item itemEntity = (Item) event.getCaught();
+                            List<String> allPossibleTreasures = plugin.configSettingCFG.getStringList("Settings.FishTreasure.treasureList", new ArrayList<>());
 
-                    if (result <= chance) { // Within boundary of configured chance.
-                        String resultFormatted = String.format("%.2f%%", result);
-                        Item itemEntity = (Item) event.getCaught();
+                            Random randomTreasure = new Random();
+                            int randomIndex = randomTreasure.nextInt(allPossibleTreasures.size());
+                            ItemStack treasureToGive = new ItemStack(Material.getMaterial(allPossibleTreasures.get(randomIndex)), 1);
 
-                        List<String> allPossibleTreasures = plugin.configSettingCFG.getStringList("Settings.FishTreasure.treasureList", new ArrayList<>());
-
-                        Random randomTreasure = new Random();
-                        int randomIndex = randomTreasure.nextInt(allPossibleTreasures.size());
-                        ItemStack treasureToGive = new ItemStack(Material.getMaterial(allPossibleTreasures.get(randomIndex)), 1);
-
-                        itemEntity.setItemStack(treasureToGive);
+                            itemEntity.setItemStack(treasureToGive);
+                        }
                     }
                     else { // Outside configured chance.
                         String resultFormatted = String.format("%.2f%%", result);
