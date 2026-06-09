@@ -37,6 +37,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 import static com.oldschoolminecraft.OSMEss.HerobrineThread.getPlayersInRadius;
+import static net.oldschoolminecraft.OSMSG.Managers.GameManager.isSpectator;
+import static net.oldschoolminecraft.OSMSG.Managers.GameManager.isTribute;
 
 public class PlayerWorldListener implements Listener {
     public OSMEss plugin;
@@ -470,17 +472,27 @@ public class PlayerWorldListener implements Listener {
             }
         }
     }
-
+    
     @EventHandler
     public void on(PlayerFishEvent event) {
         Player player = event.getPlayer();
 
         if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
+            if (isSpectator(player)) {event.setCancelled(true); /* DEBUG MSG (Remove later) */ player.sendMessage("§cNope!"); return;}
+
             if (plugin.isFishTreasureEnabled()) {
                 if (event.getCaught() instanceof Item) {
                     Random random = new Random();
                     double result = random.nextInt(100) + random.nextDouble();
                     double chance = plugin.getChanceForFishTreasure();
+
+                    if (plugin.isOSMSGEnabled()) {
+                        if (isTribute(player)) {
+                            Item itemEntity = (Item) event.getCaught();
+                            ItemStack itemStack = new ItemStack(Material.RAW_FISH, 1);
+                            itemEntity.setItemStack(itemStack);
+                        }
+                    }
 
                     if (result <= chance) { // Within boundary of configured chance.
                         String resultFormatted = String.format("%.2f%%", result);
