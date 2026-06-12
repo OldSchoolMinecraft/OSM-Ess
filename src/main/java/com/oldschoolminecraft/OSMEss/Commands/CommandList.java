@@ -24,7 +24,6 @@ public class CommandList implements CommandExecutor {
     public static List<Player> vanished = new ArrayList<>(); //Used to get the count of vanished ppl to minus from player count for getPlayerCountVisisble().
 
     public static int userIndex = 0;
-    public static int userIndexVisible = userIndex - vanished.size();
 
     public CommandList(OSMEss plugin) {
         this.plugin = plugin;
@@ -69,7 +68,7 @@ public class CommandList implements CommandExecutor {
 
                     Set<String> listedPlayers = new HashSet<>();
 
-                    for (PermissionGroup group : groups.keySet()) {
+                    for (PermissionGroup group : groups.keySet().stream().sorted().collect(Collectors.toList())) {
                         stringBuilder.append("\n§7").append(capitalize(group.getName())).append("§7: ");
 
                         List<String> visibleNames = Arrays.stream(group.getUsers())
@@ -80,11 +79,13 @@ public class CommandList implements CommandExecutor {
                                 .filter(p -> !Invisiman.instance.isVanished(p))
                                 .peek(p -> listedPlayers.add(p.getName())) // mark player as listed
                                 .map(p -> "§8" + p.getName())
+                                .sorted()
                                 .collect(Collectors.toList());
 
                         if (!visibleNames.isEmpty()) {
                             stringBuilder.append(String.join(ChatColor.GRAY + ", ", visibleNames));
                         }
+
                     }
 
                     String finalOut = stringBuilder.toString();
@@ -117,13 +118,6 @@ public class CommandList implements CommandExecutor {
                     for (PermissionGroup group : groups.keySet()) {
                         stringBuilder.append("\n§7").append(capitalize(group.getName())).append("§7: ");
                         userIndex = 0;
-//                    for (PermissionUser user : group.getUsers()) { Old method.
-//                        userIndex++;
-//
-//                        stringBuilder.append("§8").append(user.getName());
-//                        if (userIndex < group.getUsers().length)
-//                            stringBuilder.append(ChatColor.GRAY + ", ");
-//                    }
 
                         for (PermissionUser user : group.getUsers()) { //Replica of above method but filtering to look for only online players in their respective group.
                             for (Player all : Arrays.stream(Bukkit.getOnlinePlayers()).filter(all -> user.getName().equalsIgnoreCase(all.getName())).collect(Collectors.toList())) {
