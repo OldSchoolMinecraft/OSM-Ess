@@ -46,7 +46,7 @@ public class CommandList implements CommandExecutor {
 
                     for (Player all : Bukkit.getOnlinePlayers()) {
                         PermissionUser pexUser = PermissionsEx.getPermissionManager().getUser(all);
-                        PermissionGroup pexGroup = pexUser.getGroups()[0];
+                        PermissionGroup pexGroup = getFirstPlayerGroup(pexUser);
 
                         groups.getOrDefault(pexGroup, new ArrayList<>()).add(pexUser);
 
@@ -205,5 +205,19 @@ public class CommandList implements CommandExecutor {
         }
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
-}
 
+    public PermissionGroup getFirstPlayerGroup(PermissionUser player) {
+        // Get the PermissionsEx user
+        PermissionUser user = PermissionsEx.getPermissionManager().getUser(player.getName());
+
+        // Get the array of all groups the player is in
+        PermissionGroup[] groups = user.getGroups();
+
+        // Return the first group if the array is not empty
+        if (groups != null && groups.length > 0) {
+            return groups[0];
+        }
+
+        return null; // Player has no groups
+    }
+}
