@@ -273,7 +273,7 @@ public class OSMEss extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("OSM-SG") != null && Bukkit.getPluginManager().isPluginEnabled("OSM-SG")) return true;
         else return false;
     }
-    
+
     public boolean isPermissionsExEnabled() {
         if (Bukkit.getPluginManager().getPlugin("PermissionsEx") != null && Bukkit.getPluginManager().isPluginEnabled("PermissionsEx")) return true;
         else return false;
@@ -360,6 +360,11 @@ public class OSMEss extends JavaPlugin {
         else return false;
     }
 
+    public boolean isAuctionConfirmBidEnabled() {
+        if (this.configSettingCFG.getConfigOption("Settings.Auction.confirmBidEnabled").equals(true)) return true;
+        else return false;
+    }
+
     public void setAllowAuctionSystem(boolean option) {
         try {
             this.configSettingCFG.setProperty("Settings.Auction.enabled", option);
@@ -369,10 +374,6 @@ public class OSMEss extends JavaPlugin {
             ex.printStackTrace(System.err);
         }
     }
-
-//    public Integer getMinimumRequiredPlaytimeToAuction() { Old Method; Possible equivalency issue & why people with enough playtime still couldn't /auction.
-//        return (int) this.configSettingCFG.getConfigOption("Settings.Auction.minPlaytimeToAuction");
-//    }
 
     public Long getMinimumRequiredPlaytimeToAuction() {
         return Math.max(0L, Long.parseLong(this.configSettingCFG.getString("Settings.Auction.minPlaytimeToAuction")));
@@ -384,6 +385,10 @@ public class OSMEss extends JavaPlugin {
 
     public Integer getPercentageToRequireConfirmation() {
         return (int) this.configSettingCFG.getConfigOption("Settings.Auction.percentageToRequireConfirmation");
+    }
+
+    public Integer getAmountToRequireConfirmation() {
+        return (int) this.configSettingCFG.getConfigOption("Settings.Auction.confirmBidMinimum");
     }
 // Auction Setting Methods
 
@@ -611,7 +616,6 @@ public class OSMEss extends JavaPlugin {
     }
 //  Block Req Playtime Methods
 
-    
 //  Auto Broadcast Methods
     public void addDefaultBCMessages() {
         try {
