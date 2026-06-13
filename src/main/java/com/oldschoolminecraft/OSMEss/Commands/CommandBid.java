@@ -90,15 +90,21 @@ public class CommandBid implements CommandExecutor {
                                 if (plugin.auctionHandler.getTopBidAmount() != 0) {
                                     double percentage = (amount / plugin.auctionHandler.getTopBidAmount());
 
-                                    if (percentage >= plugin.getPercentageToRequireConfirmation() || amount >= 1500) { // Bidder has to /confirmbid to bid that amount.
-                                        confirmBidList.put(player.getName(), amount);
-                                        player.sendMessage("§cBid amount seems irregular! §4(§e$" + amount + "§4)");
-                                        player.sendMessage("§cTo proceed, type §e/confirmbid §cbefore the auction ends.");
-                                        player.sendMessage("§cTo cancel it, type §e/denybid§c.");
-                                        player.sendMessage("§4WARNING: §cUpon confirmation & if deemed the winner, we are not responsible for refunding your bid money!");
+                                    if (percentage >= plugin.getPercentageToRequireConfirmation() || amount >= plugin.getAmountToRequireConfirmation()) { // Bidder has to /confirmbid to bid that amount.
+                                        if (plugin.isAuctionConfirmBidEnabled()) {
+                                            confirmBidList.put(player.getName(), amount);
+                                            player.sendMessage("§cBid amount seems irregular! §4(§e$" + amount + "§4)");
+                                            player.sendMessage("§cTo proceed, type §e/confirmbid §cbefore the auction ends.");
+                                            player.sendMessage("§cTo cancel it, type §e/denybid§c.");
+                                            player.sendMessage("§4WARNING: §cUpon confirmation & if deemed the winner, we are not responsible for refunding your bid money!");
 
-                                        Bukkit.getServer().getLogger().info("[OSM-Ess] " + player.getName() + "'s bid of $" + amount + " put on HOLD! (Irregular Amount)");
-                                        return true;
+                                            Bukkit.getServer().getLogger().info("[OSM-Ess] " + player.getName() + "'s bid of $" + amount + " put on HOLD! (Irregular Amount)");
+                                            return true;
+                                        }
+                                        else {
+                                            plugin.auctionHandler.addToAuction(player, amount);
+                                            return true;
+                                        }
                                     }
                                     else {
                                         plugin.auctionHandler.addToAuction(player, amount);
