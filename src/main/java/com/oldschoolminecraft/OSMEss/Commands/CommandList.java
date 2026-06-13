@@ -69,8 +69,6 @@ public class CommandList implements CommandExecutor {
                     Set<String> listedPlayers = new HashSet<>();
 
                     for (PermissionGroup group : groups.keySet().stream().sorted().collect(Collectors.toList())) {
-                        stringBuilder.append("\n§7").append(capitalize(group.getName())).append("§7: ");
-
                         List<String> visibleNames = Arrays.stream(group.getUsers())
                                 .map(PermissionUser::getName)
                                 .filter(name -> !listedPlayers.contains(name)) // skip already-listed players
@@ -83,6 +81,7 @@ public class CommandList implements CommandExecutor {
                                 .collect(Collectors.toList());
 
                         if (!visibleNames.isEmpty()) {
+                            stringBuilder.append("\n§7").append(capitalize(group.getName())).append("§7: ");
                             stringBuilder.append(String.join(ChatColor.GRAY + ", ", visibleNames));
                         }
 
