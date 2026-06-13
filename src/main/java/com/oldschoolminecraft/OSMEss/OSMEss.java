@@ -195,6 +195,15 @@ public class OSMEss extends JavaPlugin {
         }
         else {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Auction System: Enabled");
+            
+            if (!isAuctionConfirmBidEnabled()) {
+                Bukkit.getServer().getLogger().info("[OSM-Ess] Require Bid Confirmation: Disabled");
+            }
+            else {
+                Bukkit.getServer().getLogger().info("[OSM-Ess] Require Bid Confirmation: Enabled");
+                Bukkit.getServer().getLogger().info("[OSM-Ess] Minimum Amount: $" + getAmountToRequireConfirmation());
+                Bukkit.getServer().getLogger().info("[OSM-Ess] Minimum Percentage: $" + getPercentageToRequireConfirmation());
+            }
         }
 
         if (!isExplosiveArrowsEnabled()) {
