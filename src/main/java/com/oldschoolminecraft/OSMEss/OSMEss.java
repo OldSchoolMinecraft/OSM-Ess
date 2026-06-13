@@ -1,3 +1,5 @@
+package com.oldschoolminecraft.OSMEss;
+
 import com.earth2me.essentials.Essentials;
 import com.oldschoolminecraft.OSMEss.Commands.*;
 import com.oldschoolminecraft.OSMEss.Handlers.*;
@@ -195,7 +197,7 @@ public class OSMEss extends JavaPlugin {
         }
         else {
             Bukkit.getServer().getLogger().info("[OSM-Ess] Auction System: Enabled");
-            
+
             if (!isAuctionConfirmBidEnabled()) {
                 Bukkit.getServer().getLogger().info("[OSM-Ess] Require Bid Confirmation: Disabled");
             }
@@ -377,6 +379,16 @@ public class OSMEss extends JavaPlugin {
     public void setAllowAuctionSystem(boolean option) {
         try {
             this.configSettingCFG.setProperty("Settings.Auction.enabled", option);
+            configSettingCFG.save();
+        } catch (Exception ex) {
+            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+            ex.printStackTrace(System.err);
+        }
+    }
+
+    public void setAuctionRequireConfirmBid(boolean option) {
+        try {
+            this.configSettingCFG.setProperty("Settings.Auction.confirmBidEnabled", option);
             configSettingCFG.save();
         } catch (Exception ex) {
             Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
