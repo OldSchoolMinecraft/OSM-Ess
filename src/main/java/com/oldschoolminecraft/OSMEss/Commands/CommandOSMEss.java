@@ -38,7 +38,10 @@ public class CommandOSMEss implements CommandExecutor {
                         if (player.isOp() || player.hasPermission("osmess.command.eablacklist")) {player.sendMessage("§b/osmess §3eablacklist - §7Shows a list of players blocked from /ea.");}
                         if (player.isOp() || player.hasPermission("osmess.command.endauction")) {player.sendMessage("§b/osmess §3endauction §8- §7Ends a current auction.");}
                         if (player.isOp() || player.hasPermission("osmess.command.reload")) {player.sendMessage("§b/osmess §3reload §8- §7Reloads all yml files.");}
+                        if (player.isOp() || player.hasPermission("osmess.command.setconfirmbidamount")) {player.sendMessage("§b/osmess §3setconfirmbidamount §8- §7Edits /confirmbid amount minimum.");}
+                        if (player.isOp() || player.hasPermission("osmess.command.setconfirmbidpercent")) {player.sendMessage("§b/osmess §3setconfirmbidpercent §8- §7Edits /confirmbid percent minimum.");}
                         if (player.isOp() || player.hasPermission("osmess.command.toggleauction")) {player.sendMessage("§b/osmess §3toggleauction §8- §7Enables/Disables the auction system.");}
+                        if (player.isOp() || player.hasPermission("osmess.command.toggleconfirmbid")) {player.sendMessage("§b/osmess §3toggleconfirmbid §8- §7Enables/Disables needing /confirmbid.");}
                         if (player.isOp() || player.hasPermission("osmess.command.toggleea")) {player.sendMessage("§b/osmess §3toggleea §8- §7Enables/Disables explosive arrows.");}
                         return true;
                     }
@@ -82,7 +85,7 @@ public class CommandOSMEss implements CommandExecutor {
 
                             plugin.auctionHandler.forceEndAuction();
                             Bukkit.broadcastMessage("§9Auction was §cforcefully ended §9by §b" + player.getName() + "§9!");
-                            Bukkit.getServer().getLogger().info("Auction was forcefully ended by " + player.getName() + "!");
+                            Bukkit.getServer().getLogger().info("[OSM-Ess] Auction was forcefully ended by " + player.getName() + "!");
                             return true;
                         }
                         else {
@@ -108,6 +111,77 @@ public class CommandOSMEss implements CommandExecutor {
                         }
                     }
 
+                    if (args[0].equalsIgnoreCase("setconfirmbidamount")) {
+                        if (player.isOp() || player.hasPermission("osmess.command.setconfirmbidamount")) {
+                            if (args.length == 2) {
+                                try {
+                                    int amountSettingInputed = Integer.parseInt(args[1]);
+
+                                    try {
+                                        plugin.configSettingCFG.setProperty("Settings.Auction.confirmBidMinimum", amountSettingInputed);
+                                        plugin.configSettingCFG.save();
+
+                                        Bukkit.getServer().getLogger().severe("[OSM-Ess] confirmBidMinimum updated to $" + amountSettingInputed + "!");
+                                        player.sendMessage("§aUpdated 'confirmBidMinimum' to $" + amountSettingInputed + "!");
+                                    } catch (Exception e) {
+                                        e.printStackTrace(System.err);
+
+                                        player.sendMessage("§cError whilst updating config.yml!");
+                                        Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                                    }
+
+                                } catch (NumberFormatException ex) {
+                                    player.sendMessage(plugin.invalidNumPara);
+                                }
+
+                                return true;
+                            }
+                            else {
+                                player.sendMessage("§cUsage: /osmess setconfirmbidamount <amount>");
+                                return true;
+                            }
+                        }
+                        else {
+                            player.sendMessage(plugin.noPermission);
+                            return true;
+                        }
+                    }
+                    if (args[0].equalsIgnoreCase("setconfirmbidpercent")) {
+                        if (player.isOp() || player.hasPermission("osmess.command.setconfirmbidpercent")) {
+                            if (args.length == 2) {
+                                try {
+                                    int percentSettingInputed = Integer.parseInt(args[1]);
+
+                                    try {
+                                        plugin.configSettingCFG.setProperty("Settings.Auction.percentageToRequireConfirmation", percentSettingInputed);
+                                        plugin.configSettingCFG.save();
+
+                                        Bukkit.getServer().getLogger().severe("[OSM-Ess] percentageToRequireConfirmation updated to " + percentSettingInputed + "%!");
+                                        player.sendMessage("§aUpdated 'percentageToRequireConfirmation' to " + percentSettingInputed + "%!");
+                                    } catch (Exception e) {
+                                        e.printStackTrace(System.err);
+
+                                        player.sendMessage("§cError whilst updating config.yml!");
+                                        Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                                    }
+
+                                } catch (NumberFormatException ex) {
+                                    player.sendMessage(plugin.invalidNumPara);
+                                }
+
+                                return true;
+                            }
+                            else {
+                                player.sendMessage("§cUsage: /osmess setconfirmbidpercent <number>");
+                                return true;
+                            }
+                        }
+                        else {
+                            player.sendMessage(plugin.noPermission);
+                            return true;
+                        }
+                    }
+
                     if (args[0].equalsIgnoreCase("toggleauction") || args[0].equalsIgnoreCase("toggleauctionsystem")) {
                         if (player.isOp() || player.hasPermission("osmess.command.toggleauction")) {
                             if (plugin.isAuctionSystemEnabled()) {
@@ -119,14 +193,14 @@ public class CommandOSMEss implements CommandExecutor {
                                     plugin.setAllowAuctionSystem(false);
 
                                     Bukkit.broadcastMessage("§dThe auction system has been §cdisabled §dby §c" + player.getName() + "§d!");
-                                    Bukkit.getServer().getLogger().info("The auction system has been disabled by " + player.getName() + "!");
+                                    Bukkit.getServer().getLogger().info("[OSM-Ess] The auction system has been disabled by " + player.getName() + "!");
                                     return true;
                                 }
                             }
                             else {
                                 plugin.setAllowAuctionSystem(true);
                                 Bukkit.broadcastMessage("§dThe auction system has been §cenabled §dby §c" + player.getName() + "§d!");
-                                Bukkit.getServer().getLogger().info("The auction system has been enabled by " + player.getName() + "!");
+                                Bukkit.getServer().getLogger().info("[OSM-Ess] The auction system has been enabled by " + player.getName() + "!");
                                 return true;
                             }
                         }
@@ -135,6 +209,38 @@ public class CommandOSMEss implements CommandExecutor {
                             return true;
                         }
                     }
+
+                    if (args[0].equalsIgnoreCase("toggleconfirmbid")) {
+                        if (player.isOp() || player.hasPermission("osmess.command.toggleconfirmbid")) {
+                            if (plugin.isAuctionSystemEnabled()) {
+                                if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
+                                    player.sendMessage("§cThere is currently an active auction!");
+                                    return true;
+                                }
+                                else {
+                                    if (plugin.isAuctionConfirmBidEnabled()) {
+                                        plugin.setAuctionRequireConfirmBid(false);
+
+                                        player.sendMessage("§aConfirmBid requirement disabled!");
+                                        Bukkit.getServer().getLogger().info("[OSM-Ess] ConfirmBid requirement has been disabled!");
+                                        return true;
+                                    }
+                                    else {
+                                        plugin.setAuctionRequireConfirmBid(true);
+
+                                        player.sendMessage("§aConfirmBid requirement enabled!");
+                                        Bukkit.getServer().getLogger().info("[OSM-Ess] ConfirmBid requirement has been enabled!");
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            player.sendMessage(plugin.noPermission);
+                            return true;
+                        }
+                    }
+
                     if (args[0].equalsIgnoreCase("toggleea")) {
                         if (player.isOp() || player.hasPermission("osmess.command.toggleea")) {
                             if (plugin.isExplosiveArrowsEnabled()) {
@@ -169,8 +275,11 @@ public class CommandOSMEss implements CommandExecutor {
                         if (player.isOp() || player.hasPermission("osmess.command.eablacklist")) {player.sendMessage("§b/osmess §3eablacklist - §7Shows a list of players blocked from /ea.");}
                         if (player.isOp() || player.hasPermission("osmess.command.endauction")) {player.sendMessage("§b/osmess §3endauction §8- §7Ends a current auction.");}
                         if (player.isOp() || player.hasPermission("osmess.command.reload")) {player.sendMessage("§b/osmess §3reload §8- §7Reloads all yml files.");}
+                        if (player.isOp() || player.hasPermission("osmess.command.setconfirmbidamount")) {player.sendMessage("§b/osmess §3setconfirmbidamount §8- §7Edits /confirmbid amount minimum.");}
+                        if (player.isOp() || player.hasPermission("osmess.command.setconfirmbidpercent")) {player.sendMessage("§b/osmess §3setconfirmbidpercent §8- §7Edits /confirmbid percent minimum.");}
                         if (player.isOp() || player.hasPermission("osmess.command.toggleauction")) {player.sendMessage("§b/osmess §3toggleauction §8- §7Enables/Disables the auction system.");}
-                        if (player.isOp() || player.hasPermission("osmess.command.toggleea")) {player.sendMessage("§b/osmess §3toggleea §8- §7Enables/Disables exploding arrows.");}
+                        if (player.isOp() || player.hasPermission("osmess.command.toggleconfirmbid")) {player.sendMessage("§b/osmess §3toggleconfirmbid §8- §7Enables/Disables needing /confirmbid.");}
+                        if (player.isOp() || player.hasPermission("osmess.command.toggleea")) {player.sendMessage("§b/osmess §3toggleea §8- §7Enables/Disables explosive arrows.");}
                         return true;
                     }
                 }
@@ -190,7 +299,10 @@ public class CommandOSMEss implements CommandExecutor {
                     sender.sendMessage("/osmess eablacklist - Shows a list of players blocked from /ea.");
                     sender.sendMessage("/osmess endauction - Ends a current auction.");
                     sender.sendMessage("/osmess reload - Reloads all yml files.");
+                    sender.sendMessage("/osmess setconfirmbidamount - Edits /confirmbid amount minimum.");
+                    sender.sendMessage("/osmess setconfirmbidpercent - Edits /confirmbid percent minimum.");
                     sender.sendMessage("/osmess toggleauction - Enables/Disables the auction system.");
+                    sender.sendMessage("/osmess toggleconfirmbid - Enables/Disables needing /confirmbid.");
                     sender.sendMessage("/osmess toggleea - Enables/Disables exploding arrows.");
                     return true;
                 }
@@ -218,7 +330,7 @@ public class CommandOSMEss implements CommandExecutor {
                     }
 
                     plugin.addBlocktoPTReq(material);
-                    sender.sendMessage(material.name().toUpperCase() + " (" + material.getId() + ") added to playime requirement.");
+                    sender.sendMessage("[OSM-Ess] " + material.name().toUpperCase() + " (" + material.getId() + ") added to playime requirement.");
                     return true;
                 }
 
@@ -249,7 +361,7 @@ public class CommandOSMEss implements CommandExecutor {
                         }
                         else {
                             plugin.addToEABlacklist(offline);
-                            sender.sendMessage("Player " + offline.getName() + " added to explosive arrow blacklist.");
+                            sender.sendMessage("[OSM-Ess] Player " + offline.getName() + " added to explosive arrow blacklist.");
                             return true;
                         }
                     }
@@ -260,7 +372,7 @@ public class CommandOSMEss implements CommandExecutor {
                     }
                     else {
                         plugin.addToEABlacklist(other);
-                        sender.sendMessage(other.getName() + " added to explosive arrow blacklist.");
+                        sender.sendMessage("[OSM-Ess] " + other.getName() + " added to explosive arrow blacklist.");
                         return true;
                     }
                 }
@@ -278,12 +390,12 @@ public class CommandOSMEss implements CommandExecutor {
                     }
 
                     if (!plugin.isBlockOnPTReq(material)) {
-                        sender.sendMessage("Error Block name or id isn't on the list.");
+                        sender.sendMessage("Error: Block name or id isn't on the list.");
                         return true;
                     }
 
                     plugin.delBlockFromPTReq(material);
-                    sender.sendMessage(material.name().toUpperCase() + " (" + material.getId() + ") removed from playime requirement.");
+                    sender.sendMessage("[OSM-Ess] " + material.name().toUpperCase() + " (" + material.getId() + ") removed from playime requirement.");
                     return true;
                 }
 
@@ -314,7 +426,7 @@ public class CommandOSMEss implements CommandExecutor {
                         }
                         else {
                             plugin.delFromEABlacklist(offline);
-                            sender.sendMessage(offline.getName() + " removed from explosive arrow blacklist.");
+                            sender.sendMessage("[OSM-Ess] " +offline.getName() + " removed from explosive arrow blacklist.");
                             return true;
                         }
                     }
@@ -325,7 +437,7 @@ public class CommandOSMEss implements CommandExecutor {
                     }
                     else {
                         plugin.delFromEABlacklist(other);
-                        sender.sendMessage(other.getName() + " removed from explosive arrow blacklist.");
+                        sender.sendMessage("[OSM-Ess] " + other.getName() + " removed from explosive arrow blacklist.");
                         return true;
                     }
                 }
@@ -365,13 +477,13 @@ public class CommandOSMEss implements CommandExecutor {
                     }
 
                     if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.INACTIVE) {
-                        sender.sendMessage("There is no auction to forcefully end!");
+                        sender.sendMessage("[OSM-Ess] There is no auction to forcefully end!");
                         return true;
                     }
 
                     plugin.auctionHandler.forceEndAuction();
                     Bukkit.broadcastMessage("§9Auction was §cforcefully ended §9by §bCONSOLE§9!");
-                    Bukkit.getServer().getLogger().info("Auction was forcefully ended!");
+                    Bukkit.getServer().getLogger().info("[OSM-Ess] Auction was forcefully ended!");
                     return true;
                 }
 
@@ -387,8 +499,63 @@ public class CommandOSMEss implements CommandExecutor {
                     plugin.colorMessageCFG.reload();
                     plugin.warningsCFG.reload();
 
-                    sender.sendMessage("Reloaded all yml files!");
+                    sender.sendMessage("[OSM-Ess] Reloaded all yml files!");
                     return true;
+                }
+
+                if (args[0].equalsIgnoreCase("setconfirmbidamount")) {
+                    if (args.length == 2) {
+                        try {
+                            int amountSettingInputed = Integer.parseInt(args[1]);
+
+                            try {
+                                plugin.configSettingCFG.setProperty("Settings.Auction.confirmBidMinimum", amountSettingInputed);
+                                plugin.configSettingCFG.save();
+
+                                Bukkit.getServer().getLogger().severe("[OSM-Ess] confirmBidMinimum updated to $" + amountSettingInputed + "!");
+                            } catch (Exception e) {
+                                e.printStackTrace(System.err);
+                                
+                                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                            }
+
+                        } catch (NumberFormatException ex) {
+                            sender.sendMessage("Error: Invalid integer provided.");
+                        }
+
+                        return true;
+                    }
+                    else {
+                        sender.sendMessage("Usage: /osmess setconfirmbidamount <amount>");
+                        return true;
+                    }
+                }
+                if (args[0].equalsIgnoreCase("setconfirmbidpercent")) {
+                    if (args.length == 2) {
+                        try {
+                            int percentSettingInputed = Integer.parseInt(args[1]);
+
+                            try {
+                                plugin.configSettingCFG.setProperty("Settings.Auction.percentageToRequireConfirmation", percentSettingInputed);
+                                plugin.configSettingCFG.save();
+
+                                Bukkit.getServer().getLogger().severe("[OSM-Ess] percentageToRequireConfirmation updated to " + percentSettingInputed + "%!");
+                            } catch (Exception e) {
+                                e.printStackTrace(System.err);
+                                
+                                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                            }
+
+                        } catch (NumberFormatException ex) {
+                            sender.sendMessage("Error: Invalid integer provided.");
+                        }
+
+                        return true;
+                    }
+                    else {
+                        sender.sendMessage("Usage: /osmess setconfirmbidpercent <number>");
+                        return true;
+                    }
                 }
 
                 if (args[0].equalsIgnoreCase("toggleauction") ||  args[0].equalsIgnoreCase("toggleauctionsystem")) {
@@ -399,22 +566,45 @@ public class CommandOSMEss implements CommandExecutor {
 
                     if (plugin.isAuctionSystemEnabled()) {
                         if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
-                            sender.sendMessage("There is currently an active auction!");
+                            sender.sendMessage("[OSM-Ess] There is currently an active auction!");
                             return true;
                         }
                         else {
                             plugin.setAllowAuctionSystem(false);
 
                             Bukkit.broadcastMessage("§dThe auction system has been §cdisabled §dby the §cSystem Administrator§d!");
-                            Bukkit.getServer().getLogger().info("The auction system has been disabled by the System Administrator!");
+                            Bukkit.getServer().getLogger().info("[OSM-Ess] The auction system has been disabled by the System Administrator!");
                             return true;
                         }
                     }
                     else {
                         plugin.setAllowAuctionSystem(true);
                         Bukkit.broadcastMessage("§dThe auction system has been §cenabled §dby the §cSystem Administrator§d!");
-                        Bukkit.getServer().getLogger().info("The auction system has been enabled by the System Administrator!");
+                        Bukkit.getServer().getLogger().info("[OSM-Ess] The auction system has been enabled by the System Administrator!");
                         return true;
+                    }
+                }
+
+                if (args[0].equalsIgnoreCase("toggleconfirmbid")) {
+                    if (plugin.isAuctionSystemEnabled()) {
+                        if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
+                            sender.sendMessage("[OSM-Ess] There is currently an active auction!");
+                            return true;
+                        }
+                        else {
+                            if (plugin.isAuctionConfirmBidEnabled()) {
+                                plugin.setAuctionRequireConfirmBid(false);
+
+                                Bukkit.getServer().getLogger().info("[OSM-Ess] ConfirmBid requirement has been disabled!");
+                                return true;
+                            }
+                            else {
+                                plugin.setAuctionRequireConfirmBid(true);
+
+                                Bukkit.getServer().getLogger().info("[OSM-Ess] ConfirmBid requirement has been enabled!");
+                                return true;
+                            }
+                        }
                     }
                 }
 
@@ -429,13 +619,13 @@ public class CommandOSMEss implements CommandExecutor {
 
                         CommandExplosiveArrows.explodeArrow.clear();
 
-                        Bukkit.getServer().getLogger().info("Exploding Arrows are now disabled!");
+                        Bukkit.getServer().getLogger().info("[OSM-Ess] Exploding Arrows are now disabled!");
                         return true;
                     }
                     else {
                         plugin.setExplodingArrows(true);
 
-                        Bukkit.getServer().getLogger().info("Exploding Arrows are now enabled!");
+                        Bukkit.getServer().getLogger().info("[OSM-Ess] Exploding Arrows are now enabled!");
                         return true;
                     }
                 }
@@ -449,7 +639,10 @@ public class CommandOSMEss implements CommandExecutor {
                 sender.sendMessage("/osmess eablacklist - Shows a list of players blocked from /ea.");
                 sender.sendMessage("/osmess endauction - Ends a current auction.");
                 sender.sendMessage("/osmess reload - Reloads all yml files.");
+                sender.sendMessage("/osmess setconfirmbidamount - Edits /confirmbid amount minimum.");
+                sender.sendMessage("/osmess setconfirmbidpercent - Edits /confirmbid percent minimum.");
                 sender.sendMessage("/osmess toggleauction - Enables/Disables the auction system.");
+                sender.sendMessage("/osmess toggleconfirmbid - Enables/Disables needing /confirmbid.");
                 sender.sendMessage("/osmess toggleea - Enables/Disables exploding arrows.");
                 return true;
             }
