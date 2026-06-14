@@ -1,9 +1,9 @@
 package com.oldschoolminecraft.OSMEss.Commands;
 
-import com.oldschoolminecraft.OSMEss.Handlers.EntityIdAllocator;
 import com.oldschoolminecraft.OSMEss.HerobrineStatus;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import net.minecraft.server.Packet20NamedEntitySpawn;
+import net.minecraft.server.Packet29DestroyEntity;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -42,30 +42,50 @@ public class CommandSpawnNPC implements CommandExecutor {
                             return true;
                         }
 
-                        // Build packet
-                        Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn();
-                        packet.a = 20;
-                        packet.b = args[0];
+                        if (args[0].equalsIgnoreCase("reset")) {
+                            Packet29DestroyEntity packet = new Packet29DestroyEntity();
+                            packet.a = 20;
 
-                        packet.c = (int) Math.floor(player.getLocation().getX() * 32.0);
-                        packet.d = (int) Math.floor(player.getLocation().getY() * 32.0);
-                        packet.e = (int) Math.floor(player.getLocation().getZ() * 32.0);
-                        packet.f = (byte) player.getLocation().getYaw();
-                        packet.g = (byte) player.getLocation().getPitch();
+                            ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
+                            double range = 100.0; // the desired radius
 
-                        ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
-                        double range = 100.0; // the desired radius
+                            List<Player> nearbyPlayers = getPlayersInRadius(player, range);
 
-                        List<Player> nearbyPlayers = getPlayersInRadius(player, range);
+                            for (Player p : nearbyPlayers) {
+                                CraftPlayer np = (CraftPlayer) p;
 
-                        for (Player p : nearbyPlayers) {
-                            CraftPlayer np = (CraftPlayer) p;
+                                np.getHandle().netServerHandler.sendPacket(packet);
+                            }
 
-                            np.getHandle().netServerHandler.sendPacket(packet);
+                            player.sendMessage("§aNPC despawned.");
+                            return true;
                         }
+                        else {
+                            // Build packet
+                            Packet20NamedEntitySpawn packet = new Packet20NamedEntitySpawn();
+                            packet.a = 20;
+                            packet.b = args[0];
 
-                        player.sendMessage("§aNPC named " + args[0].toUpperCase() + " summoned.");
-                        return true;
+                            packet.c = (int) Math.floor(player.getLocation().getX() * 32.0);
+                            packet.d = (int) Math.floor(player.getLocation().getY() * 32.0);
+                            packet.e = (int) Math.floor(player.getLocation().getZ() * 32.0);
+                            packet.f = (byte) player.getLocation().getYaw();
+                            packet.g = (byte) player.getLocation().getPitch();
+
+                            ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
+                            double range = 100.0; // the desired radius
+
+                            List<Player> nearbyPlayers = getPlayersInRadius(player, range);
+
+                            for (Player p : nearbyPlayers) {
+                                CraftPlayer np = (CraftPlayer) p;
+
+                                np.getHandle().netServerHandler.sendPacket(packet);
+                            }
+
+                            player.sendMessage("§aNPC named " + args[0].toUpperCase() + " summoned.");
+                            return true;
+                        }
                     }
                     if (args.length == 2) {
                         if (plugin.herobrineStatus == HerobrineStatus.ACTIVE) {
@@ -82,6 +102,7 @@ public class CommandSpawnNPC implements CommandExecutor {
                             packet.c = (int) Math.floor(player.getLocation().getX() * 32.0);
                             packet.d = (int) Math.floor(player.getLocation().getY() * 32.0);
                             packet.e = (int) Math.floor(player.getLocation().getZ() * 32.0);
+
                             packet.f = (byte) player.getLocation().getYaw();
                             packet.g = (byte) player.getLocation().getPitch();
 
