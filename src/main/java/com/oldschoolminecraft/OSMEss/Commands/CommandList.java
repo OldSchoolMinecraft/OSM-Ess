@@ -77,7 +77,6 @@ public class CommandList implements CommandExecutor {
                                 .filter(p -> !Invisiman.instance.isVanished(p))
                                 .peek(p -> listedPlayers.add(p.getName())) // mark player as listed
                                 .map(p -> "§8" + p.getName())
-                                .sorted()
                                 .collect(Collectors.toList());
 
                         if (!visibleNames.isEmpty()) {
