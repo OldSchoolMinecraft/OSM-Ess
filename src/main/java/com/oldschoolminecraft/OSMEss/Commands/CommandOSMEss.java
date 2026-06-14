@@ -29,7 +29,7 @@ public class CommandOSMEss implements CommandExecutor {
                 Player player = (Player) sender;
 
                 if (player.isOp() || player.hasPermission("osmess.command")) {
-                    if (args.length != 1) {
+                    if (args.length == 0) {
                         player.sendMessage("§7OSM-Ess version §2" + plugin.getDescription().getVersion());
                         if (player.isOp()) {player.sendMessage("§7Administration Commands:");} // Show 'Administration' if they're opped.
                         else {player.sendMessage("§7Available Commands:");}
@@ -47,7 +47,6 @@ public class CommandOSMEss implements CommandExecutor {
                     }
 
                     if (args[0].equalsIgnoreCase("eablacklist")) {
-
                         if (player.isOp() || player.hasPermission("osmess.command.eablacklist")) {
                             List<String> eaBlacklist = plugin.configSettingCFG.getStringList("ExplosiveArrows.disallowedPlayers", new ArrayList<>());
 
@@ -78,6 +77,11 @@ public class CommandOSMEss implements CommandExecutor {
 
                     if (args[0].equalsIgnoreCase("endauction")) {
                         if (player.isOp() || player.hasPermission("osmess.command.endauction")) {
+                            if (args.length != 1) {
+                                player.sendMessage("§cUsage: /osmess endauction");
+                                return true;
+                            }
+                            
                             if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.INACTIVE) {
                                 player.sendMessage("§cThere is no auction to forcefully end!");
                                 return true;
@@ -113,33 +117,32 @@ public class CommandOSMEss implements CommandExecutor {
 
                     if (args[0].equalsIgnoreCase("setconfirmbidamount")) {
                         if (player.isOp() || player.hasPermission("osmess.command.setconfirmbidamount")) {
-                            if (args.length == 2) {
+                            if (args.length != 2) {
+                                player.sendMessage("§cUsage: /osmess setconfirmbidamount <int-amount>");
+                                return true;
+                            }
+
+                            try {
+                                int amountSettingInputed = Integer.parseInt(args[1]);
+
                                 try {
-                                    int amountSettingInputed = Integer.parseInt(args[1]);
+                                    plugin.configSettingCFG.setProperty("Settings.Auction.confirmBidMinimum", amountSettingInputed);
+                                    plugin.configSettingCFG.save();
 
-                                    try {
-                                        plugin.configSettingCFG.setProperty("Settings.Auction.confirmBidMinimum", amountSettingInputed);
-                                        plugin.configSettingCFG.save();
+                                    Bukkit.getServer().getLogger().severe("[OSM-Ess] confirmBidMinimum updated to $" + amountSettingInputed + "!");
+                                    player.sendMessage("§aUpdated 'confirmBidMinimum' to $" + amountSettingInputed + "!");
+                                } catch (Exception e) {
+                                    e.printStackTrace(System.err);
 
-                                        Bukkit.getServer().getLogger().severe("[OSM-Ess] confirmBidMinimum updated to $" + amountSettingInputed + "!");
-                                        player.sendMessage("§aUpdated 'confirmBidMinimum' to $" + amountSettingInputed + "!");
-                                    } catch (Exception e) {
-                                        e.printStackTrace(System.err);
-
-                                        player.sendMessage("§cError whilst updating config.yml!");
-                                        Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
-                                    }
-
-                                } catch (NumberFormatException ex) {
-                                    player.sendMessage(plugin.invalidNumPara);
+                                    player.sendMessage("§cError whilst updating config.yml!");
+                                    Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
                                 }
 
-                                return true;
+                            } catch (NumberFormatException ex) {
+                                player.sendMessage(plugin.invalidNumPara);
                             }
-                            else {
-                                player.sendMessage("§cUsage: /osmess setconfirmbidamount <amount>");
-                                return true;
-                            }
+
+                            return true;
                         }
                         else {
                             player.sendMessage(plugin.noPermission);
@@ -148,33 +151,32 @@ public class CommandOSMEss implements CommandExecutor {
                     }
                     if (args[0].equalsIgnoreCase("setconfirmbidpercent")) {
                         if (player.isOp() || player.hasPermission("osmess.command.setconfirmbidpercent")) {
-                            if (args.length == 2) {
+                            if (args.length != 2) {
+                                player.sendMessage("§cUsage: /osmess setconfirmbidamount <int-percent>");
+                                return true;
+                            }
+
+                            try {
+                                int percentSettingInputed = Integer.parseInt(args[1]);
+
                                 try {
-                                    int percentSettingInputed = Integer.parseInt(args[1]);
+                                    plugin.configSettingCFG.setProperty("Settings.Auction.percentageToRequireConfirmation", percentSettingInputed);
+                                    plugin.configSettingCFG.save();
 
-                                    try {
-                                        plugin.configSettingCFG.setProperty("Settings.Auction.percentageToRequireConfirmation", percentSettingInputed);
-                                        plugin.configSettingCFG.save();
+                                    Bukkit.getServer().getLogger().severe("[OSM-Ess] percentageToRequireConfirmation updated to " + percentSettingInputed + "%!");
+                                    player.sendMessage("§aUpdated 'percentageToRequireConfirmation' to " + percentSettingInputed + "%!");
+                                } catch (Exception e) {
+                                    e.printStackTrace(System.err);
 
-                                        Bukkit.getServer().getLogger().severe("[OSM-Ess] percentageToRequireConfirmation updated to " + percentSettingInputed + "%!");
-                                        player.sendMessage("§aUpdated 'percentageToRequireConfirmation' to " + percentSettingInputed + "%!");
-                                    } catch (Exception e) {
-                                        e.printStackTrace(System.err);
-
-                                        player.sendMessage("§cError whilst updating config.yml!");
-                                        Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
-                                    }
-
-                                } catch (NumberFormatException ex) {
-                                    player.sendMessage(plugin.invalidNumPara);
+                                    player.sendMessage("§cError whilst updating config.yml!");
+                                    Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
                                 }
 
-                                return true;
+                            } catch (NumberFormatException ex) {
+                                player.sendMessage(plugin.invalidNumPara);
                             }
-                            else {
-                                player.sendMessage("§cUsage: /osmess setconfirmbidpercent <number>");
-                                return true;
-                            }
+
+                            return true;
                         }
                         else {
                             player.sendMessage(plugin.noPermission);
@@ -184,6 +186,11 @@ public class CommandOSMEss implements CommandExecutor {
 
                     if (args[0].equalsIgnoreCase("toggleauction") || args[0].equalsIgnoreCase("toggleauctionsystem")) {
                         if (player.isOp() || player.hasPermission("osmess.command.toggleauction")) {
+                            if (args.length != 1) {
+                                player.sendMessage("§cUsage: /osmess toggleauction");
+                                return true;
+                            }
+                            
                             if (plugin.isAuctionSystemEnabled()) {
                                 if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
                                     player.sendMessage("§cThere is currently an active auction!");
@@ -212,6 +219,11 @@ public class CommandOSMEss implements CommandExecutor {
 
                     if (args[0].equalsIgnoreCase("toggleconfirmbid")) {
                         if (player.isOp() || player.hasPermission("osmess.command.toggleconfirmbid")) {
+                            if (args.length != 1) {
+                                player.sendMessage("§cUsage: /osmess toggleconfirmbid");
+                                return true;
+                            }
+                            
                             if (plugin.isAuctionSystemEnabled()) {
                                 if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
                                     player.sendMessage("§cThere is currently an active auction!");
@@ -243,6 +255,11 @@ public class CommandOSMEss implements CommandExecutor {
 
                     if (args[0].equalsIgnoreCase("toggleea")) {
                         if (player.isOp() || player.hasPermission("osmess.command.toggleea")) {
+                            if (args.length != 1) {
+                                player.sendMessage("§cUsage: /osmess toggleea");
+                                return true;
+                            }
+                            
                             if (plugin.isExplosiveArrowsEnabled()) {
                                 plugin.setExplodingArrows(false);
 
@@ -309,7 +326,7 @@ public class CommandOSMEss implements CommandExecutor {
 
                 if (args[0].equalsIgnoreCase("addblocktoptreq")) {
                     if (args.length != 2) {
-                        sender.sendMessage("Usage: /osmess addblocktoptreq <block name>");
+                        sender.sendMessage("Usage: /osmess addblocktoptreq <block-name>");
                         return true;
                     }
 
@@ -379,7 +396,7 @@ public class CommandOSMEss implements CommandExecutor {
 
                 if (args[0].equalsIgnoreCase("delblockfromptreq")) {
                     if (args.length != 2) {
-                        sender.sendMessage("Usage: /osmess delblockfromptreq <block name>");
+                        sender.sendMessage("Usage: /osmess delblockfromptreq <block-name>");
                         return true;
                     }
 
@@ -488,11 +505,6 @@ public class CommandOSMEss implements CommandExecutor {
                 }
 
                 if (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("reloadcfg")) {
-                    if (args.length != 1) {
-                        sender.sendMessage("Usage: /osmess reload");
-                        return true;
-                    }
-
                     plugin.autoBroadcastCFG.reload();
                     plugin.blocksReqPlaytimeCFG.reload();
                     plugin.configSettingCFG.reload();
@@ -504,58 +516,56 @@ public class CommandOSMEss implements CommandExecutor {
                 }
 
                 if (args[0].equalsIgnoreCase("setconfirmbidamount")) {
-                    if (args.length == 2) {
-                        try {
-                            int amountSettingInputed = Integer.parseInt(args[1]);
-
-                            try {
-                                plugin.configSettingCFG.setProperty("Settings.Auction.confirmBidMinimum", amountSettingInputed);
-                                plugin.configSettingCFG.save();
-
-                                Bukkit.getServer().getLogger().severe("[OSM-Ess] confirmBidMinimum updated to $" + amountSettingInputed + "!");
-                            } catch (Exception e) {
-                                e.printStackTrace(System.err);
-                                
-                                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
-                            }
-
-                        } catch (NumberFormatException ex) {
-                            sender.sendMessage("Error: Invalid integer provided.");
-                        }
-
-                        return true;
-                    }
-                    else {
+                    if (args.length != 2) {
                         sender.sendMessage("Usage: /osmess setconfirmbidamount <amount>");
                         return true;
                     }
-                }
-                if (args[0].equalsIgnoreCase("setconfirmbidpercent")) {
-                    if (args.length == 2) {
+
+                    try {
+                        int amountSettingInputed = Integer.parseInt(args[1]);
+
                         try {
-                            int percentSettingInputed = Integer.parseInt(args[1]);
+                            plugin.configSettingCFG.setProperty("Settings.Auction.confirmBidMinimum", amountSettingInputed);
+                            plugin.configSettingCFG.save();
 
-                            try {
-                                plugin.configSettingCFG.setProperty("Settings.Auction.percentageToRequireConfirmation", percentSettingInputed);
-                                plugin.configSettingCFG.save();
+                            Bukkit.getServer().getLogger().severe("[OSM-Ess] confirmBidMinimum updated to $" + amountSettingInputed + "!");
+                        } catch (Exception e) {
+                            e.printStackTrace(System.err);
 
-                                Bukkit.getServer().getLogger().severe("[OSM-Ess] percentageToRequireConfirmation updated to " + percentSettingInputed + "%!");
-                            } catch (Exception e) {
-                                e.printStackTrace(System.err);
-                                
-                                Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
-                            }
-
-                        } catch (NumberFormatException ex) {
-                            sender.sendMessage("Error: Invalid integer provided.");
+                            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
                         }
 
+                    } catch (NumberFormatException ex) {
+                        sender.sendMessage("Error: Invalid integer provided.");
+                    }
+
+                    return true;
+                }
+                if (args[0].equalsIgnoreCase("setconfirmbidpercent")) {
+                    if (args.length != 2) {
+                        sender.sendMessage("Usage: /osmess setconfirmbidpercent <int-percent>");
                         return true;
                     }
-                    else {
-                        sender.sendMessage("Usage: /osmess setconfirmbidpercent <number>");
-                        return true;
+
+                    try {
+                        int percentSettingInputed = Integer.parseInt(args[1]);
+
+                        try {
+                            plugin.configSettingCFG.setProperty("Settings.Auction.percentageToRequireConfirmation", percentSettingInputed);
+                            plugin.configSettingCFG.save();
+
+                            Bukkit.getServer().getLogger().severe("[OSM-Ess] percentageToRequireConfirmation updated to " + percentSettingInputed + "%!");
+                        } catch (Exception e) {
+                            e.printStackTrace(System.err);
+
+                            Bukkit.getServer().getLogger().severe("[OSM-Ess] Error whilst updating config.yml!");
+                        }
+
+                    } catch (NumberFormatException ex) {
+                        sender.sendMessage("Error: Invalid integer provided.");
                     }
+
+                    return true;
                 }
 
                 if (args[0].equalsIgnoreCase("toggleauction") ||  args[0].equalsIgnoreCase("toggleauctionsystem")) {
@@ -586,6 +596,12 @@ public class CommandOSMEss implements CommandExecutor {
                 }
 
                 if (args[0].equalsIgnoreCase("toggleconfirmbid")) {
+                    if (args.length != 1) {
+                        sender.sendMessage("Usage: /osmess toggleconfirmbid");
+                        return true;
+                    }
+                    
+                    
                     if (plugin.isAuctionSystemEnabled()) {
                         if (plugin.auctionHandler.getAuctionStatus() == AuctionStatus.ACTIVE) {
                             sender.sendMessage("[OSM-Ess] There is currently an active auction!");
