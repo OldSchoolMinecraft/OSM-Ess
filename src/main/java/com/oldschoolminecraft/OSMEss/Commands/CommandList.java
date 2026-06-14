@@ -68,7 +68,7 @@ public class CommandList implements CommandExecutor {
 
                     Set<String> listedPlayers = new HashSet<>();
 
-                    for (PermissionGroup group : groups.keySet().stream().sorted().collect(Collectors.toList())) {
+                    for (PermissionGroup group : groups.keySet()) {
                         List<String> visibleNames = Arrays.stream(group.getUsers())
                                 .map(PermissionUser::getName)
                                 .filter(name -> !listedPlayers.contains(name)) // skip already-listed players
