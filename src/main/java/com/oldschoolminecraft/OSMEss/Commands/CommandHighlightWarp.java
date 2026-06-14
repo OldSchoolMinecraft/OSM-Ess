@@ -137,7 +137,7 @@ public class CommandHighlightWarp implements CommandExecutor {
                             }
                             if (args[1].equalsIgnoreCase("rainbow2") || args[1].equalsIgnoreCase("rgb2")) {
                                 plugin.setWarpNameHighlightColor(args[0], "&rgb2");
-                                player.sendMessage("§7Warp §8" + args[0] + " §7now highlighted in §4R§cA§6I§eN§aB§2O§bW §3#§d2§7.");
+                                player.sendMessage("§7Warp §8" + args[0] + " §7now highlighted in §4R§cA§6I§eN§aB§2O§bW §3#§12§7.");
                                 return true;
                             }
 
