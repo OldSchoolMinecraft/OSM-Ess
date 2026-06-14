@@ -59,6 +59,8 @@ public class CommandWarp implements CommandExecutor {
             ChatColor.DARK_GREEN,
             ChatColor.AQUA,
             ChatColor.DARK_AQUA,
+            ChatColor.BLUE,
+            ChatColor.DARK_BLUE,
             ChatColor.LIGHT_PURPLE,
             ChatColor.DARK_PURPLE
     );
