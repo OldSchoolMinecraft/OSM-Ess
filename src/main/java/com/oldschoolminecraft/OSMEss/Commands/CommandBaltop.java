@@ -1,5 +1,6 @@
 package com.oldschoolminecraft.OSMEss.Commands;
 
+import com.earth2me.essentials.Util;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -43,7 +44,7 @@ public class CommandBaltop implements CommandExecutor {
                             String playerName = entry.getKey();
                             double mostMoney = entry.getValue();
 
-                            player.sendMessage("§8" + rank + "§7. §7" + playerName + ": §8$" + String.format("%.2f", mostMoney));
+                            player.sendMessage("§8" + rank + "§7. §7" + playerName + ": §8" + Util.formatCurrency(mostMoney, plugin.essentials));
                             rank++;
                         }
 
@@ -67,7 +68,7 @@ public class CommandBaltop implements CommandExecutor {
                                 String accountName = entry.getKey();
                                 double mostMoney = entry.getValue();
 
-                                player.sendMessage("§8" + rank + "§7. §7" + accountName + ": §8$" + String.format("%.2f", mostMoney));
+                                player.sendMessage("§8" + rank + "§7. §7" + accountName + ": §8" + Util.formatCurrency(mostMoney, plugin.essentials));
                                 rank++;
                             }
 
@@ -94,7 +95,7 @@ public class CommandBaltop implements CommandExecutor {
                             String playerName = entry.getKey();
                             double mostMoney = entry.getValue();
 
-                            player.sendMessage("§8" + rank + "§7. §7" + playerName + ": §8$" + String.format("%.2f", mostMoney));
+                            player.sendMessage("§8" + rank + "§7. §7" + playerName + ": §8" + Util.formatCurrency(mostMoney, plugin.essentials));
                             rank++;
                         }
 
@@ -124,7 +125,7 @@ public class CommandBaltop implements CommandExecutor {
                             String playerName = entry.getKey();
                             double mostMoney = entry.getValue();
 
-                            sender.sendMessage(rank + ". " + playerName + ": $" + String.format("%.2f", mostMoney));
+                            sender.sendMessage(rank + ". " + playerName + ": " + Util.formatCurrency(mostMoney, plugin.essentials));
                             rank++;
                         }
 
@@ -148,7 +149,7 @@ public class CommandBaltop implements CommandExecutor {
                                 String accountName = entry.getKey();
                                 double mostMoney = entry.getValue();
 
-                                sender.sendMessage(rank + ". " + accountName + ": $" + String.format("%.2f", mostMoney));
+                                sender.sendMessage(rank + ". " + accountName + ": " + Util.formatCurrency(mostMoney, plugin.essentials));
                                 rank++;
                             }
 
@@ -174,7 +175,7 @@ public class CommandBaltop implements CommandExecutor {
                             String playerName = entry.getKey();
                             double mostMoney = entry.getValue();
 
-                            sender.sendMessage(rank + ". " + playerName + ": $" + String.format("%.2f", mostMoney));
+                            sender.sendMessage(rank + ". " + playerName + ": " + Util.formatCurrency(mostMoney, plugin.essentials));
                             rank++;
                         }
 
