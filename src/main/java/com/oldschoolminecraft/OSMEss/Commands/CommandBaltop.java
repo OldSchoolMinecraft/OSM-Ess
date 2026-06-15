@@ -31,7 +31,7 @@ public class CommandBaltop implements CommandExecutor {
 
                 if (args.length == 0) { // Show regular balance top 10 from Essentials.
                     player.sendMessage("§7Users with the top balances (refreshes hourly):");
-                    java.util.List<java.util.Map.Entry<String, Integer>> topBalances = getTopBalances(10);
+                    java.util.List<java.util.Map.Entry<String, Double>> topBalances = getTopBalances(10);
 
                     if (topBalances.isEmpty()) {
                         player.sendMessage("§cNo balance data available yet.");
@@ -39,11 +39,11 @@ public class CommandBaltop implements CommandExecutor {
                     }
                     else {
                         int rank = 1; //Ripped from LoginStreaks.
-                        for (java.util.Map.Entry<String, Integer> entry : topBalances) {
+                        for (java.util.Map.Entry<String, Double> entry : topBalances) {
                             String playerName = entry.getKey();
-                            int mostMoney = entry.getValue();
+                            double mostMoney = entry.getValue();
 
-                            player.sendMessage("§8" + rank + "§7. §7" + playerName + ": §8$" + mostMoney);
+                            player.sendMessage("§8" + rank + "§7. §7" + playerName + ": §8$" + String.format("%.2f", mostMoney));
                             rank++;
                         }
 
@@ -67,7 +67,7 @@ public class CommandBaltop implements CommandExecutor {
                                 String accountName = entry.getKey();
                                 double mostMoney = entry.getValue();
 
-                                player.sendMessage("§8" + rank + "§7. §7" + accountName + ": §8$" + mostMoney);
+                                player.sendMessage("§8" + rank + "§7. §7" + accountName + ": §8$" + String.format("%.2f", mostMoney));
                                 rank++;
                             }
 
@@ -82,7 +82,7 @@ public class CommandBaltop implements CommandExecutor {
                 }
                 else { // Show regular balance top 10 from Essentials.
                     player.sendMessage("§7Users with the top balances (refreshes hourly):");
-                    java.util.List<java.util.Map.Entry<String, Integer>> topBalances = getTopBalances(10);
+                    java.util.List<java.util.Map.Entry<String, Double>> topBalances = getTopBalances(10);
 
                     if (topBalances.isEmpty()) {
                         player.sendMessage("§cNo balance data available yet.");
@@ -90,11 +90,11 @@ public class CommandBaltop implements CommandExecutor {
                     }
                     else {
                         int rank = 1; //Ripped from LoginStreaks.
-                        for (java.util.Map.Entry<String, Integer> entry : topBalances) {
+                        for (java.util.Map.Entry<String, Double> entry : topBalances) {
                             String playerName = entry.getKey();
-                            int mostMoney = entry.getValue();
+                            double mostMoney = entry.getValue();
 
-                            player.sendMessage("§8" + rank + "§7. §7" + playerName + ": §8$" + mostMoney);
+                            player.sendMessage("§8" + rank + "§7. §7" + playerName + ": §8$" + String.format("%.2f", mostMoney));
                             rank++;
                         }
 
@@ -112,7 +112,7 @@ public class CommandBaltop implements CommandExecutor {
 
                 if (args.length == 0) { // Show regular balance top 10 from Essentials.
                     sender.sendMessage("Users with the top balances (refreshes hourly):");
-                    java.util.List<java.util.Map.Entry<String, Integer>> topBalances = getTopBalances(10);
+                    java.util.List<java.util.Map.Entry<String, Double>> topBalances = getTopBalances(10);
 
                     if (topBalances.isEmpty()) {
                         sender.sendMessage("No balance data available yet.");
@@ -120,11 +120,11 @@ public class CommandBaltop implements CommandExecutor {
                     }
                     else {
                         int rank = 1; //Ripped from LoginStreaks.
-                        for (java.util.Map.Entry<String, Integer> entry : topBalances) {
+                        for (java.util.Map.Entry<String, Double> entry : topBalances) {
                             String playerName = entry.getKey();
-                            int mostMoney = entry.getValue();
+                            double mostMoney = entry.getValue();
 
-                            sender.sendMessage(rank + ". " + playerName + ": $" + mostMoney);
+                            sender.sendMessage(rank + ". " + playerName + ": $" + String.format("%.2f", mostMoney));
                             rank++;
                         }
 
@@ -148,7 +148,7 @@ public class CommandBaltop implements CommandExecutor {
                                 String accountName = entry.getKey();
                                 double mostMoney = entry.getValue();
 
-                                sender.sendMessage(rank + ". " + accountName + ": $" + mostMoney);
+                                sender.sendMessage(rank + ". " + accountName + ": $" + String.format("%.2f", mostMoney));
                                 rank++;
                             }
 
@@ -162,7 +162,7 @@ public class CommandBaltop implements CommandExecutor {
                 }
                 else { // Show regular balance top 10 from Essentials.
                     sender.sendMessage("Users with the top balances (refreshes hourly):");
-                    java.util.List<java.util.Map.Entry<String, Integer>> topBalances = getTopBalances(10);
+                    java.util.List<java.util.Map.Entry<String, Double>> topBalances = getTopBalances(10);
 
                     if (topBalances.isEmpty()) {
                         sender.sendMessage("No balance data available yet.");
@@ -170,11 +170,11 @@ public class CommandBaltop implements CommandExecutor {
                     }
                     else {
                         int rank = 1; //Ripped from LoginStreaks.
-                        for (java.util.Map.Entry<String, Integer> entry : topBalances) {
+                        for (java.util.Map.Entry<String, Double> entry : topBalances) {
                             String playerName = entry.getKey();
-                            int mostMoney = entry.getValue();
+                            double mostMoney = entry.getValue();
 
-                            sender.sendMessage(rank + ". " + playerName + ": $" + mostMoney);
+                            sender.sendMessage(rank + ". " + playerName + ": $" + String.format("%.2f", mostMoney));
                             rank++;
                         }
 
@@ -186,7 +186,7 @@ public class CommandBaltop implements CommandExecutor {
         return true;
     }
 
-    public java.util.List<java.util.Map.Entry<String, Integer>> getTopBalances(int limit) {
+    public java.util.List<java.util.Map.Entry<String, Double>> getTopBalances(int limit) {
         // Return from cache instead of reading files
         if (plugin.cachedTopBalances.size() > limit) {
             return plugin.cachedTopBalances.subList(0, limit);
