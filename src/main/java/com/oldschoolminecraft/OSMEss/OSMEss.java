@@ -28,9 +28,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 public class OSMEss extends JavaPlugin {
 
@@ -720,7 +718,7 @@ public class OSMEss extends JavaPlugin {
     }
 
     public void refreshBalanceTop() {
-        java.util.List<java.util.Map.Entry<String, Double>> topBalances = new java.util.ArrayList<>();
+        java.util.List<java.util.Map.Entry<String, Double>> topBalances = new java.util.ArrayList<java.util.Map.Entry<String, Double>>();
 
         // Get all player data files
         java.io.File essentialsPlayerDataDir = new java.io.File(essentials.getDataFolder().getAbsolutePath(), "userdata");
@@ -749,7 +747,11 @@ public class OSMEss extends JavaPlugin {
         }
 
         // Sort by longest streak descending
-        java.util.Collections.sort(topBalances, (a, b) -> b.getValue().compareTo(a.getValue()));
+        java.util.Collections.sort(topBalances, new java.util.Comparator<java.util.Map.Entry<String, Double>>() {
+            public int compare(java.util.Map.Entry<String, Double> a, java.util.Map.Entry<String, Double> b) {
+                return b.getValue().compareTo(a.getValue());
+            }
+        });
 
         // Update cache
         cachedTopBalances = topBalances;
@@ -788,7 +790,11 @@ public class OSMEss extends JavaPlugin {
         }
 
         // Sort by longest streak descending
-        java.util.Collections.sort(topBusinessBals, (a, b) -> b.getValue().compareTo(a.getValue()));
+        java.util.Collections.sort(topBusinessBals, new java.util.Comparator<java.util.Map.Entry<String, Double>>() {
+            public int compare(java.util.Map.Entry<String, Double> a, java.util.Map.Entry<String, Double> b) {
+                return b.getValue().compareTo(a.getValue());
+            }
+        });
 
         // Update cache
         cachedTopBusinessBals = topBusinessBals;
