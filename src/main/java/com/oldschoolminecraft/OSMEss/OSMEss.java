@@ -179,6 +179,7 @@ public class OSMEss extends JavaPlugin {
         new CommandHomes(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
+        new CommandMultiPay(this);
         new CommandOSMEss(this);
         new CommandPTT(this);
         new CommandRainbow(this);
