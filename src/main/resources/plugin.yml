@@ -1,6 +1,6 @@
 name: OSM-Ess
 main: com.oldschoolminecraft.OSMEss.OSMEss
-version: 1.4.7
+version: 1.4.8
 authors: [SavageUser, moderator_man, ItsVollx]
 depend:
   - Essentials
@@ -49,6 +49,8 @@ commands:
   list:
     aliases: [online]
     description: Shows a list of online players.
+  multipay:
+    description: Pays multiple players at once.
   osmess:
     description: OSM-Ess administration commands.
   ptt:
