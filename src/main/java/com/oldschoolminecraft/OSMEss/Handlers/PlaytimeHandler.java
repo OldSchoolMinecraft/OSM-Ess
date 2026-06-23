@@ -280,7 +280,7 @@ public class PlaytimeHandler {
     public String getTotalPlaytimeLive(OfflinePlayer player) {
         try (FileReader reader = new FileReader(new File(PLAYER_DATA_DIR, player.getName().toLowerCase() + ".json"))) {
             OSMPLUserData data = OSMPLUserData.gson.fromJson(reader, OSMPLUserData.class);
-            long millis = getTotalPlayTimeInMillis(player) + (System.currentTimeMillis() - data.lastLogIn);
+            long millis = data.playTime + (System.currentTimeMillis() - data.lastLogIn);
             long totalSeconds = millis / 1000;
             long years = totalSeconds / (86400 * 365);
             long remainingAfterYears = totalSeconds % (86400 * 365);
