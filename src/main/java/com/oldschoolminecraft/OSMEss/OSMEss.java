@@ -173,14 +173,14 @@ public class OSMEss extends JavaPlugin {
         new CommandExplosiveArrows(this);
         new CommandFindHome(this);
         new CommandForecast(this);
-//        new CommandFriend(this); NOT READY YET.
         new CommandHighlightWarp(this);
         new CommandHome(this);
         new CommandHomes(this);
         new CommandIgnoreBC(this);
         new CommandList(this);
-        // new CommandMultiPay(this); NOT READY YET. (Needs a bit more work)
+//        new CommandMultiPay(this); NOT READY YET. (Needs a bit more work)
         new CommandOSMEss(this);
+//        new CommandParty(this); NOT READY YET.
         new CommandPTT(this);
         new CommandRainbow(this);
         new CommandSeen(this);
