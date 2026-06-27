@@ -51,6 +51,7 @@ public class OSMEss extends JavaPlugin {
     public AuctionHandler auctionHandler;
     public HerobrineTotemHandler totemHandler;
     public InventoryHandler inventoryHandler;
+    public PartyDataHandler partyDataHandler;
     public PlaytimeHandler playtimeHandler;
     public PlayerDataHandler playerDataHandler;
 
@@ -152,6 +153,7 @@ public class OSMEss extends JavaPlugin {
         pm.registerEvent(Event.Type.CUSTOM_EVENT, new OSASPoseidonListener(this), Event.Priority.Normal, this);
 
         auctionHandler = new AuctionHandler(this);
+        partyDataHandler = new PartyDataHandler(this);
         playerDataHandler = new PlayerDataHandler(this);
         playtimeHandler = new PlaytimeHandler(this);
         totemHandler = new HerobrineTotemHandler(this);
