@@ -53,6 +53,8 @@ commands:
     description: Pays multiple players at once.
   osmess:
     description: OSM-Ess administration commands.
+  party:
+    description: Shows a list of commands for party.
   ptt:
     description: Shows a list of the top 10 longest played players.
   rainbow:
