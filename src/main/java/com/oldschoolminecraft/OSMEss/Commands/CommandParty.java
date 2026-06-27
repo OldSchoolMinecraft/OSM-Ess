@@ -1,6 +1,7 @@
 package com.oldschoolminecraft.OSMEss.Commands;
 
 import com.oldschoolminecraft.OSMEss.OSMEss;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,16 +39,84 @@ public class CommandParty implements CommandExecutor {
                     return true;
                 }
 
-                if (args[0].equalsIgnoreCase("chat")) {}
-                else if (args[0].equalsIgnoreCase("create")) {}
-                else if (args[0].equalsIgnoreCase("delete")) {}
-                else if (args[0].equalsIgnoreCase("delhome")) {}
-                else if (args[0].equalsIgnoreCase("home")) {}
-                else if (args[0].equalsIgnoreCase("info")) {}
-                else if (args[0].equalsIgnoreCase("invite")) {}
-                else if (args[0].equalsIgnoreCase("kick")) {}
-                else if (args[0].equalsIgnoreCase("leave")) {}
-                else if (args[0].equalsIgnoreCase("sethome")) {}
+                if (args[0].equalsIgnoreCase("chat")) {
+                    if (args.length < 2) {
+                        player.sendMessage("§cUsage: /party chat <message>");
+                        return true;
+                    }
+
+                    if (!plugin.partyDataHandler.isInParty(player)) {
+                        player.sendMessage("§cYou are not in a party.");
+                        return true;
+                    }
+                    else {
+                        String message = "";
+                        for (int i = 1; i < args.length; i++) {
+                            message = message + args[i] + " ";
+                        }
+
+                        if (player.hasPermission("essentials.chatcolor")) {
+                            message = ChatColor.translateAlternateColorCodes('&', message);
+                        }
+
+                        plugin.partyDataHandler.sendPartyChatMessage(plugin.partyDataHandler.getPartyPlayerIsIn(player), player, message);
+                        return true;
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("create")) {
+                    if (args.length != 2) {
+                        player.sendMessage("§cUsage: /party create <name>");
+                        return true;
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("delete")) {
+                    if (args.length != 1) {
+                        player.sendMessage("§cUsage: /party delete");
+                        return true;
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("delhome")) {
+                    if (args.length != 1) {
+                        player.sendMessage("§cUsage: /party delhome");
+                        return true;
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("home")) {
+                    if (args.length != 1) {
+                        player.sendMessage("§cUsage: /party home");
+                        return true;
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("info")) {
+                    if (args.length != 1) {
+                        player.sendMessage("§cUsage: /party info");
+                        return true;
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("invite")) {
+                    if (args.length != 2) {
+                        player.sendMessage("§cUsage: /party invite <player>");
+                        return true;
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("kick")) {
+                    if (args.length != 2) {
+                        player.sendMessage("§cUsage: /party kick <player>");
+                        return true;
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("leave")) {
+                    if (args.length != 2) {
+                        player.sendMessage("§cUsage: /party leave <name>");
+                        return true;
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("sethome")) {
+                    if (args.length != 1) {
+                        player.sendMessage("§cUsage: /party sethome");
+                        return true;
+                    }
+                }
                 else if (args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("teleport")) {}
                 else {
                     player.sendMessage("§2-= PARTY COMMANDS =-");
