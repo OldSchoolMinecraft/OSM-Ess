@@ -11,6 +11,6 @@ public class PartyUserData {
     public String partyName;
     public String partyOwner;
     public int dateCreated;
-    public Location partyHomeLocation;
+    public SerializableLocation partyHomeLocation;
     public List<String> partyMembers;
 }

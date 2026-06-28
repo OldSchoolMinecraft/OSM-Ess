@@ -194,7 +194,7 @@ public class PartyDataHandler {
                 String partyNameRETAIN = data.partyName;
                 String partyOwnerRETAIN = data.partyOwner;
                 long dateCreatedRETAIN = data.dateCreated;
-                Location partyHomeLocationRETAIN = data.partyHomeLocation;
+                Location partyHomeLocationRETAIN = data.partyHomeLocation.toBukkitLocation();
 
                 //Values to calculate updates
                 List<String> partyMembers = data.partyMembers;
@@ -229,7 +229,7 @@ public class PartyDataHandler {
                 String partyNameRETAIN = data.partyName;
                 String partyOwnerRETAIN = data.partyOwner;
                 long dateCreatedRETAIN = data.dateCreated;
-                Location partyHomeLocationRETAIN = data.partyHomeLocation;
+                Location partyHomeLocationRETAIN = data.partyHomeLocation.toBukkitLocation();
 
                 //Values to calculate updates
                 List<String> partyMembers = data.partyMembers;
@@ -375,7 +375,7 @@ public class PartyDataHandler {
             try (FileReader reader = new FileReader(new File(PARTY_DATA_DIR, partyName.toLowerCase() + ".json"))) {
                 PartyUserData data = PartyUserData.gson.fromJson(reader, PartyUserData.class);
 
-                Location partyHomeLocation = data.partyHomeLocation;
+                Location partyHomeLocation = data.partyHomeLocation.toBukkitLocation();
 
                 playerToTeleport.teleport(getSafeDestination(partyHomeLocation));
             } catch (Exception ex) {
