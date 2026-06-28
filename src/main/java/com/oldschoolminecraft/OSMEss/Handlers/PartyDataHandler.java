@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import com.oldschoolminecraft.OSMEss.compat.PartyUserData;
 import org.bukkit.*;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -21,6 +23,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -104,35 +107,15 @@ public class PartyDataHandler {
 
             Gson gson = new Gson();
 
-            try (Stream<Path> paths = Files.walk(PARTY_DATA_DIR.toPath())) {
-                Optional<Path> foundPath = paths.filter(Files::isRegularFile)
-                        .filter(path -> path.toString().endsWith(".json"))
-                        .filter(path -> {
-                            try (FileReader reader = new FileReader(path.toFile())) {
-                                JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+            String filePartyName = getFileNameContainingPlayer(PARTY_DATA_DIR, player.getName().toLowerCase(), "partyMembers");
 
-                                if (jsonObject != null && jsonObject.has("partyMembers") && jsonObject.get("partyMembers").isJsonArray()) {
-                                    JsonArray stringList = jsonObject.getAsJsonArray("partyMembers");
+            if (filePartyName != null) {
+                String partyName = filePartyName.replace(".json", "");
 
-                                    for (JsonElement element : stringList) {
-                                        if (element.isJsonPrimitive() && element.getAsString().equals(player.getName().toLowerCase())) {
-                                            return true;
-                                        }
-                                    }
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            return false;
-                        })
-                        .findFirst();
-
-                // Convert the Path object straight to an absolute String path
-                return foundPath.map(path -> path.toAbsolutePath().toString()).orElse(null);
-            } catch (IOException e) {
-                e.printStackTrace();
+                return partyName;
             }
-            return null;
+
+            return "N/A";
         }
 
         return null;
@@ -275,36 +258,10 @@ public class PartyDataHandler {
     public boolean isInParty(Player playerToCheck) {
         if (!PARTY_DATA_DIR.exists() || !PARTY_DATA_DIR.isDirectory()) return false;
 
-        Gson gson = PartyUserData.gson;
+        boolean found = searchForKeyInList(PARTY_DATA_DIR, playerToCheck.getName().toLowerCase(), "partyMembers");
 
-        try (Stream<Path> paths = Files.walk(PARTY_DATA_DIR.toPath())) {
-            return paths.filter(Files::isRegularFile)
-                    .filter(path -> path.toString().endsWith(".json"))
-                    .anyMatch(path -> {
-                        try (FileReader reader = new FileReader(path.toFile())) {
-                            JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
-
-                            // Check if the key exists and is a JsonArray
-                            if (jsonObject.has("partyMembers") && jsonObject.get("partyMembers").isJsonArray()) {
-                                JsonArray stringList = jsonObject.getAsJsonArray("partyMembers");
-
-                                // Cycle through the elements
-                                for (JsonElement element : stringList) {
-                                    if (element.isJsonPrimitive() &&
-                                            element.getAsString().equals(playerToCheck.getName().toLowerCase())) {
-                                        return true; // Match found, short-circuit immediately
-                                    }
-                                }
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return false;
-                    });
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+        if (found) {return true;}
+        else {return false;}
     }
     public boolean isInParty(Player playerToCheck, String partyName) {
         if (doesPartyExist(partyName)) {
@@ -426,6 +383,74 @@ public class PartyDataHandler {
             }
         }
     }
+
+
+    /* String Search Handling Stuff */
+    public boolean searchForKeyInList(File directory, String searchString, String listKey) {
+        if (!directory.exists() || !directory.isDirectory()) {
+            return false;
+        }
+
+        try (Stream<Path> paths = Files.walk(directory.toPath())) {
+            return paths
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(".json"))
+                    .anyMatch(path -> fileContainsStringInList(path.toFile(), searchString, listKey));
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("[OSM-Ess] Error walking through JSON files: " + e.getMessage());
+        }
+        return false;
+    }
+    private boolean fileContainsStringInList(File file, String searchString, String listKey) {
+        Gson gson = new Gson();
+
+        try (FileReader reader = new FileReader(file)) {
+            // Parse JSON into a generic Map
+            Type type = new TypeToken<Map<String, Object>>() {}.getType();
+            Map<String, Object> jsonMap = gson.fromJson(reader, type);
+
+            if (jsonMap != null && jsonMap.containsKey(listKey)) {
+                // Gson parses JSON arrays as List<Object> or List<String>
+                Object listObject = jsonMap.get(listKey);
+
+                if (listObject instanceof List) {
+                    List<?> stringList = (List<?>) listObject;
+
+                    // Check if the list contains your target string
+                    for (Object item : stringList) {
+                        if (searchString.equals(item)) { // or item.toString().equals(...)
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("[OSM-Ess] Failed to read/parse JSON file: " + file.getName());
+        }
+        return false;
+    }
+    public String getFileNameContainingPlayer(File directory, String searchString, String listKey) {
+        if (!directory.exists() || !directory.isDirectory()) {
+            return null;
+        }
+
+        try (Stream<Path> paths = Files.walk(directory.toPath())) {
+            // Find the first file that contains the target string
+            Optional<Path> foundFile = paths
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(".json"))
+                    .filter(path -> fileContainsStringInList(path.toFile(), searchString, listKey))
+                    .findFirst(); // Stops processing subsequent files immediately upon match
+
+            // If a file was found, return its name. Otherwise, return null.
+            return foundFile.map(path -> path.getFileName().toString()).orElse(null);
+
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("Error scanning party files: " + e.getMessage());
+        }
+        return null;
+    }
+    /* String Search Handling Stuff */
 
 
     /* Teleportation Handling Stuff */
