@@ -1,9 +1,6 @@
 package com.oldschoolminecraft.OSMEss.Handlers;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.oldschoolminecraft.OSMEss.OSMEss;
 import com.oldschoolminecraft.OSMEss.compat.PartyUserData;
@@ -22,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,7 +84,7 @@ public class PartyDataHandler {
         if (partyFile.exists()) {return true;}
         else {return false;}
     }
-    public boolean isPartyOwner(Player owner, String partyName) {
+    public boolean isPartyOwner(OfflinePlayer owner, String partyName) {
         if (doesPartyExist(partyName)) {
             try (FileReader reader = new FileReader(new File(PARTY_DATA_DIR, partyName.toLowerCase() + ".json"))) {
                 PartyUserData data = PartyUserData.gson.fromJson(reader, PartyUserData.class);
@@ -101,11 +99,9 @@ public class PartyDataHandler {
 
         return false;
     }
-    public String getPartyPlayerIsIn(Player player) {
+    public String getPartyPlayerIsIn(OfflinePlayer player) {
         if (isInParty(player)) {
             if (!PARTY_DATA_DIR.exists() || !PARTY_DATA_DIR.isDirectory()) return null;
-
-            Gson gson = new Gson();
 
             String filePartyName = getFileNameContainingPlayer(PARTY_DATA_DIR, player.getName().toLowerCase(), "partyMembers");
 
@@ -184,7 +180,7 @@ public class PartyDataHandler {
 
     public void inviteToParty(String partyName, Player playerToInvite) {}
 
-    public void addToParty(String partyName, Player playerToAdd) {
+    public void addToParty(String partyName, OfflinePlayer playerToAdd) {
         if (doesPartyExist(partyName)) {
             try (FileReader reader = new FileReader(new File(PARTY_DATA_DIR, partyName.toLowerCase() + ".json"))) {
                 PartyUserData data = PartyUserData.gson.fromJson(reader, PartyUserData.class);
@@ -219,7 +215,7 @@ public class PartyDataHandler {
             }
         }
     }
-    public void removeFromParty(String partyName, Player playerToRemove) {
+    public void removeFromParty(String partyName, OfflinePlayer playerToRemove) {
         if (doesPartyExist(partyName)) {
             try (FileReader reader = new FileReader(new File(PARTY_DATA_DIR, partyName.toLowerCase() + ".json"))) {
                 PartyUserData data = PartyUserData.gson.fromJson(reader, PartyUserData.class);
@@ -255,15 +251,16 @@ public class PartyDataHandler {
             }
         }
     }
-    public boolean isInParty(Player playerToCheck) {
+    public boolean isInParty(OfflinePlayer playerToCheck) {
         if (!PARTY_DATA_DIR.exists() || !PARTY_DATA_DIR.isDirectory()) return false;
 
-        boolean found = searchForKeyInList(PARTY_DATA_DIR, playerToCheck.getName().toLowerCase(), "partyMembers");
+        boolean foundAsMember = searchForKeyInList(PARTY_DATA_DIR, playerToCheck.getName().toLowerCase(), "partyMembers");
+        boolean foundAsOwner = isStringInJsonFolder(PARTY_DATA_DIR, playerToCheck.getName().toLowerCase(), "partyOwner");
 
-        if (found) {return true;}
+        if (foundAsMember || foundAsOwner) {return true;}
         else {return false;}
     }
-    public boolean isInParty(Player playerToCheck, String partyName) {
+    public boolean isInParty(OfflinePlayer playerToCheck, String partyName) {
         if (doesPartyExist(partyName)) {
             try (FileReader reader = new FileReader(new File(PARTY_DATA_DIR, partyName.toLowerCase() + ".json"))) {
                 PartyUserData data = PartyUserData.gson.fromJson(reader, PartyUserData.class);
@@ -334,6 +331,8 @@ public class PartyDataHandler {
                 writer.close();
 
                 Bukkit.getServer().getLogger().info("[OSM-Ess] Home location for party '" + partyName.toLowerCase() + " set @ " + x + y + z + ".");
+                sendPartyChatMessage(partyName, "§d" + player.getName() + " has set/updated the party home location.");
+                sendPartyChatMessage(partyName, "§dNew location is in §b" + world.getName() + " §d@ §b" + x + "§d, §b" + y + "§d, §b" + z + "§d.");
             } catch (Exception ex) {
                 Bukkit.getServer().getLogger().info("[OSM-Ess] Error saving home location for party '" + partyName.toLowerCase() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
@@ -364,6 +363,7 @@ public class PartyDataHandler {
                 writer.close();
 
                 Bukkit.getServer().getLogger().info("[OSM-Ess] Home location for party '" + partyName.toLowerCase() + " deleted.");
+                sendPartyChatMessage(partyName, "§dThe party's current home location has been §cdeleted§d.");
             } catch (Exception ex) {
                 Bukkit.getServer().getLogger().info("[OSM-Ess] Error deleting home location for party '" + partyName.toLowerCase() + ": " + ex.getMessage());
                 ex.printStackTrace(System.err);
@@ -383,7 +383,22 @@ public class PartyDataHandler {
             }
         }
     }
+    public String getPartyHomeLocation(String partyName) {
+        if (doesPartyExist(partyName)) {
+            try (FileReader reader = new FileReader(new File(PARTY_DATA_DIR, partyName.toLowerCase() + ".json"))) {
+                PartyUserData data = PartyUserData.gson.fromJson(reader, PartyUserData.class);
 
+                Location partyHomeLocation = data.partyHomeLocation.toBukkitLocation();
+
+                return "§6(§e" + partyHomeLocation.getWorld().getName() + "§6, §e" + partyHomeLocation.getBlockX() + "§6, §e" + partyHomeLocation.getBlockY() + "§6, §e" + partyHomeLocation.getBlockZ() + "§6)";
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+                return "N/A";
+            }
+        }
+
+        return "N/A";
+    }
 
     /* String Search Handling Stuff */
     public boolean searchForKeyInList(File directory, String searchString, String listKey) {
@@ -449,6 +464,56 @@ public class PartyDataHandler {
             Bukkit.getLogger().severe("Error scanning party files: " + e.getMessage());
         }
         return null;
+    }
+    public static boolean isStringInJsonFolder(File directory, String jsonKey, String searchString) {
+        if (!directory.exists() || !directory.isDirectory()) return false;
+
+        try (Stream<Path> paths = Files.walk(directory.toPath(), 1)) {
+            return paths.filter(Files::isRegularFile)
+                    .filter(p -> p.toString().endsWith(".json"))
+                    .anyMatch(p -> {
+                        try (FileReader reader = new FileReader(p.toFile())) {
+                            JsonElement root = JsonParser.parseReader(reader);
+                            if (root.isJsonObject()) {
+                                JsonObject json = root.getAsJsonObject();
+                                if (json.has(jsonKey) && json.get(jsonKey).isJsonPrimitive()) {
+                                    return json.get(jsonKey).getAsString().contains(searchString);
+                                }
+                            }
+                        } catch (Exception e) {
+                            // Skip malformed files or read errors safely
+                        }
+                        return false;
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<String> fetchStringListFromJson(Path filePath, String keyName) {
+        List<String> stringList = new ArrayList<>();
+
+        try (FileReader reader = new FileReader(filePath.toFile())) {
+            // Parse the JSON file into a JsonObject
+            JsonElement rootElement = JsonParser.parseReader(reader);
+
+            if (rootElement.isJsonObject()) {
+                JsonArray jsonArray = rootElement.getAsJsonObject().getAsJsonArray(keyName);
+
+                if (jsonArray != null) {
+                    // Iterate through the JSON array and convert each element to a String
+                    for (JsonElement element : jsonArray) {
+                        stringList.add(element.getAsString());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // Handle file missing or read errors
+            e.printStackTrace();
+        }
+
+        return stringList;
     }
     /* String Search Handling Stuff */
 
