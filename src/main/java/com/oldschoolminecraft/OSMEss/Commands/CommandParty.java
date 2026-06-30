@@ -9,6 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import static com.earth2me.essentials.Util.getSafeDestination;
 import static com.oldschoolminecraft.OSMEss.Commands.CommandSeen.getPlayerTimeZone;
+import static com.oldschoolminecraft.OSMEss.Handlers.PartyDataHandler.PARTY_DATA_DIR;
 
 public class CommandParty implements CommandExecutor {
 
@@ -205,6 +207,11 @@ public class CommandParty implements CommandExecutor {
                         return true;
                     }
                     else {
+                        if (plugin.partyDataHandler.isPartyHomeDeleted(plugin.partyDataHandler.getPartyPlayerIsIn(player))) {
+                            player.sendMessage("§5[PARTY] §cParty currently doesn't have a home set.");
+                            return true;
+                        }
+
                         plugin.partyDataHandler.delPartyHome(plugin.partyDataHandler.getPartyPlayerIsIn(player));
                         return true;
                     }
@@ -229,23 +236,30 @@ public class CommandParty implements CommandExecutor {
                         player.sendMessage("§cUsage: /party info");
                         return true;
                     }
-                    StringBuilder stringBuilderMembers = new StringBuilder();
-                    List<String> members = plugin.partyDataHandler.fetchStringListFromJson(Paths.get(plugin.partyDataHandler.getPartyPlayerIsIn(player) + ".json"), "partyMembers");
 
-                    player.sendMessage("§2-= PARTY §a" + plugin.partyDataHandler.getPartyPlayerIsIn(player).toUpperCase() + " §2INFO =-");
-                    player.sendMessage("§bOwner: " + plugin.partyDataHandler.getPartyOwner(plugin.partyDataHandler.getPartyPlayerIsIn(player)));
-                    if (plugin.playerDataHandler.hasTimeZoneData(player) && !getPlayerTimeZone(player).endsWith("c")) {player.sendMessage("§bDate Created: §e" + plugin.partyDataHandler.getPartyDatedCreatedByTimeZone(plugin.partyDataHandler.getPartyPlayerIsIn(player), player));}
-                    else {player.sendMessage("§bDate Created: §e" + plugin.partyDataHandler.getPartyDatedCreated(plugin.partyDataHandler.getPartyPlayerIsIn(player)));}
-
-                    for (String member : members) {
-                        if (stringBuilderMembers.length() > 0) {stringBuilderMembers.append(", ");}
-                        stringBuilderMembers.append("§e" + member.toLowerCase()).append("§6");
+                    if (!plugin.partyDataHandler.isInParty(player)) {
+                        player.sendMessage("§5[PARTY] §cYou are not in a party.");
+                        return true;
                     }
+                    else {
+                        StringBuilder stringBuilderMembers = new StringBuilder();
+                        List<String> members = plugin.partyDataHandler.getPartyMembers(PARTY_DATA_DIR, plugin.partyDataHandler.getPartyPlayerIsIn(player));
 
-                    player.sendMessage("§bMembers§8(§d" + members.size() + "§8)§b: §e" + stringBuilderMembers.toString());
-                    player.sendMessage("§bParty Home Location: " + plugin.partyDataHandler.getPartyHomeLocation(plugin.partyDataHandler.getPartyPlayerIsIn(player)));
-                    player.sendMessage("§2-= END OF PARTY INFO =-");
-                    return true;
+                        player.sendMessage("§2-= PARTY §a" + plugin.partyDataHandler.getPartyPlayerIsIn(player).toUpperCase() + " §2INFO =-");
+                        player.sendMessage("§bOwner: §e" + plugin.partyDataHandler.getPartyOwner(plugin.partyDataHandler.getPartyPlayerIsIn(player)));
+                        if (plugin.playerDataHandler.hasTimeZoneData(player) && !getPlayerTimeZone(player).endsWith("c")) {player.sendMessage("§bDate Created: §e" + plugin.partyDataHandler.getPartyDatedCreatedByTimeZone(plugin.partyDataHandler.getPartyPlayerIsIn(player), player));}
+                        else {player.sendMessage("§bDate Created: §e" + plugin.partyDataHandler.getPartyDatedCreated(plugin.partyDataHandler.getPartyPlayerIsIn(player)));}
+
+                        for (String member : members) {
+                            if (stringBuilderMembers.length() > 0) {stringBuilderMembers.append(", ");}
+                            stringBuilderMembers.append("§e" + member.toLowerCase()).append("§6");
+                        }
+
+                        player.sendMessage("§bMembers§8(§d" + (members.size() + 1) + "§8)§b: §e" + stringBuilderMembers.toString());
+                        player.sendMessage("§bParty Home Location: §e" + plugin.partyDataHandler.getPartyHomeLocation(plugin.partyDataHandler.getPartyPlayerIsIn(player)));
+                        player.sendMessage("§2-= END OF PARTY INFO =-");
+                        return true;
+                    }
                 }
                 else if (args[0].equalsIgnoreCase("invite")) {
                     if (args.length != 2) {
@@ -327,8 +341,8 @@ public class CommandParty implements CommandExecutor {
                     }
                 }
                 else if (args[0].equalsIgnoreCase("leave")) {
-                    if (args.length != 2) {
-                        player.sendMessage("§cUsage: /party leave <name>");
+                    if (args.length != 1) {
+                        player.sendMessage("§cUsage: /party leave");
                         return true;
                     }
 
@@ -370,21 +384,28 @@ public class CommandParty implements CommandExecutor {
                         player.sendMessage("§cUsage; /party tp <player>");
                         return true;
                     }
-                    Player other = Bukkit.getServer().getPlayerExact(args[1]);
 
-                    if (other == null) {
-                        player.sendMessage(plugin.playerNotFound);
-                        return true;
-                    }
-
-                    if (plugin.partyDataHandler.getPartyPlayerIsIn(other).equalsIgnoreCase(plugin.partyDataHandler.getPartyPlayerIsIn(player))) {
-                        try {player.teleport(getSafeDestination(other.getLocation())); player.sendMessage("§5[PARTY] §dTeleported to member §b" + other.getName() + "§d.");
-                        } catch (Exception ex) {Bukkit.getServer().getLogger().severe("[OSM-Ess] Error party-tping " + player.getName() + " to " + other.getName() + ": " + ex.getMessage()); ex.printStackTrace(System.err); player.sendMessage("§cError: " + ex.getMessage());}
+                    if (!plugin.partyDataHandler.isInParty(player)) {
+                        player.sendMessage("§5[PARTY] §cYou are not in a party.");
                         return true;
                     }
                     else {
-                        player.sendMessage("§5[PARTY] §cPlayer is not in your party.");
-                        return true;
+                        Player other = Bukkit.getServer().getPlayerExact(args[1]);
+
+                        if (other == null) {
+                            player.sendMessage(plugin.playerNotFound);
+                            return true;
+                        }
+
+                        if (plugin.partyDataHandler.getPartyPlayerIsIn(other).equalsIgnoreCase(plugin.partyDataHandler.getPartyPlayerIsIn(player))) {
+                            try {player.teleport(getSafeDestination(other.getLocation())); player.sendMessage("§5[PARTY] §dTeleported to member §b" + other.getName() + "§d.");
+                            } catch (Exception ex) {Bukkit.getServer().getLogger().severe("[OSM-Ess] Error party-tping " + player.getName() + " to " + other.getName() + ": " + ex.getMessage()); ex.printStackTrace(System.err); player.sendMessage("§cError: " + ex.getMessage());}
+                            return true;
+                        }
+                        else {
+                            player.sendMessage("§5[PARTY] §cPlayer is not in your party.");
+                            return true;
+                        }
                     }
                 }
                 else {
